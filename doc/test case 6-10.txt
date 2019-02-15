@@ -1,0 +1,322 @@
+ID 06.01.01
+Name: Lend by Scanning 
+Participating Actors: User (as Owner)
+Goal: As an owner, I want to hand over a book by scanning the book ISBN code and denoting the book as borrowed.
+Trigger: User (as Owner) selects “ISBN” button on “Edit” page.
+Precondition: There is an available book which will be borrowed from owner.
+Postcondition: Owner will hand over the borrowed book by scanning the book ISBN code.
+Basic Flow: 1. Click the book under “Available” list in “Owned by me”
+2. Click “Black pencil” Button
+2. “ISBN” button on “Edit” page is clicked.
+3. The book ISBN code will be scanned after that.
+4.ISBN code will be automatically saved on ISBN line
+Alternative Flow: 3.1 ISBN code is typed.
+Exception Flow: No ISBN code is saved
+4.1 User (as owner) chooses not to save the ISBN code.
+Include: None
+
+
+ID: 06.02.01
+Name: Confirm borrow by Scanning 
+Participating Actors: User (as borrower)
+Goal: As a borrower, I want to receive an accepted book by scanning the book ISBN code to confirm I have borrowed it.
+Trigger:1. User (as borrower) selects “ISBN” button on “Edit” page.
+Precondition: There is an available book which will be borrowed from owner.
+Postcondition: Borrower will receive an accepted book by scanning the book ISBN code to confirm it has borrowed.
+Basic Flow: 
+1. Click the red button near “Borrowed from Buddy”
+2. “ISBN” button on “Edit” page is clicked.
+3. The book ISBN code will be scanned after that.
+4.ISBN code will be automatically saved on ISBN line
+Alternative Flow: 3.1 ISBN code is typed
+Exception Flow: No ISBN code is saved
+4.1 User (as borrower) chooses not to save the ISBN code.
+Include: None
+
+ID: 06.03.01
+Name: Borrower view borrowed book
+Participating Actors: User (as borrower)
+Goal: As a borrower, I want to view a list of books I am borrowing, each book with its description and owner username.
+Trigger: User (as borrower) Click book from “Borrowed from Buddy” 
+Precondition: There is an available book which has borrowed from owner.
+Postcondition: Borrower can view the details of book (description and owner username) that he borrowed from different owners. 
+Basic Flow: 1. Click “My Library” page
+2. Choose the book from “Borrowed from Buddy” which user wants to view.
+3. The description of the book will be showed.
+Alternative Flow:  None
+Exception Flow: None
+Include: None
+Related Artifacts: Use case 06.02.01
+
+
+ID: 07.01.01
+Name: Borrow by Scanning 
+Participating Actors: User (as borrower)
+Goal: As a borrower, I want to hand over a book I borrowed by scanning the book ISBN code to denote the book as available.
+Trigger: 1. User (as borrower) selects “ISBN” button on “Edit” page.
+Precondition: There is an available book which has be borrowed.
+Postcondition: Borrower will scan the book ISBN code to denote that book is available to hand over.
+Basic Flow: 
+1. User(as Borrower) Choose the book from “Borrowed from Buddy”
+2. Click the black button on bottom right corner.
+2. “ISBN” button on “Edit” page is clicked.
+3. The book ISBN code will be scanned after that.
+4.ISBN code will be automatically saved on ISBN line
+Alternative Flow: 3.1 ISBN code is typed
+Exception Flow: No ISBN code is saved
+4.1 User (as borrower) chooses not to save the ISBN code.
+Include: None
+
+ID: 07.02.01
+Name: Receive by Scanning 
+Participating Actors: User (as Owner)
+Goal: As an owner, I want to receive a returned book by scanning the book ISBN code to confirm I have it available.
+Trigger: User selects “ISBN” button on “Edit” page.
+Precondition: There is an available book which will be returned.
+Postcondition: User will scan the book ISBN code to confirm that book is available.
+Basic Flow: 
+1. User (as Owner) Choose the book from “Borrowed” in “Owned by me”.
+2. Click the black button on bottom right corner.
+2. “ISBN” button on “Edit” page is clicked.
+3. The book ISBN code will be scanned after that.
+4.ISBN code will be automatically saved on ISBN line
+Alternative Flow: 3.1 ISBN code is typed
+Exception Flow: No ISBN code is saved
+4.1 User (as owner) chooses not to save the ISBN code.
+Include: None
+Related Artifacts: Use case 07.01.01
+
+ID: 08.01.01
+Name: Owner attach photograph
+Participating Actors: User (as Owner)
+Goal: As an owner, I want to optionally attach a photograph to a book of mine.
+Trigger: Click the button with “New Picture” on Edit page.
+Precondition: There are available photograph and books that belong to owner.
+Postcondition: User will attach a photograph to a book that belongs to owner.  
+Basic Flow: 
+1. User (as Owner) Choose the book from “Borrowed” in “Owned by me”.
+2. Click the black button on bottom right corner.
+3. “Black pencil” button in “Book image” is clicked.
+4. Click “New Picture” button.
+5. A photograph will be attached.
+Alternative Flow: None
+Exception: No photograph is saved
+5.1: User (as Owner) chooses not to save graph.
+Include: None
+
+ID: 08.02.01
+Name: Owner delete photograph
+Participating Actors: User (as Owner)
+Goal: As an owner, I want to delete any attached photograph for a book of mine.
+Trigger: Click the button with “Delete image” on Edit page
+Precondition: There are available photograph and books that belong to user.
+Postcondition: User will delete a photograph from a book that belongs to user.  
+Basic Flow:
+1. User (as Owner) Choose the book from “Borrowed” in “Owned by me”.
+2. Click the black button on bottom right corner.
+3. “Black pencil” button in “Book image” is clicked.
+4. Click “Delete image” button.
+5. A photograph will be deleted if user chooses to delete it.
+Alternative Flow: None
+Exception Flow: No photograph is deleted
+5.1: User (as Owner) chooses not to delete it.
+Include: None
+ID: 08.03.01
+Name: Owner attach photographs
+Participating Actors: User (as Owner)
+Goal: As an owner, I want to optionally attach any photograph for a book.
+Trigger: Click the button with “New Picture” on Edit page.
+Precondition: There are available photograph and books.
+Postcondition: User will attach any photograph to a book.  
+Basic Flow:
+1. User (as Owner) click the “pink plus button on bottom right corner of “My Library” page.
+2. “Black pencil” button in “Book image” is clicked on Edit page.
+3. Click “New Picture” button.
+4. A photograph will be attached.
+Alternative Flow: None
+Exception Flow: No photograph is saved
+4.1: User (as Owner) chooses not to save graph.
+Include: None
+
+ID: 09.01.01
+Name: Owner specify locations
+Participating Actors: User (as Owner)
+Goal: As an owner, I want to specify a geo location on a map of where to receive a book when I accept a request on the book.
+Trigger: ”ACCEPT” button is clicked on Description page.
+Precondition: There is a request for the user needs to be accepted.
+Postcondition: When the book is accepted, a geo location is specified by owner.
+Basic Flow:
+“Requested” button is clicked from “Owned for me” in “My Library” Page
+Click “SEE REQUESTS” green button
+Click “ACCEPT” button for the requests the user(as Owner) wants to accept.
+Specify a geo location on a map as the user(as Owner).
+Alternative Flow: None
+Exception Flow: None
+Include: None
+
+ID: 09.02.01
+Name: Borrower specify locations
+Participating Actors: User (as Borrower)
+Goal: As a borrower, I want to view the geo location of where to receive a book I will be borrowing.
+Trigger: User (as Borrower) click “Request to Borrow” button on Description page.
+Precondition: There is a book that can be received by borrower.
+Postcondition: When the book is received, a geo location is viewed by borrower.
+Basic Flow:
+After account logged in, click “Browse” button
+User (as Borrower) chooses the book which wants to borrow.
+Click “arrow” button to view detail on Browse Available Books page.
+Click “Request to Borrow” Button on Description page.
+View the geo location of where to receive a book.
+
+Alternative Flow: Different ways to choose a book
+2.1 Use search line to find a book
+2.2 Use “Books you might like” list to find a book
+2.3 Use “Books closest to you” list to find a book
+Exception Flow: None
+Include : None
+
+ID: 10.01.01
+Name: Club Create Group
+Participating Actors: User (as owner)
+Goal: As a user, I want to be able to create a group where I can add members to discuss books.
+Trigger: Click “black pencil” button to create a account
+Precondition: User already register an account for app.
+Postcondition: Owner creates a group to add members to discuss books.
+Basic Flow:
+1.	Click “Clubs” button after logging in.
+2.	Click “Red plus button” on bottom right corner.
+3.	Click “Black pencil” button on top right corner to create a group.
+Alternative Flow: Edit the club
+3.1	To create a group, user can edit club name, book name and page.
+Exception Flow: No club is created
+3.1 User chooses not to create a club.
+Include : None
+
+ID: 10.02.01
+Name: Club add people
+Participating Actors: User (as owner)
+Goal: As a club owner, I want to be able to add people to my club.
+Trigger: User clicks “Club Members” part
+Precondition: User has his own group.
+Postcondition: Owner is able to add people to a personal club.
+Basic Flow:
+1.	Click “Club Members” part on Clubs page
+2.	Choose members’ name by click each circle to add people to user’s club.
+Alternative Flow:
+2.1	Each member’s profile is able to be viewed.
+Exception Flow:
+3.	User chooses not to add members to the club.
+ID: 10.03.01
+Name: Club edit page
+Participating Actors: User (as Owner)
+Goal: As a club owner, I want to edit the club page.
+Trigger: Click “black pencil” button to edit the club page.
+Precondition: User has his own club.
+Postcondition: Owner can edit the club page.
+Basic Flow: 
+1.	Click “black pencil” button to edit the club page.
+2.	Edit Club profile
+Alternative Flow:
+2.1	Click “Club Name” to edit club name.
+2.2	Click “Book Name” to edit the book that clubs is currently reading.
+2.3	Click “Page” to edit which page club is reading for the book.
+2.4	Click “Floating label” to change label.
+Exception Flow: None
+Include : None 
+ID: 10.04.01
+Name: Club create event
+Participating Actors: User (as owner)
+Goal: As a club owner, I want to be able to create an event.
+Trigger: Click red button on middle of club page
+Precondition: User has his own group.
+Postcondition: Owner can create an event.
+Basic Flow:
+1.	Click red button on the club page
+2.	Create an event for the club.
+Alternative Flow: 
+2.1	User can set a time for the event
+2.2	User can set a location for the event
+Exception Flow: None
+Include Flow: User case 10.05.01 and User case 10.06.01
+
+ID: 10.05.01
+Name: Club view geolocation
+Participating Actors: User (as owner)
+Goal: As a club member, I want to set the geolocation of an event.
+Trigger: Click “purple direction” button to view the location
+Precondition: User has his own group.
+Postcondition: Owner can set geolocation of an event.
+Basic Flow:
+Click “purple direction” button to view the location
+Click “Select this location” to set a new location for event 
+
+ID: 10.06.01
+Name: Club Set Time
+Participating Actors: User (as Owner)
+Goal: As a club owner, I want to set a time for an event.
+Trigger:
+Precondition: User is a club owner.
+Postcondition: User sets a time for an event.
+Basic Flow: 
+1.	Create an event for the club.
+2.	User set the time for the event
+ID: 10.07.01
+Name: Member view club information
+Participating Actors: User (as member)
+Goal: As a club member, I want to be able to view club information such as the club name, the book the club is reading, and what chapter of the book the club is on.
+Trigger: Click club page to view all information
+Precondition: User already joins this club.
+Postcondition: Owner can view club information such as the club name, the book the club is reading, and what chapter of the book the club is on.
+Basic Flow: 1. User click club description to view information.
+Alternative Flow: 2.1 Owner view club name
+2.2	Owner view the book the club is reading
+2.3	Owner view what chapter of the book the club is on
+2.4	Owner view a list of all the club members and look at their profiles.
+Include : User case 10.11.01
+ID: 10.08.01
+Name: Member chat 
+Participating Actors: User (as member)
+Goal: As a user, I want to be able to chat with club members about the book we are reading.
+Trigger: Click club page to view all information
+Precondition: User already joins this club.
+Postcondition: Owner can chat with other members.
+Basic Flow: 1. User click conversation button to chat with other members on club page.
+Include : None
+
+ID: 10.09.01
+Name: Member leaves group
+Participating Actors: User (as member)
+Goal: As a club member, I want to be able to leave a group.
+Trigger: Click “leave” button on club page to leave a club
+Precondition: User already joins this club.
+Postcondition: User leaves the club.
+Basic Flow: 1. User click “leave” button to leave a chat.
+Include : None
+
+ID: 10.10.01
+Name: Member search for club
+Participating Actors: User (as member)
+Goal: As a user, I want to be able to search for clubs.
+Trigger: User can search for the clubs
+Precondition: User has account for this app.
+Postcondition: User found/not found the club.
+Basic Flow: 1. User click “club” button after logging in.
+3.	User use search line to find the club.
+Alternative Flow: None
+Exception Flow: 
+3.1  User does not find the club name he wants.
+Include : None
+
+ID: 10.11.01
+Name: Member view club member
+Participating Actors: User (as member)
+Goal: As a user, I want to be able to search for clubs.
+Trigger: User can search for the clubs
+Precondition: User has account for this app.
+Postcondition: User view a list of all the club members and look at their profiles.
+Basic Flow: 1. User click “club” button after logging in.
+2User click club on club search page.
+3.	User click “club members” part on clubs page
+4.	User click different member profiles.
+5.	User can view different member profiles on member profile pages. 
+Alternative Flow: None

@@ -12,6 +12,7 @@ import java.util.Date;
 
 public class User {
     private FirebaseDatabase firebase = FirebaseDatabase.getInstance();
+    private DatabaseReference reference;
 
     private String username;
     private String password;
@@ -90,7 +91,7 @@ public class User {
 
     public void deleteUser(){
         //do things with database
-        DatabaseReference reference = firebase.getReference("Users");
+        reference = firebase.getReference("Users");
         reference.child(username).removeValue();
     }
     public void addBook(String title, String author, String isbn, String description){
@@ -101,7 +102,7 @@ public class User {
         //add the book to the database
 
         */
-        DatabaseReference reference = firebase.getReference("Users");
+        reference = firebase.getReference("Users");
         //reference.child(username).child("Books").child(isbn).setValue(book);
 
 
@@ -115,15 +116,17 @@ public class User {
 
         //add Club to database
         */
-        DatabaseReference reference = firebase.getReference("Clubs");
+        reference = firebase.getReference("Clubs");
        //reference.child(clubName).setValue(club);
     }
 /*
     public Transaction tradeBook(User borrower, Location tradeLocation, Book book, Date tradeTime){
         return new Transaction(this, borrower, book, tradeLocation, tradeTime);
         //add transaction to database
-        DatabaseReference reference = firebase.getReference("Transactions");
+        reference = firebase.getReference("Transactions");
         reference.child(transaction);
     }
 */
+
 }
+

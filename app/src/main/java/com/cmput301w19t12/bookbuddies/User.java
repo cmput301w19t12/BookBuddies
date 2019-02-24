@@ -1,11 +1,18 @@
 package com.cmput301w19t12.bookbuddies;
 
 import android.location.Location;
+import android.provider.ContactsContract;
+
+import com.google.firebase.FirebaseApp;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
 import java.util.Date;
 
 public class User {
+    private FirebaseDatabase firebase = FirebaseDatabase.getInstance();
+    private DatabaseReference reference;
 
     private String username;
     private String password;
@@ -81,8 +88,11 @@ public class User {
     public void setUsername(String username) {
         this.username = username;
     }
+
     public void deleteUser(){
         //do things with database
+        reference = firebase.getReference("Users");
+        reference.child(username).removeValue();
     }
     public void addBook(String title, String author, String isbn, String description){
         /*
@@ -92,6 +102,10 @@ public class User {
         //add the book to the database
 
         */
+        reference = firebase.getReference("Users");
+        //reference.child(username).child("Books").child(isbn).setValue(book);
+
+
     }
 
     public void createClub(String clubName){
@@ -102,11 +116,17 @@ public class User {
 
         //add Club to database
         */
+        reference = firebase.getReference("Clubs");
+       //reference.child(clubName).setValue(club);
     }
 /*
     public Transaction tradeBook(User borrower, Location tradeLocation, Book book, Date tradeTime){
         return new Transaction(this, borrower, book, tradeLocation, tradeTime);
         //add transaction to database
+        reference = firebase.getReference("Transactions");
+        reference.child(transaction);
     }
 */
+
 }
+

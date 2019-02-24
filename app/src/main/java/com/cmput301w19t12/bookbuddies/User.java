@@ -102,7 +102,7 @@ public class User {
 
         */
         DatabaseReference reference = firebase.getReference("Users");
-        reference.child(username).child("Books").child(isbn).setValue(title);
+        //reference.child(username).child("Books").child(isbn).setValue(book);
 
 
     }
@@ -116,14 +116,14 @@ public class User {
         //add Club to database
         */
         DatabaseReference reference = firebase.getReference("Clubs");
-       reference.child(clubName).setValue("STUFF");
+       //reference.child(clubName).setValue(club);
     }
 /*
     public Transaction tradeBook(User borrower, Location tradeLocation, Book book, Date tradeTime){
         return new Transaction(this, borrower, book, tradeLocation, tradeTime);
         //add transaction to database
         DatabaseReference reference = firebase.getReference("Transactions");
-        firebase.child(transaction);
+        reference.child(transaction);
     }
 */
 }

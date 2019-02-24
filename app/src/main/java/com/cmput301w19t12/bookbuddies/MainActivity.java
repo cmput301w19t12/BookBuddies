@@ -15,9 +15,5 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         FirebaseApp.initializeApp(getApplicationContext());
-        User user = new User("Brian","hb");
-        user.addBook("harry potter","JK","234","the first one");
-        // user.deleteUser();
-        user.createClub("MY CLUB");
     }
 }

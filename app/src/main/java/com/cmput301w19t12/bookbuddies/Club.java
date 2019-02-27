@@ -7,7 +7,7 @@ import java.util.ArrayList;
  * A Club contains an owner, has a name, a list of members,
  * a book the members are currently reading, and a list of club related events
  *
- * @author bgrenier
+ * @author Team 12
  * @version 1.0*/
 
 public class Club {

@@ -14,18 +14,21 @@ import java.util.Date;
 /**User class represents a user account within the app
  * A user has a username, password, phone number, email address and profile picture path
  *
- * @author Team 12
+ * @author dfournier
  * @version 1.0*/
 
 public class User {
     private FirebaseDatabase firebase = FirebaseDatabase.getInstance();
-    private DatabaseReference reference;
+    private DatabaseReference userRef;
+    private DatabaseReference clubsRef;
+    private DatabaseReference transactionRef;
 
     private String username;
     private String password;
     private String phoneNumber;
     private String emailAddress;
     private String profilePicturePath;
+    private String userId;
 
     /**Constructor including all attributes
      * @param username String
@@ -39,20 +42,27 @@ public class User {
         this.phoneNumber = phoneNumber;
         this.emailAddress = emailAddress;
         this.profilePicturePath = profilePicturePath;
+        this.userRef = firebase.getReference("Users");
+        this.clubsRef = firebase.getReference("Clubs");
+        this.transactionRef = firebase.getReference("Transactions");
     }
-
+/*
     /**Constructor including all attributes but picture path
      * @param username String
      * @param password String
      * @param phoneNumber String
-     * @param emailAddress String*/
+     * @param emailAddress String
     public User(String username, String password, String phoneNumber, String emailAddress){
         this.username = username;
         this.password = password;
         this.phoneNumber = phoneNumber;
         this.emailAddress = emailAddress;
         this.profilePicturePath = null;
+        this.userRef = firebase.getReference("Users");
+        this.clubsRef = firebase.getReference("Clubs");
+        this.transactionRef = firebase.getReference("Transactions");
     }
+    */
 
     /**Constructor including all  but picture path and email address
      * @param username String
@@ -64,7 +74,12 @@ public class User {
         this.phoneNumber = phoneNumber;
         this.emailAddress = null;
         this.profilePicturePath = null;
+        this.userRef = firebase.getReference("Users");
+        this.clubsRef = firebase.getReference("Clubs");
+        this.transactionRef = firebase.getReference("Transactions");
     }
+
+
 
     /**Base constructor, including only username and password
      * @param username String
@@ -75,6 +90,21 @@ public class User {
         this.phoneNumber = null;
         this.emailAddress = null;
         this.profilePicturePath = null;
+        this.userRef = firebase.getReference("Users");
+        this.clubsRef = firebase.getReference("Clubs");
+        this.transactionRef = firebase.getReference("Transactions");
+    }
+
+    public User(String userId, String username, String password, String emailAddress){
+        this.username = username;
+        this.password = password;
+        this.phoneNumber = null;
+        this.emailAddress = emailAddress;
+        this.profilePicturePath = null;
+        this.userId = userId;
+        this.userRef = firebase.getReference("Users");
+        this.clubsRef = firebase.getReference("Clubs");
+        this.transactionRef = firebase.getReference("Transactions");
     }
 
     /**Gets user email address
@@ -140,8 +170,7 @@ public class User {
     /**Deletes the user from the database*/
     public void deleteUser(){
         //do things with database
-        reference = firebase.getReference("Users");
-        reference.child(username).removeValue();
+        userRef.child(username).removeValue();
     }
 
     /**creates book and associates it with the user in database
@@ -153,21 +182,17 @@ public class User {
         BookDetails bookDetails = new BookDetails(title, author,isbn, description);
         Book book = new Book(this.username, bookDetails,"available");
         //add the book to the database
-        reference = firebase.getReference("Users");
-        //reference.child(username).child("Books").child(isbn).setValue(book);
+        userRef.child(username).child("Books").child(isbn).setValue(book);
     }
 
     /**Creates a new club that the user owns
      * @param clubName String*/
     public void createClub(String clubName){
-        ArrayList<User> memberList = new ArrayList<User>();
+        ArrayList<User> memberList = new ArrayList<>();
         memberList.add(this);
-        Club club = new Club(this, clubName);
-
+        Club club = new Club(this, clubName, memberList);
         //add Club to database
-
-        reference = firebase.getReference("Clubs");
-        reference.child(clubName).setValue(club);
+        clubsRef.child(clubName).setValue(club);
     }
 
     /**Allows a user to borrow a book from the user
@@ -178,9 +203,8 @@ public class User {
     public Transaction tradeBook(User borrower, Location tradeLocation, Book book, Date tradeTime){
         Transaction transaction = new Transaction(this, borrower, book, tradeLocation, tradeTime);
         //add transaction to database
-        reference = firebase.getReference("Transactions");
         String trade = String.format("&s to %s",username, borrower.getUsername());
-        reference.child(trade).setValue(transaction);
+        transactionRef.child(trade).setValue(transaction);
         return transaction;
     }
 

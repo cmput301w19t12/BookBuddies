@@ -15,18 +15,18 @@ public class Club {
     private String name;
     private ArrayList<User> membersList;
     private Book currentBook;
-    //private ArrayList<Event> events;
+    private ArrayList<Event> events;
 
 
     /**Baseline constructor for the Club class
      * Assigns club owner and name, initializes both lists
      * @param owner User
      * @param name String*/
-    Club(User owner, String name){
+    Club(User owner, String name, ArrayList<User> membersList){
         this.owner = owner;
         this.name = name;
-        this.membersList = new ArrayList<>();
-        //this.events = new ArrayList<>();
+        this.membersList = membersList;
+        this.events = new ArrayList<>();
     }
 
     /**Gets book being currently read by the club

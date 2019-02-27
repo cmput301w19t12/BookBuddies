@@ -11,13 +11,13 @@ import java.util.*;
 public class ChatTest {
     ArrayList<String> MessageList = new ArrayList<String>();
     MessageList.add("msg1");
-    MessageListDetails TestMessage = new MessageLisDetails(MessageList);
+    Club TestMessage = new Club(MessageList);
     ArrayList<String> UserList = new ArrayList<String>();
     UserList.add("user1");
-    UserListDeatils TestUser = new UserListDetails(UserList);
+    User TestUser = new User(UserList);
     @Test
     public void GetMessageTest() {
-        MessageListDeatils TestMessage = new MessageListDetails(MessageList);
+        Club TestMessage = new Club(MessageList);
         assertEquals(TestMessage.getMessage(), "msg1");
         TestMessage.sendMessage("msg2");
         assertEquals(TestMessage.getMessage(), "msg2");
@@ -26,7 +26,7 @@ public class ChatTest {
 
     @Test
     public void GetUsersTest() {
-        UserListDeatils TestUser = new UserListDetails(UserList);
+        User TestUser = new User(UserList);
         assertEquals(TestUser.getMessage(), "user1");
         TestMessage.addUser("user2");
         assertEquals(TestMessage.getMessage(), "user2");

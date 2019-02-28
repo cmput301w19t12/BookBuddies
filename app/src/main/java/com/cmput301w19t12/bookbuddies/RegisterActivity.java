@@ -33,6 +33,11 @@ public class RegisterActivity extends AppCompatActivity {
     private LoginValidator loginValidator;
     private FirebaseAuth mAuth;
     private DatabaseReference userRef;
+
+
+    /**onCreate method initializes all instance attributes, and sets a click listener
+     * for the registration confirmation button
+     * @param savedInstanceState Bundle*/
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -46,11 +51,12 @@ public class RegisterActivity extends AppCompatActivity {
         passwordConfirmField = findViewById(R.id.confirmPassword);
         loginValidator =  new LoginValidator(usernameField,emailField,passwordField,passwordConfirmField);
 
-
         registerButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                // ensures all info fields follow the required regulations
                 loginValidator.runRegistrationTests();
+                // if the account credentials are valid, create a new account
                 if(loginValidator.isValid()) {
                     createAccount();
                 }
@@ -60,24 +66,29 @@ public class RegisterActivity extends AppCompatActivity {
     }
 
 
+    /**Creates a new account in the database*/
     public void createAccount(){
+        // get all credentials
         final String username = usernameField.getText().toString();
         final String email = emailField.getText().toString();
         final String password = passwordField.getText().toString();
+        // Attempt to authorize a new user
         mAuth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                 @Override
                 public void onComplete(@NonNull Task<AuthResult> task) {
                     if (task.isSuccessful()){
+                        // if the authorization is valid, create a new user in the database
                         FirebaseUser user = mAuth.getCurrentUser();
                         // UPDATE UI STUFF HERE
                         String userId = user.getUid();
                         User newUser = new User(userId,username,password,email);
                         userRef.child(userId).setValue(newUser);
-                        Log.i("STUFF","IT WORKED");
+                        Log.i("STUFF","ACCOUNT CREATION SUCCESSFUL");
                         finish();
                     }
                     else{
+                        // if an error occurs, print it to the log
                         Log.w("STUFF","USER ACCOUNT CREATION FAILURE");
                         Log.w("STUFF",task.getException().toString());
                     }

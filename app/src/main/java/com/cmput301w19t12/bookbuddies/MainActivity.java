@@ -19,6 +19,12 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+/**Main activity currently serving to give the option of registering a new account, signing into an
+ * existing account, or signing out of an account
+ *
+ * @author bgrenier
+ * #version 1.0*/
+
 public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {

@@ -8,7 +8,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
-
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
@@ -18,12 +17,22 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 
+/**Login activity to allow users to sign into an already created account
+ *
+ * @author bgrenier
+ * @version 1.0*/
+
+
 public class LoginActivity extends AppCompatActivity {
     private DatabaseReference userRef;
     private FirebaseAuth mAuth;
     private EditText emailField;
     private EditText passwordField;
     private Button signInButton;
+
+
+    /**onCreate method initializes instance attributes and sets a click listener for the
+     * sign in confirmation button*/
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -34,24 +43,28 @@ public class LoginActivity extends AppCompatActivity {
         passwordField = findViewById(R.id.passwordLogin);
         signInButton = findViewById(R.id.sign_in_button);
 
-
         signInButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String email = emailField.getText().toString();
-                String password = passwordField.getText().toString();
-                signIn(email,password);
+                // attempt to sign
+                signIn();
             }
         });
 
     }
 
-    public void signIn(final String email, final String password){
+    /**attempts to sign the user into a previously created account*/
+    public void signIn(){
+        // get string contents of the sign in fields
+        final String email = emailField.getText().toString();
+        final String password = passwordField.getText().toString();
+        // attempt to sign in using the email and password of the user
         mAuth.signInWithEmailAndPassword(email,password)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()){
+                            // if auth is successful, get the user and make a toast
                             FirebaseUser user = mAuth.getCurrentUser();
                             // UPDATE UI STUFF HERE
                             Toast.makeText(LoginActivity.this,String.format("%s is signed in",
@@ -60,6 +73,7 @@ public class LoginActivity extends AppCompatActivity {
                             finish();
                         }
                         else{
+                            // else print error to the log
                             Toast.makeText(LoginActivity.this,"USER DOES NOT EXIST",Toast.LENGTH_LONG).show();
                             Log.i("STUFF","LOGIN FUCKED UP");
                         }

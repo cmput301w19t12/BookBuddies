@@ -7,6 +7,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -72,28 +73,36 @@ public class RegisterActivity extends AppCompatActivity {
         final String username = usernameField.getText().toString();
         final String email = emailField.getText().toString();
         final String password = passwordField.getText().toString();
-        // Attempt to authorize a new user
-        mAuth.createUserWithEmailAndPassword(email, password)
-                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                @Override
-                public void onComplete(@NonNull Task<AuthResult> task) {
-                    if (task.isSuccessful()){
-                        // if the authorization is valid, create a new user in the database
-                        FirebaseUser user = mAuth.getCurrentUser();
-                        // UPDATE UI STUFF HERE
-                        String userId = user.getUid();
-                        User newUser = new User(userId,username,password,email);
-                        userRef.child(userId).setValue(newUser);
-                        Log.i("STUFF","ACCOUNT CREATION SUCCESSFUL");
-                        finish();
-                    }
-                    else{
-                        // if an error occurs, print it to the log
-                        Log.w("STUFF","USER ACCOUNT CREATION FAILURE");
-                        Log.w("STUFF",task.getException().toString());
-                    }
-                }
-            });
+        try {
+            // Attempt to authorize a new user
+            mAuth.createUserWithEmailAndPassword(email, password)
+                    .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                        @Override
+                        public void onComplete(@NonNull Task<AuthResult> task) {
+                            if (task.isSuccessful()) {
+                                // if the authorization is valid, create a new user in the database
+                                FirebaseUser user = mAuth.getCurrentUser();
+
+                                // UPDATE UI STUFF HERE
+
+                                String userId = user.getUid();
+                                User newUser = new User(userId, username, password, email);
+                                userRef.child(userId).setValue(newUser);
+                                Log.i("STUFF", "ACCOUNT CREATION SUCCESSFUL");
+                                finish();
+                            } else {
+                                // if an error occurs, print it to the log
+                                Log.w("STUFF", "USER ACCOUNT CREATION FAILURE");
+                                Log.w("STUFF", task.getException().toString());
+                            }
+                        }
+                    });
+        }catch (Exception e){
+            e.printStackTrace();
+            Log.e("STUFF",e.getMessage());
+            // notify the user that an error has occurred
+            Toast.makeText(getApplicationContext(),"Error occurred during registration",Toast.LENGTH_LONG).show();
+        }
     }
 
 }

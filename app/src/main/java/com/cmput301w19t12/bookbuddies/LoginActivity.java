@@ -58,27 +58,34 @@ public class LoginActivity extends AppCompatActivity {
         // get string contents of the sign in fields
         final String email = emailField.getText().toString();
         final String password = passwordField.getText().toString();
-        // attempt to sign in using the email and password of the user
-        mAuth.signInWithEmailAndPassword(email,password)
-                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()){
-                            // if auth is successful, get the user and make a toast
-                            FirebaseUser user = mAuth.getCurrentUser();
-                            // UPDATE UI STUFF HERE
-                            Toast.makeText(LoginActivity.this,String.format("%s is signed in",
-                                    email),Toast.LENGTH_LONG).show();
-                            Log.i("STUFF","LOGIN WORKED");
-                            finish();
+
+        try {
+            // attempt to sign in using the email and password of the user
+            mAuth.signInWithEmailAndPassword(email, password)
+                    .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                        @Override
+                        public void onComplete(@NonNull Task<AuthResult> task) {
+                            if (task.isSuccessful()) {
+                                // if auth is successful, get the user and make a toast
+                                FirebaseUser user = mAuth.getCurrentUser();
+                                // UPDATE UI STUFF HERE
+                                Toast.makeText(LoginActivity.this, String.format("%s is signed in",
+                                        email), Toast.LENGTH_LONG).show();
+                                Log.i("STUFF", "LOGIN WORKED");
+                                finish();
+                            } else {
+                                // else print error to the log
+                                Toast.makeText(LoginActivity.this, "USER DOES NOT EXIST", Toast.LENGTH_LONG).show();
+                                Log.i("STUFF", "LOGIN ERROR");
+                            }
                         }
-                        else{
-                            // else print error to the log
-                            Toast.makeText(LoginActivity.this,"USER DOES NOT EXIST",Toast.LENGTH_LONG).show();
-                            Log.i("STUFF","LOGIN FUCKED UP");
-                        }
-                    }
-                });
+                    });
+        }catch (Exception e){
+            e.printStackTrace();
+            Log.e("STUFF",e.getMessage());
+            // notify the user that an error has occurred
+            Toast.makeText(getApplicationContext(),"Error occurred during sign in",Toast.LENGTH_LONG).show();
+        }
 
     }
 

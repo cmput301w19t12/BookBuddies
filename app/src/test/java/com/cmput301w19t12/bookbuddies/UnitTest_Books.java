@@ -11,7 +11,7 @@ import org.junit.Test;
 
 import static junit.framework.TestCase.assertEquals;
 
-
+class BookTest{
 @Test
 public void Book_Insertion_Check(String testOwner, String testStatus){ //Tests whether our setting methods are doing what they are supposed to do, as well as the functionality of getters().
 	Book book = new Book();
@@ -31,12 +31,12 @@ public void Book_Insertion_Check(String testOwner, String testStatus){ //Tests w
   * ...
   * @return Boolean: Correct or Incorrect.
   */
-class BookTest {
+
 	@Test
 	public void Book_Basic_Details_Check(String title, String author, String description, String Picture, String Genre) {
 		if (Picture != "") {
 			private final String pic = Picture;
-			Book_Pic_Details_Check(pic);
+			Book_Img_Details_Check(pic);
 		} else {
 			private String pic = "NoImage";
 		}

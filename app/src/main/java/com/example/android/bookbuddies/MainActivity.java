@@ -1,3 +1,5 @@
+//how to make a tabbed activity:
+    //https://www.youtube.com/watch?v=zcnT-3F-9JA
 package com.example.android.bookbuddies;
 
 import android.net.Uri;
@@ -28,6 +30,7 @@ public class MainActivity extends AppCompatActivity implements ClubFragment.OnFr
 
     @Override
     public void onFragmentInteraction(Uri uri) {
+        //https://stackoverflow.com/questions/24777985/how-to-implement-onfragmentinteractionlistener
     }
 
 
@@ -61,15 +64,6 @@ public class MainActivity extends AppCompatActivity implements ClubFragment.OnFr
         // Set up the ViewPager with the sections adapter.
         mViewPager = (ViewPager) findViewById(R.id.container);
         setUpViewPager(mViewPager);
-
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
 
         //add tabs to the view
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);

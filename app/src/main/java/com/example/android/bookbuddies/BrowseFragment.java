@@ -3,10 +3,12 @@ package com.example.android.bookbuddies;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.SearchView;
 
 
 /**
@@ -26,6 +28,7 @@ public class BrowseFragment extends Fragment {
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
+    private SearchView searchBar;
 
     private OnFragmentInteractionListener mListener;
 
@@ -60,11 +63,17 @@ public class BrowseFragment extends Fragment {
         }
     }
 
-    @Override
+     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_browse, container, false);
+    }
+
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        searchBar = (SearchView) view.findViewById(R.id.bookSearch);
+        searchBar.setQueryHint("Search for books");
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -73,6 +82,7 @@ public class BrowseFragment extends Fragment {
             mListener.onFragmentInteraction(uri);
         }
     }
+
 
     @Override
     public void onAttach(Context context) {

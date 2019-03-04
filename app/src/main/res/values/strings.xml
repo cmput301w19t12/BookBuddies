@@ -1,11 +1,20 @@
 <resources>
     <string name="app_name">BookBuddies</string>
-    <string name="title_activity_login">Sign in</string>
-    <!-- Strings related to login -->
-    <string name="prompt_email">Email</string>
-    <string name="prompt_password">Password</string>
-    <string name="action_sign_in">Sign in</string>
-    <string name="prompt_username">Username</string>
-    <string name="prompt_confirm_password">Confirm Password</string>
-    <string name="action_register">Register</string>
+    <string name="action_settings">Settings</string>
+    <string name="section_format">Hello World from section: %1$d</string>
+    <string name="createAccountTitle">Create an account</string>
+    <string name="usernameHint">Enter username</string>
+    <string name="passwordHint">Enter password</string>
+    <string name="createAccountButton">Create Account</string>
+    <string name="confirmPasswordHint">Confirm password</string>
+    <string name="passwordConfirmationHint">Confirm password</string>
+    <string name="signInTitle">Sign in to your account</string>
+    <string name="signInButton">Login</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="BookRecommendationsTitle">Books you might like</string>
+    <string name="CloseBooks">Books closest to you</string>
+    <string name="seeAll">See All</string>
+    <string name="closeBooks">Books closest to you</string>
 </resources>

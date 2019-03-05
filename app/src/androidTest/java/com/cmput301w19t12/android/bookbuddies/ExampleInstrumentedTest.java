@@ -1,4 +1,4 @@
-package com.cmput301w19t12.bookbuddies;
+package com.cmput301w19t12.android.bookbuddies;
 
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;
@@ -21,6 +21,6 @@ public class ExampleInstrumentedTest {
         // Context of the app under test.
         Context appContext = InstrumentationRegistry.getTargetContext();
 
-        assertEquals("com.cmput301w19t12.bookbuddies", appContext.getPackageName());
+        assertEquals("com.example.android.bookbuddies", appContext.getPackageName());
     }
 }

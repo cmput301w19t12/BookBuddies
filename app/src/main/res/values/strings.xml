@@ -17,4 +17,5 @@
     <string name="CloseBooks">Books closest to you</string>
     <string name="seeAll">See All</string>
     <string name="closeBooks">Books closest to you</string>
+    <string name="SignInTitle">Sign in to your account</string>
 </resources>

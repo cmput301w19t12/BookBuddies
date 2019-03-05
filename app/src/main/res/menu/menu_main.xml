@@ -1,7 +1,7 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context="com.example.android.bookbuddies.MainActivity">
+    tools:context="com.cmput301w19t12.android.bookbuddies.MainActivity">
     <item
         android:id="@+id/action_settings"
         android:orderInCategory="100"

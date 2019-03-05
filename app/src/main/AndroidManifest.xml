@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.android.bookbuddies">
+    package="com.cmput301w19t12.bookbuddies">
 
     <application
         android:allowBackup="true"

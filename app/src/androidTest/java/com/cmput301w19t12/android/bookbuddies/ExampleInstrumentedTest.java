@@ -1,4 +1,4 @@
-package com.example.android.bookbuddies;
+package com.cmput301w19t12.android.bookbuddies;
 
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;

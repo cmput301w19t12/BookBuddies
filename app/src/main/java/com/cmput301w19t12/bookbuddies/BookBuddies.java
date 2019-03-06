@@ -31,7 +31,7 @@ public class BookBuddies extends Application {
         fUser = FirebaseAuth.getInstance().getCurrentUser();
         Log.i("STUFF",fUser.getEmail());
         //user = new User("234","bgrenier","234234","EMAIL");
-        setUser();
+        //setUser();
     }
 
 

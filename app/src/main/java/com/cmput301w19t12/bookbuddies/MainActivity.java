@@ -97,7 +97,6 @@ public class MainActivity extends AppCompatActivity implements ClubFragment.OnFr
         adapter.addFragment(new BrowseFragment(), "Browse");
         adapter.addFragment(new MyLibraryFragment(), "My Library");
         adapter.addFragment(new ClubFragment(), "Clubs");
-        adapter.addFragment(new NewBookFragment(),"Add Book");
         v.setAdapter(adapter);
     }
 

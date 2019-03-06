@@ -7,6 +7,7 @@ import android.net.Uri;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 
@@ -23,6 +24,7 @@ import android.view.ViewGroup;
 
 import android.widget.TableLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.FirebaseAuth;
@@ -30,7 +32,8 @@ import com.google.firebase.auth.FirebaseUser;
 
 public class MainActivity extends AppCompatActivity implements ClubFragment.OnFragmentInteractionListener,
         BrowseFragment.OnFragmentInteractionListener,
-        MyLibraryFragment.OnFragmentInteractionListener {
+        MyLibraryFragment.OnFragmentInteractionListener,
+        NewBookFragment.OnFragmentInteractionListener {
 
 
     @Override
@@ -59,8 +62,7 @@ public class MainActivity extends AppCompatActivity implements ClubFragment.OnFr
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        // firebase init
-        FirebaseApp.initializeApp(getApplicationContext());
+
         checkLoggedIn();
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -75,6 +77,11 @@ public class MainActivity extends AppCompatActivity implements ClubFragment.OnFr
         //add tabs to the view
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(mViewPager);
+
+
+
+        //String message = String.format("Username: %s is currently logged in",((BookBuddies) this.getApplication()).getUsername());
+        //Toast.makeText(this,message,Toast.LENGTH_LONG).show();
     }
 
     public void checkLoggedIn(){
@@ -90,6 +97,7 @@ public class MainActivity extends AppCompatActivity implements ClubFragment.OnFr
         adapter.addFragment(new BrowseFragment(), "Browse");
         adapter.addFragment(new MyLibraryFragment(), "My Library");
         adapter.addFragment(new ClubFragment(), "Clubs");
+        adapter.addFragment(new NewBookFragment(),"Add Book");
         v.setAdapter(adapter);
     }
 

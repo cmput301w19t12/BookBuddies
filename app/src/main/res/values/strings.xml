@@ -3,6 +3,7 @@
     <string name="action_settings">Settings</string>
     <string name="section_format">Hello World from section: %1$d</string>
     <string name="createAccountTitle">Create an account</string>
+    <string name="emailHint">Enter Email</string>
     <string name="usernameHint">Enter username</string>
     <string name="passwordHint">Enter password</string>
     <string name="createAccountButton">Create Account</string>
@@ -10,6 +11,8 @@
     <string name="passwordConfirmationHint">Confirm password</string>
     <string name="signInTitle">Sign in to your account</string>
     <string name="signInButton">Login</string>
+    <string name="signOutButton">SignOut</string>
+    <string name="newAccountButton">Create New Account</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
@@ -17,5 +20,9 @@
     <string name="CloseBooks">Books closest to you</string>
     <string name="seeAll">See All</string>
     <string name="closeBooks">Books closest to you</string>
+    <string name="titleHint">Title</string>
+    <string name="authorHint">Author</string>
+    <string name="ISBNHint">ISBN</string>
     <string name="SignInTitle">Sign in to your account</string>
+
 </resources>

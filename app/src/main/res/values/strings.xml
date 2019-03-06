@@ -24,5 +24,6 @@
     <string name="authorHint">Author</string>
     <string name="ISBNHint">ISBN</string>
     <string name="SignInTitle">Sign in to your account</string>
+    <string name="descriptionHint">Description</string>
 
 </resources>

@@ -88,4 +88,16 @@ public class BookDetails {
         this.title = title;
     }
 
+    /**Sets ISBN for the book
+     * @param ISBN String*/
+    public void setISBN(String ISBN){
+        this.ISBN = ISBN;
+    }
+
+    /**Gets ISBN for the book
+     * @return ISBN String*/
+    public String getISBN(){
+        return this.ISBN;
+    }
+
 }

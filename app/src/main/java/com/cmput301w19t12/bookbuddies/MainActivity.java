@@ -79,9 +79,6 @@ public class MainActivity extends AppCompatActivity implements ClubFragment.OnFr
         tabLayout.setupWithViewPager(mViewPager);
 
 
-
-        //String message = String.format("Username: %s is currently logged in",((BookBuddies) this.getApplication()).getUsername());
-        //Toast.makeText(this,message,Toast.LENGTH_LONG).show();
     }
 
     public void checkLoggedIn(){
@@ -97,6 +94,7 @@ public class MainActivity extends AppCompatActivity implements ClubFragment.OnFr
         adapter.addFragment(new BrowseFragment(), "Browse");
         adapter.addFragment(new MyLibraryFragment(), "My Library");
         adapter.addFragment(new ClubFragment(), "Clubs");
+
         v.setAdapter(adapter);
     }
 

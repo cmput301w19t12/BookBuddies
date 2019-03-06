@@ -23,6 +23,8 @@ import com.google.firebase.database.FirebaseDatabase;
  * to handle interaction events.
  * Use the {@link NewBookFragment#newInstance} factory method to
  * create an instance of this fragment.
+ *
+ * New Book Fragment allows the user to add a new book to their library
  */
 public class NewBookFragment extends Fragment {
 
@@ -64,7 +66,7 @@ public class NewBookFragment extends Fragment {
         // init firebase attributes
         mAuth = FirebaseAuth.getInstance();
         user = mAuth.getCurrentUser();
-        userLibRef = FirebaseDatabase.getInstance().getReference("Users").child(user.getUid()).child("Books").child("Available");
+        userLibRef = FirebaseDatabase.getInstance().getReference("Users").child(user.getUid()).child("Books").child("Owned");
 
     }
 
@@ -79,6 +81,8 @@ public class NewBookFragment extends Fragment {
         ISBNField = root.findViewById(R.id.ISBNEdit);
         addButton = root.findViewById(R.id.addButton);
         desField = root.findViewById(R.id.DesEdit);
+
+
         addButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -96,9 +100,10 @@ public class NewBookFragment extends Fragment {
         String ISBN = ISBNField.getText().toString();
         String description = desField.getText().toString();
         BookDetails details = new BookDetails(title,author,ISBN,description);
-        Book newBook = new Book(user.getEmail(),details,"available");
+        String status = "Available";
+        Book newBook = new Book(user.getEmail(),details,status);
 
-        userLibRef.child(newBook.getBookDetails().getISBN()).setValue(newBook);
+        userLibRef.child(status).child(newBook.getBookDetails().getISBN()).setValue(newBook);
 
     }
 

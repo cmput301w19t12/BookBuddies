@@ -16,6 +16,13 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.concurrent.CountDownLatch;
 
+
+
+
+/**THIS IS SUPER BROKEN, NOBODY TRY AND USE THIS*/
+
+
+
 public class BookBuddies extends Application {
     private static User user;
     private static FirebaseUser fUser;
@@ -43,9 +50,6 @@ public class BookBuddies extends Application {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                     for(DataSnapshot thing : dataSnapshot.getChildren()) {
-                        if(thing.getKey() == "username"){
-                            username = thing.getValue(String.class);
-                        }
                         userInfo.add(thing.getKey());
                         Log.i("STUFFY", thing.getValue(String.class));
                     }
@@ -68,8 +72,7 @@ public class BookBuddies extends Application {
 
     public static String getUsername(){
         //return user.getUsername();
-       //return userInfo.get(2);
-        return username;
+       return userInfo.get(2);
     }
 
     public String getEmail(){

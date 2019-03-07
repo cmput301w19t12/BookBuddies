@@ -2,10 +2,12 @@
 //https://www.youtube.com/watch?v=zcnT-3F-9JA
 package com.cmput301w19t12.bookbuddies;
 
+import android.content.Intent;
 import android.net.Uri;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 
@@ -22,10 +24,16 @@ import android.view.ViewGroup;
 
 import android.widget.TableLayout;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import com.google.firebase.FirebaseApp;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 public class MainActivity extends AppCompatActivity implements ClubFragment.OnFragmentInteractionListener,
         BrowseFragment.OnFragmentInteractionListener,
-        MyLibraryFragment.OnFragmentInteractionListener {
+        MyLibraryFragment.OnFragmentInteractionListener,
+        NewBookFragment.OnFragmentInteractionListener {
 
 
     @Override
@@ -55,6 +63,7 @@ public class MainActivity extends AppCompatActivity implements ClubFragment.OnFr
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        checkLoggedIn();
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         // Create the adapter that will return a fragment for each of the three
@@ -68,6 +77,16 @@ public class MainActivity extends AppCompatActivity implements ClubFragment.OnFr
         //add tabs to the view
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(mViewPager);
+
+
+    }
+
+    public void checkLoggedIn(){
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if(user == null){
+            startActivity(new Intent(MainActivity.this,LogInActivity.class));
+        }
+
     }
 
     private void setUpViewPager(ViewPager v) {
@@ -75,6 +94,7 @@ public class MainActivity extends AppCompatActivity implements ClubFragment.OnFr
         adapter.addFragment(new BrowseFragment(), "Browse");
         adapter.addFragment(new MyLibraryFragment(), "My Library");
         adapter.addFragment(new ClubFragment(), "Clubs");
+
         v.setAdapter(adapter);
     }
 
@@ -97,7 +117,14 @@ public class MainActivity extends AppCompatActivity implements ClubFragment.OnFr
             return true;
         }
 
-        return super.onOptionsItemSelected(item);
+        switch(id) {
+            case R.id.action_signOut:
+                FirebaseAuth.getInstance().signOut();
+                checkLoggedIn();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 
     /**

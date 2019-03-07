@@ -3,10 +3,30 @@ package com.cmput301w19t12.bookbuddies;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ExpandableListAdapter;
+import android.widget.ExpandableListView;
+import android.widget.ListView;
+
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.StorageReference;
+
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 
 /**
@@ -26,6 +46,19 @@ public class MyLibraryFragment extends Fragment {
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
+    private FirebaseUser user;
+    private FirebaseAuth mAuth;
+    private StorageReference mStorageRef;
+    private DatabaseReference userLibRef;
+    private TitleContainer titleContainer;
+    private Context context;
+
+    private ArrayList<String> MenuHeaders;
+    private ExpandingMenuListAdapter adapter;
+    private ExpandableListView Menu;
+    private HashMap<String, List<String>> menuChildHeaders;
+
+
 
     private OnFragmentInteractionListener mListener;
 
@@ -73,6 +106,72 @@ public class MyLibraryFragment extends Fragment {
             mListener.onFragmentInteraction(uri);
         }
     }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        makeMenu();
+        Menu = (ExpandableListView) view.findViewById(R.id.ExpandingMenu);
+
+        Menu.setAdapter(new ExpandingMenuListAdapter(getContext(), MenuHeaders, menuChildHeaders));
+        Menu.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
+            @Override
+            public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
+                //TODO: Code for when the book is clicked in the menu
+                return true;
+            }
+        });
+
+    }
+
+    public void makeMenu() {
+        MenuHeaders = new ArrayList<String>();
+        titleContainer = new TitleContainer();
+        // TODO: Code for inserting the child
+        MenuHeaders.add("Owned by me");
+        MenuHeaders.add("Borrowed from buddy");
+
+        mAuth = FirebaseAuth.getInstance();
+        user = mAuth.getCurrentUser();
+        userLibRef = FirebaseDatabase.getInstance().getReference("Users").child(user.getUid()).child("Books").child("Owned").child("Available");
+        userLibRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                DatabaseReference ref;
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    titleContainer.getBookTitlesAvailable().add(dataSnapshot.child("BookDetails").getValue(BookDetails.class).getTitle());
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
+        menuChildHeaders.put(MenuHeaders.get(0), titleContainer.getBookTitlesAvailable());
+
+        userLibRef = FirebaseDatabase.getInstance().getReference("Users").child(user.getUid()).child("Books").child("Borrowing");
+        userLibRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                DatabaseReference ref;
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    titleContainer.getBookTitlesBorrowing().add(dataSnapshot.child("BookDetails").getValue(BookDetails.class).getTitle());
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
+        menuChildHeaders.put(MenuHeaders.get(1), titleContainer.getBookTitlesBorrowing());
+
+    }
+
 
     @Override
     public void onAttach(Context context) {

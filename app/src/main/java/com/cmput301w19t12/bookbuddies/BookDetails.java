@@ -8,6 +8,14 @@ package com.cmput301w19t12.bookbuddies;
  * @version 1.0*/
 
 public class BookDetails {
+    public BookDetails() {
+        this.title = null;
+        this.author = null;
+        this.description = null;
+        this.genre = null;
+        this.picturePath = null;
+        this.ISBN = null;
+    }
 
     private String title;
     private String author;

@@ -21,6 +21,12 @@ public class Book {
         this.status = status;
     }
 
+    public Book() {
+        this.status = null;
+        this.bookDetails = null;
+        this.status = null;
+    }
+
     /**Gets owner name
      * @return owner String*/
     public String getOwner() {

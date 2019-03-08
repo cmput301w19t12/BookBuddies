@@ -63,7 +63,7 @@ public class MainActivity extends AppCompatActivity implements ClubFragment.OnFr
         setContentView(R.layout.activity_main);
 
         checkLoggedIn();
-        startActivity(new Intent(MainActivity.this,NewBookActivity.class));
+        //startActivity(new Intent(MainActivity.this,NewBookActivity.class));
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         // Create the adapter that will return a fragment for each of the three
@@ -122,6 +122,10 @@ public class MainActivity extends AppCompatActivity implements ClubFragment.OnFr
                 FirebaseAuth.getInstance().signOut();
                 checkLoggedIn();
                 return true;
+            case R.id.action_myProfile:
+                Intent intent = new Intent(this,MyProfileActivity.class);
+                startActivity(intent);
+
             default:
                 return super.onOptionsItemSelected(item);
         }

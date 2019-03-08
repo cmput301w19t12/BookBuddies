@@ -38,6 +38,7 @@ public class NewBookActivity extends AppCompatActivity implements PopupMenu.OnMe
 
 
     private DatabaseReference userLibRef;
+    private DatabaseReference allBooksRef;
     private FirebaseUser user;
     private FirebaseAuth mAuth;
     private StorageReference mStorageRef;
@@ -51,9 +52,6 @@ public class NewBookActivity extends AppCompatActivity implements PopupMenu.OnMe
     private ImageView bookImage;
 
     private static final int SELECT_PICTURE = 1;
-    private String selectedImagePath;
-    private String fileManagerString;
-    private String currentPhotoPath;
 
     private static final int REQUEST_IMAGE_CAPTURE = 2;
 
@@ -66,7 +64,9 @@ public class NewBookActivity extends AppCompatActivity implements PopupMenu.OnMe
         mAuth = FirebaseAuth.getInstance();
         mStorageRef = FirebaseStorage.getInstance().getReference();
         user = mAuth.getCurrentUser();
+        allBooksRef = FirebaseDatabase.getInstance().getReference("Books");
         userLibRef = FirebaseDatabase.getInstance().getReference("Users").child(user.getUid()).child("Books").child("Owned");
+
 
         // get all the input fields
         titleField = findViewById(R.id.titleEdit);
@@ -81,7 +81,9 @@ public class NewBookActivity extends AppCompatActivity implements PopupMenu.OnMe
         addButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                addBookToDatabase();
+                if(checkFields()) {
+                    addBookToDatabase();
+                }
 
             }
         });
@@ -89,14 +91,32 @@ public class NewBookActivity extends AppCompatActivity implements PopupMenu.OnMe
         editImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(ISBNField.getText().toString().isEmpty()){
-                    ISBNField.setError("Must add ISBN before adding photo");
-                }
-                else {
-                    showMenu(v);
-                }
+                showMenu(v);
             }
         });
+
+    }
+
+    private boolean checkFields(){
+        boolean isValid = true;
+        if(titleField.getText().toString().trim().length() == 0){
+            titleField.setError("Must Enter Title");
+            isValid = false;
+        }
+        if(authorField.getText().toString().trim().length() == 0){
+            authorField.setError("Must Enter Author");
+            isValid = false;
+        }
+        if(ISBNField.getText().toString().trim().length() == 0){
+            ISBNField.setError("Must Enter ISBN");
+            isValid = false;
+        }
+        if(desField.getText().toString().trim().length() == 0){
+            desField.setError("Must Enter Description");
+            isValid = false;
+        }
+
+        return isValid;
 
     }
 
@@ -135,9 +155,6 @@ public class NewBookActivity extends AppCompatActivity implements PopupMenu.OnMe
    }
 
 
-
-
-
    @Override
    protected void onActivityResult(int requestCode, int resultCode, Intent data){
         super.onActivityResult(requestCode,resultCode,data);
@@ -147,7 +164,6 @@ public class NewBookActivity extends AppCompatActivity implements PopupMenu.OnMe
             try {
                 Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), selectedImageUri);
                 bookImage.setImageBitmap(bitmap);
-                addPhotoToDatabase();
             }
             catch (Exception e){
                 Log.e("Image Load Error",e.getMessage());
@@ -160,13 +176,13 @@ public class NewBookActivity extends AppCompatActivity implements PopupMenu.OnMe
         }
    }
 
-   private void addPhotoToDatabase(){
+   private void addPhotoToDatabase(String key){
        Bitmap bitmap = ((BitmapDrawable) bookImage.getDrawable()).getBitmap();
        ByteArrayOutputStream baos = new ByteArrayOutputStream();
        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
        byte[] data = baos.toByteArray();
 
-       UploadTask uploadTask = mStorageRef.child("images").child(ISBNField.getText().toString()).putBytes(data);
+       UploadTask uploadTask = mStorageRef.child("images").child(key).putBytes(data);
        uploadTask.addOnFailureListener(new OnFailureListener() {
            @Override
            public void onFailure(@NonNull Exception exception) {
@@ -191,17 +207,19 @@ public class NewBookActivity extends AppCompatActivity implements PopupMenu.OnMe
 
 
 
-
     public void addBookToDatabase(){
         String title = titleField.getText().toString();
         String author = authorField.getText().toString();
         String ISBN = ISBNField.getText().toString();
         String description = desField.getText().toString();
-        BookDetails details = new BookDetails(title,author,ISBN,description);
+        String key = userLibRef.push().getKey();
+        BookDetails details = new BookDetails(title,author,ISBN,description,key);
         String status = "Available";
         Book newBook = new Book(user.getEmail(),details,status);
 
-        userLibRef.child(status).child(newBook.getBookDetails().getISBN()).setValue(newBook);
+        userLibRef.child(status).child(key).setValue(newBook);
+        allBooksRef.child(status).child(key).setValue(newBook);
+        addPhotoToDatabase(key);
 
     }
 }

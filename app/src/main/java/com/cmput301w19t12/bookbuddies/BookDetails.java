@@ -15,17 +15,31 @@ public class BookDetails {
     private String description;
     private String genre;
     private String ISBN;
+    private String UniqueID;
 
     /**Base constructor for book details
      * @param title String
      * @param author String
      * @param ISBN String
      * @param description String*/
-    BookDetails(String title, String author, String ISBN, String description){
+    BookDetails(String title, String author, String ISBN, String description, String UniqueID){
         this.title = title;
         this.author = author;
         this.ISBN = ISBN;
         this.description = description;
+        this.UniqueID = UniqueID;
+    }
+
+    /**Gets unique ID for the book
+     * @return UniqueID String*/
+    public String getUniqueID(){
+        return this.UniqueID;
+    }
+
+    /**Sets unique ID for the book
+     * @param UniqueID String*/
+    public void setUniqueID(String UniqueID){
+        this.UniqueID = UniqueID;
     }
 
     /**Gets the genre of the book

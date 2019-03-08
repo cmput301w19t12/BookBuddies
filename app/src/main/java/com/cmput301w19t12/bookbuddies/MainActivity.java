@@ -78,6 +78,7 @@ public class MainActivity extends AppCompatActivity implements ClubFragment.OnFr
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(mViewPager);
 
+        FirebaseApp.initializeApp(getApplicationContext());
 
     }
 

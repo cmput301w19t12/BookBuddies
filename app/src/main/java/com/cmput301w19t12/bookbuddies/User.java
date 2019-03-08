@@ -179,7 +179,8 @@ public class User {
      * @param isbn String
      * @param description String*/
     public void addBook(String title, String author, String isbn, String description){
-        BookDetails bookDetails = new BookDetails(title, author,isbn, description);
+        String key = null;
+        BookDetails bookDetails = new BookDetails(title, author,isbn, description,key);
         Book book = new Book(this.username, bookDetails,"available");
         //add the book to the database
         userRef.child(username).child("Books").child(isbn).setValue(book);

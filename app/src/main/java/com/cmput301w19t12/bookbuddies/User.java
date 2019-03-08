@@ -23,12 +23,13 @@ public class User {
     private DatabaseReference clubsRef;
     private DatabaseReference transactionRef;
 
-    private String username;
-    private String password;
-    private String phoneNumber;
-    private String emailAddress;
-    private String profilePicturePath;
+    private String username = "";
+    private String password = "";
+    private String phoneNumber = "";
+    private String emailAddress = "";
+    private String profilePicturePath = null;
     private String userId;
+    private String fullName = "";
 
     /**Constructor including all attributes
      * @param username String
@@ -46,6 +47,9 @@ public class User {
         this.clubsRef = firebase.getReference("Clubs");
         this.transactionRef = firebase.getReference("Transactions");
     }
+
+    public User(){ }
+
 /*
     /**Constructor including all attributes but picture path
      * @param username String
@@ -137,6 +141,8 @@ public class User {
         return this.username;
     }
 
+    public String getFullName(){return this.fullName;}
+
     /**Sets user email address
      * @param emailAddress String*/
     public void setEmailAddress(String emailAddress) {
@@ -160,6 +166,7 @@ public class User {
     public void setProfilePicturePath(String profilePicturePath) {
         this.profilePicturePath = profilePicturePath;
     }
+    public void setFullName(String fullName){this.fullName = fullName;}
 
     /**Sets the users username
      * @param username String*/

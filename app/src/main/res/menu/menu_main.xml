@@ -3,6 +3,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="com.cmput301w19t12.android.bookbuddies.MainActivity">
     <item
+        android:id="@+id/action_myProfile"
+        android:title="@string/myProfile" />
+    <item
         android:id="@+id/action_settings"
         android:orderInCategory="100"
         android:title="@string/action_settings"

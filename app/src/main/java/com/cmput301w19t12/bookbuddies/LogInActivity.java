@@ -26,6 +26,7 @@ public class LogInActivity extends AppCompatActivity {
     private EditText emailField;
     private EditText passwordField;
     private Button signInButton;
+    private Button createButton;
 
 
     /**onCreate method initializes instance attributes and sets a click listener for the
@@ -39,6 +40,8 @@ public class LogInActivity extends AppCompatActivity {
         emailField = findViewById(R.id.emailEdit);
         passwordField = findViewById(R.id.passwordEdit);
         signInButton = findViewById(R.id.loginButton);
+        createButton = findViewById(R.id.RegisterNewButton);
+
 
         signInButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -48,6 +51,18 @@ public class LogInActivity extends AppCompatActivity {
             }
         });
 
+        createButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                switchToCreateAccount();
+            }
+        });
+
+    }
+
+    public void switchToCreateAccount(){
+        Intent intent = new Intent(this,CreateAccountActivity.class);
+        startActivity(intent);
     }
 
     /**attempts to sign the user into a previously created account*/
@@ -57,6 +72,7 @@ public class LogInActivity extends AppCompatActivity {
         final String password = passwordField.getText().toString();
 
             try {
+                //Toast.makeText(LogInActivity.this, "IN TRY", Toast.LENGTH_LONG).show();
                 // attempt to sign in using the email and password of the user
                 mAuth.signInWithEmailAndPassword(email, password)
                         .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {

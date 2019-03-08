@@ -33,7 +33,6 @@ public class BookBuddies extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        userInfo = new ArrayList<>();
         FirebaseApp.initializeApp(getApplicationContext());
         fUser = FirebaseAuth.getInstance().getCurrentUser();
         //user = new User("234","bgrenier","234234","EMAIL");

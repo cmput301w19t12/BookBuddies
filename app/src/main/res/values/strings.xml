@@ -13,6 +13,7 @@
     <string name="signInButton">Login</string>
     <string name="signOutButton">SignOut</string>
     <string name="newAccountButton">Create New Account</string>
+    <string name="myProfile">My Profile</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
@@ -25,5 +26,8 @@
     <string name="ISBNHint">ISBN</string>
     <string name="SignInTitle">Sign in to your account</string>
     <string name="descriptionHint">Description</string>
+    <string name="imageFromStorage">From Storage</string>
+    <string name="newImage">New Picture</string>
+    <string name="deleteImage">Delete Image</string>
 
 </resources>

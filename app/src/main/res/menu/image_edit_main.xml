@@ -1,0 +1,22 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.cmput301w19t12.android.bookbuddies.NewBookFragment">
+    <item
+        android:id="@+id/actionFromStorage"
+        android:orderInCategory="100"
+        android:title="@string/imageFromStorage"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/actionNewImage"
+        android:orderInCategory="100"
+        android:title="@string/newImage"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/actionDeleteImage"
+        android:orderInCategory="100"
+        android:title="@string/deleteImage"
+        app:showAsAction="never" />
+</menu>

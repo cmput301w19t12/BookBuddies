@@ -1,12 +1,29 @@
 package com.cmput301w19t12.bookbuddies;
 
 import android.content.Context;
+import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
+
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
+import java.util.ArrayList;
 
 
 /**
@@ -26,8 +43,16 @@ public class ClubFragment extends Fragment {
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
+    private DatabaseReference clubsRef;
+    private FirebaseAuth mAuth;
+    private FirebaseUser user;
 
     private OnFragmentInteractionListener mListener;
+    private User owner;
+    private ListView clubsListView;
+    private ArrayList<String> myClubNames;
+    private String username;
+    private Book book;
 
     public ClubFragment() {
         // Required empty public constructor
@@ -104,5 +129,48 @@ public class ClubFragment extends Fragment {
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        clubsListView = (ListView) view.findViewById(R.id.clubsListView);
+        myClubNames = new ArrayList<String>();
+        mAuth = FirebaseAuth.getInstance();
+        user = mAuth.getCurrentUser();
+        DatabaseReference userRef = FirebaseDatabase.getInstance().getReference("Users").child(user.getUid());
+
+        userRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                username = dataSnapshot.getValue(User.class).getUsername();
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+        clubsRef = FirebaseDatabase.getInstance().getReference("Clubs");
+        clubsRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                Club club;
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    club = snapshot.getValue(Club.class);
+                    Log.i("Club names", ""+club.getName()+" | "+club.getOwner().getUsername()+" | "+username);
+                    if (((club.getOwner().getUsername()).equals(username)) || (club.getMembers().contains(username))) {
+                        myClubNames.add(club.getName());
+                    }
+                }
+                clubsListView.setAdapter(new ArrayAdapter<String>(getContext(), android.R.layout.simple_list_item_1, myClubNames));
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
     }
 }

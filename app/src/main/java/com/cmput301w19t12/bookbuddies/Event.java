@@ -14,6 +14,9 @@ public class Event {
     private Date eventTime;
     private int eventId;
 
+    public Event() {
+
+    }
     /**Base constructor for an event
      * @param location Location
      * @param eventTime Date*/

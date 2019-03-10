@@ -215,7 +215,7 @@ public class NewBookActivity extends AppCompatActivity implements PopupMenu.OnMe
         String key = userLibRef.push().getKey();
         BookDetails details = new BookDetails(title,author,ISBN,description,key);
         String status = "Available";
-        Book newBook = new Book(user.getEmail(),details,status);
+        Book newBook = new Book(user.getUid(),details,status);
 
         userLibRef.child(status).child(key).setValue(newBook);
         allBooksRef.child(status).child(key).setValue(newBook);

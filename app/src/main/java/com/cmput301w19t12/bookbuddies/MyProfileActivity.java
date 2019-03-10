@@ -1,6 +1,7 @@
 package com.cmput301w19t12.bookbuddies;
 
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
@@ -32,7 +33,7 @@ public class MyProfileActivity extends AppCompatActivity {
     private TextView email;
     private User user;
     private String userId;
-
+    private Button addNew;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,7 +48,13 @@ public class MyProfileActivity extends AppCompatActivity {
         FirebaseUser userDB = mAuth.getCurrentUser();
         userId = userDB.getUid();
         user = new User();
-
+        addNew = findViewById(R.id.addNewBook);
+        addNew.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v){
+                switchToNewBook();
+            }
+        });
 
         setTextViews();
 
@@ -82,7 +89,10 @@ public class MyProfileActivity extends AppCompatActivity {
 
 
     }
-
+    public void switchToNewBook(){
+        Intent intent = new Intent(this, NewBookActivity.class);
+        startActivity(intent);
+    }
     public void setTextViews(){
         userRef.addValueEventListener(new ValueEventListener() {
             @Override

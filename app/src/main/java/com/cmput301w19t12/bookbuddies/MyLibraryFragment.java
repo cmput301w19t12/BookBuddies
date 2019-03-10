@@ -74,8 +74,13 @@ public class MyLibraryFragment extends Fragment {
     private ArrayList<String> MenuHeaders;
     private ExpandableListView Menu;
     private HashMap<String, List<String>> menuChildHeaders;
-
-
+    private Button addNew;
+    private String ttl;
+    private String author;
+    private String isbn;
+    private String owner;
+    private String status;
+    private String desc;
 
     private OnFragmentInteractionListener mListener;
     private ArrayList<String> bookTitles;
@@ -114,6 +119,13 @@ public class MyLibraryFragment extends Fragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
+        /*addNew = (Button) getView().findViewById(R.id.addNew);
+        addNew.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v){
+                Intent intent = new Intent(getActivity(), NewBookActivity.class);
+                startActivity(intent);}
+        });*///This doesn't work for some reasons.
     }
 
     /**
@@ -213,6 +225,20 @@ public class MyLibraryFragment extends Fragment {
         Menu.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
             @Override
             public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
+                /*ttl = parent.getExpandableListAdapter().getChild(groupPosition, childPosition).getid();
+                author = ;
+                isbn = ;
+                owner = ;
+                status = ;
+                desc = parent.getExpandableListAdapter().getChild(groupPosition, childPosition)
+                Intent intent = new Intent(, book_details.class);
+                intent.putExtra(EXTRA_ttl, ttl);
+                intent.putExtra(EXTRA_auth, author);
+                intent.putExtra(EXTRA_isbn, isbn);
+                intent.putExtra(EXTRA_owner, owner);
+                intent.putExtra(EXTRA_status, status);
+                intent.putExtra(EXTRA_desc, desc);
+                startActivity(intent);*/
                 return false;
             }
         });

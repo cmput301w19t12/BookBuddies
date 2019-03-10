@@ -29,5 +29,9 @@
     <string name="imageFromStorage">From Storage</string>
     <string name="newImage">New Picture</string>
     <string name="deleteImage">Delete Image</string>
+    <string name="expandAll">Expand All</string>
+    <string name="clubNameHint">Club Name</string>
+    <string name="currentBookHint">Book you are reading</string>
+    <string name="AddClubTitle">Add a new club</string>
 
 </resources>

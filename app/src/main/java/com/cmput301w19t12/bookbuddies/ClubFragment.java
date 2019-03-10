@@ -1,12 +1,40 @@
+/**
+ * ClubFragment
+ *
+ * March 9/2019
+ */
 package com.cmput301w19t12.bookbuddies;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.ListView;
+
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
+import java.util.ArrayList;
 
 
 /**
@@ -26,8 +54,17 @@ public class ClubFragment extends Fragment {
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
+    private DatabaseReference clubsRef;
+    private FirebaseAuth mAuth;
+    private FirebaseUser user;
 
     private OnFragmentInteractionListener mListener;
+    private User owner;
+    private ListView clubsListView;
+    private ArrayList<String> myClubNames;
+    private String username;
+    private Book book;
+    private FloatingActionButton addButton;
 
     public ClubFragment() {
         // Required empty public constructor
@@ -104,5 +141,159 @@ public class ClubFragment extends Fragment {
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
+    }
+
+    /**
+     * Called after the view is created. Initializes activity fields and adds on click listener
+     * to the button.
+     * @param view:View
+     * @param savedInstanceState:Bundle
+     */
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        clubsListView = (ListView) view.findViewById(R.id.clubsListView);
+        myClubNames = new ArrayList<String>();
+        authorizeUser();
+        configureListView();
+        populateClubsList();
+
+        addButton = (FloatingActionButton) view.findViewById(R.id.addClubButton);
+        addButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(ClubFragment.this.getActivity(), AddClubActivity.class);
+                startActivity(i);
+            }
+        });
+    }
+
+    /**
+     * Called before the view is displayed. Calls populateClubsList to fill listview with the users
+     * clubs
+     */
+    @Override
+    public void onResume() {
+        super.onResume();
+        populateClubsList();
+    }
+
+    /**
+     * Iterates through the clubs from the database. If the user is either the owner or a member
+     * of the club the club is added to the listview for the user to see.
+     */
+    public void populateClubsList() {
+        clubsRef = FirebaseDatabase.getInstance().getReference("Clubs");
+        clubsRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                Club club;
+                myClubNames.clear();
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    club = snapshot.getValue(Club.class);
+                    Log.i("Club names", ""+club.getName()+" | "+club.getOwner().getUsername()+" | "+username);
+                    if (((club.getOwner().getUsername()).equals(username)) || (club.getMembers().contains(username))) {
+                        myClubNames.add(club.getName());
+                    }
+                }
+                clubsListView.setAdapter(new ArrayAdapter<String>(getContext(), android.R.layout.simple_list_item_1, myClubNames));
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
+    }
+
+    /**
+     * Sets the click listener for the club names in the list. If a club name is long pressed a dialog
+     * appears asking the user whether they want to delete the club.
+     */
+    public void configureListView() {
+
+        clubsListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                String clubName = clubsListView.getAdapter().getItem(position).toString();
+                getDeleteConfirmation(clubName).show();
+                return false;
+            }
+        });
+    }
+
+    /**
+     * Sets the current authorized as the user field and sets the username field with the user's
+     * username.
+     */
+    public void authorizeUser() {
+        mAuth = FirebaseAuth.getInstance();
+        user = mAuth.getCurrentUser();
+        DatabaseReference userRef = FirebaseDatabase.getInstance().getReference("Users").child(user.getUid());
+
+        userRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                owner = dataSnapshot.getValue(User.class);
+                username = owner.getUsername();
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    /**
+     * Creates a dialog which prompts the user to verify if they want to delete the club. If so
+     * the club is removed from the database and if not the dialog is closed.
+     * @param name:String
+     * @return Delete confirmation dialog:AlertDialog
+     */
+    private AlertDialog getDeleteConfirmation(final String name) {
+        return new AlertDialog.Builder(getContext())
+                .setTitle("Delete Club")
+                .setMessage("Are you sure you want to delete this club?")
+                .setPositiveButton("Delete", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        removeClub(name);
+                    }
+                })
+                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                })
+                .create();
+    }
+
+    /**
+     * Deletes a club owned by the user from the database.
+     * @param clubName:String
+     */
+    private void removeClub(final String clubName) {
+        final DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Clubs");
+        ref.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()){
+                    Club club = snapshot.getValue(Club.class);
+                    Log.i("Club owner", ""+club.getOwner().getUsername()+" | "+club.getName()+" | ");
+                    if (club.getOwner().getUsername().equals(username) && club.getName().equals(clubName)) {
+                        ref.child(snapshot.getKey()).removeValue();
+                        populateClubsList();
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
     }
 }

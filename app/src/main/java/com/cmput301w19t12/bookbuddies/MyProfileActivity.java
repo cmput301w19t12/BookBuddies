@@ -7,6 +7,7 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
@@ -23,6 +24,12 @@ import com.google.firebase.database.ValueEventListener;
 
 import org.w3c.dom.Text;
 
+
+/**Profile activity shows the user their account information and allows them to edit them
+ *
+ * @author Dexter
+ * @version 1.0*/
+
 public class MyProfileActivity extends AppCompatActivity {
 
     private DatabaseReference userRef;
@@ -35,6 +42,9 @@ public class MyProfileActivity extends AppCompatActivity {
     private String userId;
     private Button addNew;
 
+
+    /**onCreate inits class variables and sets click listeners
+     * @param savedInstanceState Bundle*/
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -89,10 +99,14 @@ public class MyProfileActivity extends AppCompatActivity {
 
 
     }
+
+    /**opens NewBookActivity*/
     public void switchToNewBook(){
         Intent intent = new Intent(this, NewBookActivity.class);
         startActivity(intent);
     }
+
+    /**Gets user information from the database and fills text views*/
     public void setTextViews(){
         userRef.addValueEventListener(new ValueEventListener() {
             @Override
@@ -124,11 +138,13 @@ public class MyProfileActivity extends AppCompatActivity {
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-
+                Log.e("User Info",databaseError.getMessage());
             }
         });
     }
 
+    /**creates popups for editing user information fields
+     * @param field int*/
     public void openEditMenu(final int field){
 
         LayoutInflater li = LayoutInflater.from(this);

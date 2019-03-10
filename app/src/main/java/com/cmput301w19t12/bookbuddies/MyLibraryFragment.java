@@ -155,7 +155,7 @@ public class MyLibraryFragment extends Fragment {
 
         Menu = view.findViewById(R.id.ExpandingMenu);
 
-        addNew = view.findViewById(R.id.addNew);
+        addNew = view.findViewById(R.id.addNewBook);
         addNew.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v){

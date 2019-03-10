@@ -20,8 +20,10 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ExpandableListAdapter;
 import android.widget.ExpandableListView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -69,7 +71,6 @@ public class MyLibraryFragment extends Fragment {
     private FirebaseUser user;
     private FirebaseAuth mAuth;
     private DatabaseReference userLibRef;
-    private TitleContainer titleContainer;
     private ArrayList<String> MenuHeaders;
     private ExpandableListView Menu;
     private HashMap<String, List<String>> menuChildHeaders;
@@ -77,6 +78,8 @@ public class MyLibraryFragment extends Fragment {
 
 
     private OnFragmentInteractionListener mListener;
+    private ArrayList<String> bookTitles;
+    private Button expandAllButton;
 
     public MyLibraryFragment() {
         // Required empty public constructor
@@ -102,7 +105,7 @@ public class MyLibraryFragment extends Fragment {
 
     /**
      * Called when the system is creating the fragment
-     * @param savedInstanceState
+     * @param savedInstanceState:Bundle
      */
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -115,10 +118,10 @@ public class MyLibraryFragment extends Fragment {
 
     /**
      * Draw the user interface
-     * @param inflater
-     * @param container
-     * @param savedInstanceState
-     * @return
+     * @param inflater:LayoutInflater
+     * @param container:ViewGroup
+     * @param savedInstanceState:Bundle
+     * @return View
      */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -137,14 +140,63 @@ public class MyLibraryFragment extends Fragment {
     /**
      * Called when onCreateView is completed. An ExpandableListView (Menu) is instantiated with a
      * ExpandableListView layout item.
-     * @param view
-     * @param savedInstanceState
+     * @param view:View
+     * @param savedInstanceState:Bundle
      */
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
+        bookTitles = new ArrayList<String>();
         Menu = (ExpandableListView) view.findViewById(R.id.ExpandingMenu);
+        Menu.setOnGroupClickListener(new ExpandableListView.OnGroupClickListener() {
+            @Override
+            public boolean onGroupClick(ExpandableListView parent, View v, int groupPosition, long id) {
+                setListViewHeight(parent, groupPosition);
+                return false;
+            }
+        });
+    }
+
+    /**
+     * When a book status header is expanded, the expandable list view is expanded to accomadate for
+     * the new length added when the children of the header is shown. Works by adding the length
+     * of all the children (book titles) in the groupView specified by group:int to the listView.
+     * Citation: https://thedeveloperworldisyours.com/android/expandable-listview-inside-scrollview/
+     * @param listView:ExpandableListView
+     * @param group:int
+     */
+    public void setListViewHeight(ExpandableListView listView, int group) {
+        ExpandableListAdapter listAdapter = (ExpandableListAdapter) listView.getExpandableListAdapter();
+        int totalHeight = 0;
+        int desiredWidth = View.MeasureSpec.makeMeasureSpec(listView.getWidth(),
+                View.MeasureSpec.EXACTLY);
+        for (int i = 0; i < listAdapter.getGroupCount(); i++) {
+            View groupItem = listAdapter.getGroupView(i, false, null, listView);
+            groupItem.measure(desiredWidth, View.MeasureSpec.UNSPECIFIED);
+
+            totalHeight += groupItem.getMeasuredHeight();
+
+            if (((listView.isGroupExpanded(i)) && (i != group))
+                    || ((!listView.isGroupExpanded(i)) && (i == group))) {
+                for (int j = 0; j < listAdapter.getChildrenCount(i); j++) {
+                    View listItem = listAdapter.getChildView(i, j, false, null,
+                            listView);
+                    listItem.measure(desiredWidth, View.MeasureSpec.UNSPECIFIED);
+
+                    totalHeight += listItem.getMeasuredHeight();
+
+                }
+            }
+        }
+
+        ViewGroup.LayoutParams params = listView.getLayoutParams();
+        int height = totalHeight
+                + (listView.getDividerHeight() * (listAdapter.getGroupCount() - 1));
+        if (height < 10)
+            height = 200;
+        params.height = height;
+        listView.setLayoutParams(params);
+        listView.requestLayout();
     }
 
     /**
@@ -157,7 +209,6 @@ public class MyLibraryFragment extends Fragment {
         super.onResume();
         makeMenu();
         Menu.setAdapter(new ExpandingMenuListAdapter(getContext(), MenuHeaders, menuChildHeaders));
-
         //TODO: Add the on click listener code here for when a book is clicked
         Menu.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
             @Override
@@ -165,107 +216,71 @@ public class MyLibraryFragment extends Fragment {
                 return false;
             }
         });
+    }
 
+    /**
+     * Maps the user's book titles to their status where the book titles are retrieved from the
+     * firebase database.
+     * @param status:String
+     * @param index:int
+     */
+    public void addMyBookTitles(final String status, final int index) {
+        userLibRef = FirebaseDatabase.getInstance().getReference("Books").child(status);
+        userLibRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                bookTitles.clear();
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    Book book = snapshot.getValue(Book.class);
+                    String title = snapshot.getValue(Book.class).getBookDetails().getTitle();
+                    if (user.getUid().equals(book.getOwner())) {
+                        bookTitles.add(title);
+                    }
+                }
+                menuChildHeaders.put(MenuHeaders.get(index), getCopy(bookTitles));
+            }
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
     }
 
     /**
      * Initializes the MenuHeaders which is the expandable header on the ExpandableListView with the
-     * different book statuses. It also gets the respective book titles from the database and maps them
-     * to their header in the menuChildHeaders field.
+     * different book statuses. It also calls addMyBookTitles to get the respective book titles from the database
+     * and maps them to their header in the menuChildHeaders field.
      */
     public void makeMenu() {
         MenuHeaders = new ArrayList<String>();
-        titleContainer = new TitleContainer();
         MenuHeaders.add("Available");
         MenuHeaders.add("Accepted");
         MenuHeaders.add("Requested");
-        MenuHeaders.add("Currently borrowed");
-        MenuHeaders.add("Borrowed from buddy");
+        MenuHeaders.add("Borrowed");
+//        MenuHeaders.add("Borrowed from buddy");
         menuChildHeaders = new HashMap<String, List<String>>();
+
+
 
         mAuth = FirebaseAuth.getInstance();
         user = mAuth.getCurrentUser();
-        userLibRef = FirebaseDatabase.getInstance().getReference("Users").child(user.getUid()).child("Books").child("Borrowing");
-        userLibRef.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                    String title = snapshot.getValue(Book.class).getBookDetails().getTitle();
-                    titleContainer.getBookTitlesBorrowing().add(title);
-                }
-            }
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
+        addMyBookTitles("Available", 0);
+        addMyBookTitles("Accepted", 1);
+        addMyBookTitles("Requested", 2);
+        addMyBookTitles("Borrowed", 3);
 
-            }
-        });
+    }
 
-        userLibRef = FirebaseDatabase.getInstance().getReference("Users").child(user.getUid()).child("Books").child("Owned").child("Available");
-        userLibRef.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                    String title = snapshot.getValue(Book.class).getBookDetails().getTitle();
-                    titleContainer.getBookTitlesAvailable().add(title);
-                }
-            }
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
-
-        userLibRef = FirebaseDatabase.getInstance().getReference("Users").child(user.getUid()).child("Books").child("Owned").child("Accepted");
-        userLibRef.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                    String title = snapshot.getValue(Book.class).getBookDetails().getTitle();
-                    titleContainer.getBookTitlesAccepted().add(title);
-                }
-            }
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
-
-        userLibRef = FirebaseDatabase.getInstance().getReference("Users").child(user.getUid()).child("Books").child("Owned").child("Requested");
-        userLibRef.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                    String title = snapshot.getValue(Book.class).getBookDetails().getTitle();
-                    titleContainer.getBookTitlesRequested().add(title);
-                }
-            }
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
-
-        userLibRef = FirebaseDatabase.getInstance().getReference("Users").child(user.getUid()).child("Books").child("Owned").child("Borrowed");
-        userLibRef.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                    String title = snapshot.getValue(Book.class).getBookDetails().getTitle();
-                    titleContainer.getBookTitlesBorrowed().add(title);
-                }
-            }
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
-
-        menuChildHeaders.put(MenuHeaders.get(0), titleContainer.getBookTitlesAvailable());
-        menuChildHeaders.put(MenuHeaders.get(1), titleContainer.getBookTitlesAccepted());
-        menuChildHeaders.put(MenuHeaders.get(2), titleContainer.getBookTitlesRequested());
-        menuChildHeaders.put(MenuHeaders.get(3), titleContainer.getBookTitlesBorrowed());
-        menuChildHeaders.put(MenuHeaders.get(4), titleContainer.getBookTitlesBorrowing());
-
+    /**
+     * Copies all the elements in the passed in parameter to a new ArrayList<String> before returning
+     * the copied list.
+     * @param myBookTitles:ArrayList<String>
+     * @return ArrayList<String>
+     */
+    public ArrayList<String> getCopy(ArrayList<String> myBookTitles) {
+        ArrayList<String> titles = new ArrayList<String>();
+        titles.addAll(0, myBookTitles);
+        return titles;
     }
 
 

@@ -16,6 +16,12 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:transcriptMode="alwaysScroll" />
+
+        <Button
+            android:id="@+id/addNewBook"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/addNewBook" />
     </LinearLayout>
 
 </FrameLayout>

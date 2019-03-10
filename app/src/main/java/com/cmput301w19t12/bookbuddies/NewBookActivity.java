@@ -2,9 +2,7 @@ package com.cmput301w19t12.bookbuddies;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.Matrix;
 import android.graphics.drawable.BitmapDrawable;
-import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -28,7 +26,6 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 
 
 /**NewBookActivity allows user to create a new book in the database and add a picture to the book
@@ -39,14 +36,13 @@ import java.io.IOException;
 
 public class NewBookActivity extends AppCompatActivity implements PopupMenu.OnMenuItemClickListener {
 
-    // firebase related variables
+
     private DatabaseReference userLibRef;
     private DatabaseReference allBooksRef;
     private FirebaseUser user;
     private FirebaseAuth mAuth;
     private StorageReference mStorageRef;
 
-    // views we need to access
     private FloatingActionButton addButton;
     private EditText titleField;
     private EditText authorField;
@@ -55,15 +51,11 @@ public class NewBookActivity extends AppCompatActivity implements PopupMenu.OnMe
     private Button editImage;
     private ImageView bookImage;
 
-    // request codes for camera and image selection activities
     private static final int SELECT_PICTURE = 1;
+
     private static final int REQUEST_IMAGE_CAPTURE = 2;
 
 
-
-
-    /**onCreate method inits instance variables and sets click listeners
-     * @param savedInstanceState Bundle*/
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -86,19 +78,16 @@ public class NewBookActivity extends AppCompatActivity implements PopupMenu.OnMe
         bookImage = findViewById(R.id.bookImage);
 
 
-        // set click listener for confirm button
         addButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if(checkFields()) {
                     addBookToDatabase();
-                    finish();
                 }
 
             }
         });
 
-        // set click listener for image editing button
         editImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -108,8 +97,6 @@ public class NewBookActivity extends AppCompatActivity implements PopupMenu.OnMe
 
     }
 
-    /**checks that non of the book details fields are empty
-     * @return isValid boolean*/
     private boolean checkFields(){
         boolean isValid = true;
         if(titleField.getText().toString().trim().length() == 0){
@@ -133,8 +120,6 @@ public class NewBookActivity extends AppCompatActivity implements PopupMenu.OnMe
 
     }
 
-    /**shows the image edit options menu
-     * @param v View*/
    public void showMenu(View v){
        PopupMenu popupMenu = new PopupMenu(this,v);
 
@@ -143,23 +128,16 @@ public class NewBookActivity extends AppCompatActivity implements PopupMenu.OnMe
        popupMenu.show();
    }
 
-
-   /**gets which menu item has been clicked and takes action accordingly
-    * @param item MenuItem
-    * @return boolean*/
    @Override
    public boolean onMenuItemClick(MenuItem item){
         switch(item.getItemId()){
-            // open camera app
             case R.id.actionNewImage:
                 takePicture();
                 return true;
-            // get the image from internal storage
             case R.id.actionFromStorage:
                 getImageFromStorage();
                 return true;
             case R.id.actionDeleteImage:
-                deleteImage();
                 return true;
             default:
                 return false;
@@ -168,12 +146,6 @@ public class NewBookActivity extends AppCompatActivity implements PopupMenu.OnMe
    }
 
 
-   /**Remove the image from the book image view*/
-   private void deleteImage(){
-       bookImage.setImageDrawable(null);
-   }
-
-   /**opens built in camera app for taking a photo of the book*/
    private void takePicture() {
        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
        if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
@@ -183,20 +155,13 @@ public class NewBookActivity extends AppCompatActivity implements PopupMenu.OnMe
    }
 
 
-   /**onActivityResult method gets either the image taken by the camera app, or the image chosen
-    * storage and sets it to the book image view
-    * @param requestCode int
-    * @param resultCode int
-    * @param data Intent*/
    @Override
    protected void onActivityResult(int requestCode, int resultCode, Intent data){
         super.onActivityResult(requestCode,resultCode,data);
-        // if the user selected a picture from storage
+        Log.i("STUFF","STUFF");
         if(requestCode == SELECT_PICTURE && resultCode == RESULT_OK){
-            // get image uri
             Uri selectedImageUri = data.getData();
             try {
-                // get the image from storage and put it in the image view
                 Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), selectedImageUri);
                 bookImage.setImageBitmap(bitmap);
             }
@@ -204,57 +169,35 @@ public class NewBookActivity extends AppCompatActivity implements PopupMenu.OnMe
                 Log.e("Image Load Error",e.getMessage());
             }
         }
-        // if the user has taken a new photo
         else if(requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK){
-            // get bitmap from extras bundle passed by the camera app
             Bundle extras = data.getExtras();
             Bitmap imageBitMap = (Bitmap) extras.get("data");
-            Bitmap newBitmap = doRotation(imageBitMap);
-            bookImage.setImageBitmap(newBitmap);
+            bookImage.setImageBitmap(imageBitMap);
         }
    }
 
-    /**Rotates the photo 90 degrees
-     * @param sourceBitmap Bitmap*/
-   private Bitmap doRotation(Bitmap sourceBitmap){
-       Matrix matrix = new Matrix();
-       matrix.preRotate(90);
-       sourceBitmap = Bitmap.createBitmap(sourceBitmap, 0, 0, sourceBitmap.getWidth(), sourceBitmap.getHeight(), matrix, true);
-       return sourceBitmap;
-   }
-
-
-
-    /**Adds a photo to the database associate with the book
-    * @param key String*/
    private void addPhotoToDatabase(String key){
-       // if no image has been set, skip this process
-        if(bookImage.getDrawable() == null){
-            return;
-        }
-        // get the bitmap for the picture and convert it into a byte array
-        Bitmap bitmap = ((BitmapDrawable) bookImage.getDrawable()).getBitmap();
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
-        byte[] data = baos.toByteArray();
+       Bitmap bitmap = ((BitmapDrawable) bookImage.getDrawable()).getBitmap();
+       ByteArrayOutputStream baos = new ByteArrayOutputStream();
+       bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+       byte[] data = baos.toByteArray();
 
-        // try to upload it to firebase storage
-        UploadTask uploadTask = mStorageRef.child("images").child(key).putBytes(data);
-        uploadTask.addOnFailureListener(new OnFailureListener() {
+       UploadTask uploadTask = mStorageRef.child("images").child(key).putBytes(data);
+       uploadTask.addOnFailureListener(new OnFailureListener() {
            @Override
            public void onFailure(@NonNull Exception exception) {
-               Log.i("Book Picture",exception.getMessage());
-            }
-        }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+               // Handle unsuccessful uploads
+           }
+       }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
            @Override
            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-               Log.e("Book Picture","Book picture upload successful");
-            }
+               // taskSnapshot.getMetadata() contains file metadata such as size, content-type, etc.
+               // ...
+           }
        });
    }
 
 
-   /**Opens up storage browser to allow the user to select a photo*/
     private void getImageFromStorage(){
         Intent intent = new Intent();
         intent.setType("image/*");
@@ -263,8 +206,7 @@ public class NewBookActivity extends AppCompatActivity implements PopupMenu.OnMe
     }
 
 
-    /**Gets the contents of all the book details fields, creates a new book and stores it in
-     * the database*/
+
     public void addBookToDatabase(){
         String title = titleField.getText().toString();
         String author = authorField.getText().toString();
@@ -275,9 +217,7 @@ public class NewBookActivity extends AppCompatActivity implements PopupMenu.OnMe
         String status = "Available";
         Book newBook = new Book(user.getUid(),details,status);
 
-        // store under user library
         userLibRef.child(status).child(key).setValue(newBook);
-        // store under all books node
         allBooksRef.child(status).child(key).setValue(newBook);
         addPhotoToDatabase(key);
 

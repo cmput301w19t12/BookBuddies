@@ -4,9 +4,7 @@
     tools:context="com.cmput301w19t12.android.bookbuddies.MainActivity">
     <item
         android:id="@+id/action_myProfile"
-        android:orderInCategory="100"
-        android:title="@string/myProfile"
-        app:showAsAction="never"/>
+        android:title="@string/myProfile" />
     <item
         android:id="@+id/action_settings"
         android:orderInCategory="100"

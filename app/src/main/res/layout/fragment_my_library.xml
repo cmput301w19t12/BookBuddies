@@ -1,52 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".MyLibraryFragment">
 
-    <android.support.constraint.ConstraintLayout
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
-        <LinearLayout
-            android:id="@+id/LayoutMaster"
+        <ExpandableListView
+            android:id="@+id/ExpandingMenu"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="vertical">
+            android:transcriptMode="alwaysScroll" />
+    </LinearLayout>
 
-            <LinearLayout
-                android:id="@+id/Layout1"
-                android:layout_width="match_parent"
-                android:layout_height="500dp"
-                android:orientation="vertical">
-
-                <ExpandableListView
-                    android:id="@+id/ExpandingMenu"
-                    android:layout_width="match_parent"
-                    android:layout_height="500dp" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/Layout2"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_gravity="bottom"
-                android:layout_marginTop="15dp"
-                android:layout_marginBottom="30dp"
-                android:orientation="vertical">
-
-                <Button
-                    android:id="@+id/addNew"
-                    style="@style/Widget.AppCompat.Button"
-                    android:layout_width="100dp"
-                    android:layout_height="65dp"
-                    android:layout_gravity="center_horizontal"
-                    android:layout_marginBottom="150dp"
-                    android:text="@string/addNew"
-                    android:textColor="@color/common_google_signin_btn_text_dark_focused"
-                    android:textStyle="bold" />
-            </LinearLayout>
-        </LinearLayout>
-    </android.support.constraint.ConstraintLayout>
 </FrameLayout>

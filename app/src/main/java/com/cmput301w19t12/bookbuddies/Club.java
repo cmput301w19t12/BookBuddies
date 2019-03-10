@@ -17,6 +17,29 @@ public class Club {
     private Book currentBook;
     private ArrayList<Event> events;
 
+    public ArrayList<User> getMembersList() {
+        return membersList;
+    }
+
+    public void setMembersList(ArrayList<User> membersList) {
+        this.membersList = membersList;
+    }
+
+    public ArrayList<Event> getEvents() {
+        return events;
+    }
+
+    public void setEvents(ArrayList<Event> events) {
+        this.events = events;
+    }
+
+    public Club() {
+        owner = null;
+        name = null;
+        membersList = null;
+        currentBook = null;
+        events = null;
+    }
 
     /**Baseline constructor for the Club class
      * Assigns club owner and name, initializes both lists

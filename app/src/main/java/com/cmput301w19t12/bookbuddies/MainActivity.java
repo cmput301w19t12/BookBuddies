@@ -30,6 +30,14 @@ import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
+/**Main activity is a tabbed activity that serves to present the user with all of the main functionalities
+ * It has a browse tab to introduce the user to new book, a library tab to show the user all of the
+ * books in their library and a clubs tab to allow the user to manage club interaction
+ *
+ * @author Ayub
+ * @version 1.0
+ * */
+
 public class MainActivity extends AppCompatActivity implements ClubFragment.OnFragmentInteractionListener,
         BrowseFragment.OnFragmentInteractionListener,
         MyLibraryFragment.OnFragmentInteractionListener {
@@ -63,7 +71,6 @@ public class MainActivity extends AppCompatActivity implements ClubFragment.OnFr
         setContentView(R.layout.activity_main);
 
         checkLoggedIn();
-        //startActivity(new Intent(MainActivity.this,NewBookActivity.class));
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         // Create the adapter that will return a fragment for each of the three

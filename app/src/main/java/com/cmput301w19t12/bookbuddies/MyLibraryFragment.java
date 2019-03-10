@@ -119,7 +119,13 @@ public class MyLibraryFragment extends Fragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
-
+        /*addNew = (Button) getView().findViewById(R.id.addNew);
+        addNew.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v){
+                Intent intent = new Intent(getActivity(), NewBookActivity.class);
+                startActivity(intent);}
+        });*///This doesn't work for some reasons.
     }
 
     /**
@@ -152,17 +158,6 @@ public class MyLibraryFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
-        Menu = view.findViewById(R.id.ExpandingMenu);
-
-        addNew = view.findViewById(R.id.addNew);
-        addNew.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View v){
-                Intent intent = new Intent(getActivity(), NewBookActivity.class);
-                startActivity(intent);}
-        });
-      
         bookTitles = new ArrayList<String>();
         Menu = (ExpandableListView) view.findViewById(R.id.ExpandingMenu);
         Menu.setOnGroupClickListener(new ExpandableListView.OnGroupClickListener() {
@@ -214,7 +209,6 @@ public class MyLibraryFragment extends Fragment {
         params.height = height;
         listView.setLayoutParams(params);
         listView.requestLayout();
-      
     }
 
     /**

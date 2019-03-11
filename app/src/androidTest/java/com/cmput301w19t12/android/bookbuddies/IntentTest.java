@@ -268,4 +268,18 @@ public class IntentTest extends ActivityTestRule<MainActivity> {
         return adapter.searchForTitle(0, "Hunger Games (TEST)");
     }
 
+    @Test
+    public void validEmailInvalidPassword() {
+        solo.enterText((EditText) solo.getView(R.id.emailEdit), "grenierb96@gmail.com");
+        solo.enterText((EditText) solo.getView(R.id.passwordEdit), "Incorrect Password");
+        solo.clickOnButton("Login");
+        solo.searchText("USER DOES NOT EXIST");
+    }
+
+//    @Test
+//    public void createAccountTest() {
+//        //TODO:Create Account Test
+//    }
+
+
 }

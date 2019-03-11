@@ -200,14 +200,19 @@ public class ClubFragment extends Fragment {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 Club club;
                 myClubNames.clear();
-                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                    club = snapshot.getValue(Club.class);
-                    Log.i("Club names", ""+club.getName()+" | "+club.getOwner().getUsername()+" | "+username);
-                    if (((club.getOwner().getUsername()).equals(username)) || (club.getMembers().contains(username))) {
-                        myClubNames.add(club.getName());
+
+                try {
+                    for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                        club = snapshot.getValue(Club.class);
+                        Log.i("Club names", "" + club.getName() + " | " + club.getOwner().getUsername() + " | " + username);
+                        if (((club.getOwner().getUsername()).equals(username)) || (club.getMembers().contains(username))) {
+                            myClubNames.add(club.getName());
+                        }
                     }
+                    clubsListView.setAdapter(new ArrayAdapter<String>(context, android.R.layout.simple_list_item_1, myClubNames));
+                }catch (Exception e){
+                    Log.e("Club list making",e.getMessage());
                 }
-                clubsListView.setAdapter(new ArrayAdapter<String>(context, android.R.layout.simple_list_item_1, myClubNames));
             }
 
             @Override

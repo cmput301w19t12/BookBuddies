@@ -1,12 +1,47 @@
+/**
+ * MyLibraryFragment
+ *
+ * March 8/2019
+ *
+ * @Author Ayub Ahmed
+ *
+ *
+ */
 package com.cmput301w19t12.bookbuddies;
 
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.ExpandableListAdapter;
+import android.widget.ExpandableListView;
+import android.widget.LinearLayout;
+import android.widget.ListView;
+
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.StorageReference;
+
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -16,7 +51,15 @@ import android.view.ViewGroup;
  * to handle interaction events.
  * Use the {@link MyLibraryFragment#newInstance} factory method to
  * create an instance of this fragment.
+ *----------------------------------------------------------------------
+ *
+ * MyLibraryFragment displays the books that the user owns in a drop down menu filtered by their status.
+ * It also displays the books that the user is currently borrowing from someone else. If a book is pressed
+ * more details about the book are shown.
+ *
+ * --------------------------------------------------------------------
  */
+
 public class MyLibraryFragment extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -26,8 +69,23 @@ public class MyLibraryFragment extends Fragment {
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
+    private FirebaseUser user;
+    private FirebaseAuth mAuth;
+    private DatabaseReference userLibRef;
+    private ArrayList<String> MenuHeaders;
+    private ExpandableListView Menu;
+    private HashMap<String, List<String>> menuChildHeaders;
+    private FloatingActionButton addNew;
+    private String ttl;
+    private String author;
+    private String isbn;
+    private String owner;
+    private String status;
+    private String desc;
 
     private OnFragmentInteractionListener mListener;
+    private ArrayList<String> bookTitles;
+    private Button expandAllButton;
 
     public MyLibraryFragment() {
         // Required empty public constructor
@@ -51,6 +109,10 @@ public class MyLibraryFragment extends Fragment {
         return fragment;
     }
 
+    /**
+     * Called when the system is creating the fragment
+     * @param savedInstanceState:Bundle
+     */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -58,8 +120,22 @@ public class MyLibraryFragment extends Fragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
+        /*addNew = (Button) getView().findViewById(R.id.addNew);
+        addNew.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v){
+                Intent intent = new Intent(getActivity(), NewBookActivity.class);
+                startActivity(intent);}
+        });*///This doesn't work for some reasons.
     }
 
+    /**
+     * Draw the user interface
+     * @param inflater:LayoutInflater
+     * @param container:ViewGroup
+     * @param savedInstanceState:Bundle
+     * @return View
+     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -73,6 +149,178 @@ public class MyLibraryFragment extends Fragment {
             mListener.onFragmentInteraction(uri);
         }
     }
+
+    /**
+     * Called when onCreateView is completed. An ExpandableListView (Menu) is instantiated with a
+     * ExpandableListView layout item.
+     * @param view:View
+     * @param savedInstanceState:Bundle
+     */
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        Menu = view.findViewById(R.id.ExpandingMenu);
+
+        addNew = view.findViewById(R.id.addNewBook);
+        addNew.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v){
+                Intent intent = new Intent(getActivity(), NewBookActivity.class);
+                startActivity(intent);}
+        });
+      
+        bookTitles = new ArrayList<String>();
+        Menu = (ExpandableListView) view.findViewById(R.id.ExpandingMenu);
+        Menu.setOnGroupClickListener(new ExpandableListView.OnGroupClickListener() {
+            @Override
+            public boolean onGroupClick(ExpandableListView parent, View v, int groupPosition, long id) {
+                setListViewHeight(parent, groupPosition);
+                return false;
+            }
+        });
+    }
+
+    /**
+     * When a book status header is expanded, the expandable list view is expanded to accomadate for
+     * the new length added when the children of the header is shown. Works by adding the length
+     * of all the children (book titles) in the groupView specified by group:int to the listView.
+     * Citation: https://thedeveloperworldisyours.com/android/expandable-listview-inside-scrollview/
+     * @param listView:ExpandableListView
+     * @param group:int
+     */
+    public void setListViewHeight(ExpandableListView listView, int group) {
+        ExpandableListAdapter listAdapter = (ExpandableListAdapter) listView.getExpandableListAdapter();
+        int totalHeight = 0;
+        int desiredWidth = View.MeasureSpec.makeMeasureSpec(listView.getWidth(),
+                View.MeasureSpec.EXACTLY);
+        for (int i = 0; i < listAdapter.getGroupCount(); i++) {
+            View groupItem = listAdapter.getGroupView(i, false, null, listView);
+            groupItem.measure(desiredWidth, View.MeasureSpec.UNSPECIFIED);
+
+            totalHeight += groupItem.getMeasuredHeight();
+
+            if (((listView.isGroupExpanded(i)) && (i != group))
+                    || ((!listView.isGroupExpanded(i)) && (i == group))) {
+                for (int j = 0; j < listAdapter.getChildrenCount(i); j++) {
+                    View listItem = listAdapter.getChildView(i, j, false, null,
+                            listView);
+                    listItem.measure(desiredWidth, View.MeasureSpec.UNSPECIFIED);
+
+                    totalHeight += listItem.getMeasuredHeight();
+
+                }
+            }
+        }
+
+        ViewGroup.LayoutParams params = listView.getLayoutParams();
+        int height = totalHeight
+                + (listView.getDividerHeight() * (listAdapter.getGroupCount() - 1));
+        if (height < 10)
+            height = 200;
+        params.height = height;
+        listView.setLayoutParams(params);
+        listView.requestLayout();
+    }
+
+    /**
+     * Called before the Fragment is displayed on the screen. The adapter is set for the ExpandableListView
+     * and a onclicklistener is initialized to handle when the user clicks on a book title.
+     * If a book title is clicked, more details on the book are displayed.
+     */
+    @Override
+    public void onResume() {
+        super.onResume();
+        makeMenu();
+        Menu.setAdapter(new ExpandingMenuListAdapter(getContext(), MenuHeaders, menuChildHeaders));
+        //TODO: Add the on click listener code here for when a book is clicked
+        Menu.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
+            @Override
+            public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
+                /*ttl = parent.getExpandableListAdapter().getChild(groupPosition, childPosition).getid();
+                author = ;
+                isbn = ;
+                owner = ;
+                status = ;
+                desc = parent.getExpandableListAdapter().getChild(groupPosition, childPosition)
+                Intent intent = new Intent(, book_details.class);
+                intent.putExtra(EXTRA_ttl, ttl);
+                intent.putExtra(EXTRA_auth, author);
+                intent.putExtra(EXTRA_isbn, isbn);
+                intent.putExtra(EXTRA_owner, owner);
+                intent.putExtra(EXTRA_status, status);
+                intent.putExtra(EXTRA_desc, desc);
+                startActivity(intent);*/
+                return false;
+            }
+        });
+    }
+
+    /**
+     * Maps the user's book titles to their status where the book titles are retrieved from the
+     * firebase database.
+     * @param status:String
+     * @param index:int
+     */
+    public void addMyBookTitles(final String status, final int index) {
+        userLibRef = FirebaseDatabase.getInstance().getReference("Books").child(status);
+        userLibRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                bookTitles.clear();
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    Book book = snapshot.getValue(Book.class);
+                    String title = snapshot.getValue(Book.class).getBookDetails().getTitle();
+                    if (user.getUid().equals(book.getOwner())) {
+                        bookTitles.add(title);
+                    }
+                }
+                menuChildHeaders.put(MenuHeaders.get(index), getCopy(bookTitles));
+            }
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    /**
+     * Initializes the MenuHeaders which is the expandable header on the ExpandableListView with the
+     * different book statuses. It also calls addMyBookTitles to get the respective book titles from the database
+     * and maps them to their header in the menuChildHeaders field.
+     */
+    public void makeMenu() {
+        MenuHeaders = new ArrayList<String>();
+        MenuHeaders.add("Available");
+        MenuHeaders.add("Accepted");
+        MenuHeaders.add("Requested");
+        MenuHeaders.add("Borrowed");
+//        MenuHeaders.add("Borrowed from buddy");
+        menuChildHeaders = new HashMap<String, List<String>>();
+
+
+
+        mAuth = FirebaseAuth.getInstance();
+        user = mAuth.getCurrentUser();
+        addMyBookTitles("Available", 0);
+        addMyBookTitles("Accepted", 1);
+        addMyBookTitles("Requested", 2);
+        addMyBookTitles("Borrowed", 3);
+
+    }
+
+    /**
+     * Copies all the elements in the passed in parameter to a new ArrayList<String> before returning
+     * the copied list.
+     * @param myBookTitles:ArrayList<String>
+     * @return ArrayList<String>
+     */
+    public ArrayList<String> getCopy(ArrayList<String> myBookTitles) {
+        ArrayList<String> titles = new ArrayList<String>();
+        titles.addAll(0, myBookTitles);
+        return titles;
+    }
+
 
     @Override
     public void onAttach(Context context) {

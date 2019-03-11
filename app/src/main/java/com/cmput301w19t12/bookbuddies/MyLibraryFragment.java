@@ -224,6 +224,7 @@ public class MyLibraryFragment extends Fragment {
                 + (listView.getDividerHeight() * (listAdapter.getGroupCount() - 1));
         if (height < 10)
             height = 200;
+        height+=100;
         params.height = height;
         listView.setLayoutParams(params);
         listView.requestLayout();
@@ -239,6 +240,7 @@ public class MyLibraryFragment extends Fragment {
         super.onResume();
         makeMenu();
         Menu.setAdapter(new ExpandingMenuListAdapter(getContext(), MenuHeaders, menuChildHeaders));
+
         //TODO: Add the on click listener code here for when a book is clicked
         Menu.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
             @Override

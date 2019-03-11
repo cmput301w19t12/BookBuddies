@@ -168,6 +168,15 @@ public class ClubFragment extends Fragment {
             }
         });
         context = this.getContext();
+
+        clubsListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Intent intent = new Intent(ClubFragment.this.getActivity(), ClubDetailsActivity.class);
+                intent.putExtra("CLUB DETAILS NAME", myClubNames.get(position));
+                startActivity(intent);
+            }
+        });
     }
 
     /**

@@ -168,13 +168,13 @@ public class MyLibraryFragment extends Fragment {
 
         Menu = view.findViewById(R.id.ExpandingMenu);
 
-        addNew = view.findViewById(R.id.addNewBook);
-        addNew.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View v){
-                Intent intent = new Intent(getActivity(), NewBookActivity.class);
-                startActivity(intent);}
-        });
+//        addNew = view.findViewById(R.id.addNewBook);
+//        addNew.setOnClickListener(new View.OnClickListener(){
+//            @Override
+//            public void onClick(View v){
+//                Intent intent = new Intent(getActivity(), NewBookActivity.class);
+//                startActivity(intent);}
+//        });
       
         bookTitles = new ArrayList<String>();
         Menu = (ExpandableListView) view.findViewById(R.id.ExpandingMenu);
@@ -303,7 +303,6 @@ public class MyLibraryFragment extends Fragment {
         MenuHeaders.add("Accepted");
         MenuHeaders.add("Requested");
         MenuHeaders.add("Borrowed");
-//        MenuHeaders.add("Borrowed from buddy");
         menuChildHeaders = new HashMap<String, List<String>>();
 
 

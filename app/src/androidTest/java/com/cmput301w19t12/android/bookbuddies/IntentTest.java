@@ -116,7 +116,7 @@ public class IntentTest extends ActivityTestRule<MainActivity> {
      */
     public void deleteClub() {
         Log.i("Club position", ""+position);
-        solo.clickLongInList(2, position);
+        solo.clickLongInList(0, position+1);
         solo.clickOnButton("Delete");
     }
 

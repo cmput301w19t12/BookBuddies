@@ -14,14 +14,18 @@
         <ExpandableListView
             android:id="@+id/ExpandingMenu"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:transcriptMode="alwaysScroll" />
 
-        <Button
+        <android.support.design.widget.FloatingActionButton
             android:id="@+id/addNewBook"
+            android:layout_gravity="bottom|end"
             android:layout_width="match_parent"
+            android:layout_marginRight="70dp"
             android:layout_height="wrap_content"
-            android:text="@string/addNewBook" />
+            android:clickable="true"
+            app:srcCompat="@drawable/ic_outline_add_24px" />
+
     </LinearLayout>
 
 </FrameLayout>

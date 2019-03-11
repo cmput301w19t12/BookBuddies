@@ -15,6 +15,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -74,7 +75,7 @@ public class MyLibraryFragment extends Fragment {
     private ArrayList<String> MenuHeaders;
     private ExpandableListView Menu;
     private HashMap<String, List<String>> menuChildHeaders;
-    private Button addNew;
+    private FloatingActionButton addNew;
     private String ttl;
     private String author;
     private String isbn;

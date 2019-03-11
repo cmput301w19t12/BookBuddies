@@ -120,13 +120,7 @@ public class MyLibraryFragment extends Fragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
-        /*addNew = (Button) getView().findViewById(R.id.addNew);
-        addNew.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View v){
-                Intent intent = new Intent(getActivity(), NewBookActivity.class);
-                startActivity(intent);}
-        });*///This doesn't work for some reasons.
+
     }
 
     /**

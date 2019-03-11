@@ -20,7 +20,7 @@ public class Transaction {
      * @param owner User
      * @param borrower User
      * @param book Book*/
-    Transaction(User owner, User borrower, Book book, Location location, Date time){
+    Transaction(User owner, User borrower, Book book,Location location,Date time){
         this.owner = owner;
         this.borrower = borrower;
         this.book = book;

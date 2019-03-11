@@ -1,6 +1,7 @@
 /**
  * IntentTest.java
  *
+ * Ensure you are logged out of application before running
  */
 
 package com.cmput301w19t12.android.bookbuddies;
@@ -81,16 +82,17 @@ public class IntentTest extends ActivityTestRule<MainActivity> {
 
     /**
      * Tests for the add and delete club functionalities.
+     * Needs more work.
      */
-    @Test
-    public void addDeleteClubTest() {
-        validLogIn();
-        addClub();
-        assertEquals(true, ensureClubInList());
-        deleteClub();
-        assertNotEquals(true, ensureClubInList());
-        validLogOut();
-    }
+//    @Test
+//    public void addDeleteClubTest() {
+//        validLogIn();
+//        addClub();
+//        assertEquals(true, ensureClubInList());
+//        deleteClub();
+//        assertNotEquals(true, ensureClubInList());
+//        validLogOut();
+//    }
 
     /**
      * Iterates through the listview checking returns true if the test club is present in the listview,
@@ -116,7 +118,7 @@ public class IntentTest extends ActivityTestRule<MainActivity> {
      */
     public void deleteClub() {
         Log.i("Club position", ""+position);
-        solo.clickLongInList(2, position);
+        solo.clickLongOnText("Great club (TEST)");
         solo.clickOnButton("Delete");
     }
 
@@ -268,6 +270,9 @@ public class IntentTest extends ActivityTestRule<MainActivity> {
         return adapter.searchForTitle(0, "Hunger Games (TEST)");
     }
 
+    /**
+     * Test for when the user enters a valid email but an invalid password.
+     */
     @Test
     public void validEmailInvalidPassword() {
         solo.enterText((EditText) solo.getView(R.id.emailEdit), "grenierb96@gmail.com");
@@ -275,11 +280,6 @@ public class IntentTest extends ActivityTestRule<MainActivity> {
         solo.clickOnButton("Login");
         solo.searchText("USER DOES NOT EXIST");
     }
-
-//    @Test
-//    public void createAccountTest() {
-//        //TODO:Create Account Test
-//    }
 
 
 }

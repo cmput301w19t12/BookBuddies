@@ -33,5 +33,6 @@
     <string name="clubNameHint">Club Name</string>
     <string name="currentBookHint">Book you are reading</string>
     <string name="AddClubTitle">Add a new club</string>
+    <string name="detailedListMenuItem">Detailed Book List</string>
 
 </resources>

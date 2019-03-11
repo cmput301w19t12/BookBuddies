@@ -281,8 +281,13 @@ public class MyLibraryFragment extends Fragment {
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     Book book = snapshot.getValue(Book.class);
                     String title = snapshot.getValue(Book.class).getBookDetails().getTitle();
-                    if (user.getUid().equals(book.getOwner())) {
-                        bookTitles.add(title);
+                    try {
+                        if (user.getUid().equals(book.getOwner())) {
+                            bookTitles.add(title);
+                        }
+                    }
+                    catch (NullPointerException e) {
+                        //ignore the invalid data
                     }
                 }
                 menuChildHeaders.put(MenuHeaders.get(index), getCopy(bookTitles));

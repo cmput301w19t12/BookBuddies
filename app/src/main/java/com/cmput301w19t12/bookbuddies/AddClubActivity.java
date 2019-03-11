@@ -71,7 +71,6 @@ public class AddClubActivity extends AppCompatActivity {
         String name = clubNameField.getText().toString();
         Club newClub = new Club(owner, name, new ArrayList<User>());
         newClub.getEvents().add(new Event());
-        newClub.addMember(owner);
         newClub.setCurrentBook(new Book());
         clubsRef.child(key).setValue(newClub);
         returnToMainActivity();

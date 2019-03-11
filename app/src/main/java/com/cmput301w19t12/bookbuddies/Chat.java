@@ -40,4 +40,10 @@ public class Chat {
     public ArrayList<Message> getMessages(){
         return this.messageList;
     }
+
+    /**Adds a message to the char
+     * @param newMessage message*/
+    public void addMessage(Message newMessage){
+        messageList.add(newMessage);
+    }
 }

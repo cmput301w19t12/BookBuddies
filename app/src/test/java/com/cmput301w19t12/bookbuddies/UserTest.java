@@ -24,7 +24,7 @@ public class UserTest {
     }
     @Test
     public void contactInfoTest(){
-        User testUser = new User("username", "password", "555-5555", "test@example.com");
+        User testUser = new User("username", "password", "555-5555", "test@example.com", "photos/selfie.png");
         assertEquals(testUser.getPhoneNumber(),"555-5555");
         testUser.setPhoneNumber("911");
         assertEquals(testUser.getPhoneNumber(),"911");

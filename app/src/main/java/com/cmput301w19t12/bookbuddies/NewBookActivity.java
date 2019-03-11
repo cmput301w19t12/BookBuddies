@@ -135,6 +135,7 @@ public class NewBookActivity extends AppCompatActivity implements PopupMenu.OnMe
 
     }
 
+    /**shows options for editing photo*/
    public void showMenu(View v){
        PopupMenu popupMenu = new PopupMenu(this,v);
 

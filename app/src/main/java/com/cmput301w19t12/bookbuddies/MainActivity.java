@@ -119,17 +119,24 @@ public class MainActivity extends AppCompatActivity implements ClubFragment.OnFr
         }
 
         switch(id) {
+            case R.id.action_view_detailed:
+                Intent i = new Intent(this, DetailedBookList.class);
+                i.putExtra("UserID", FirebaseAuth.getInstance().getCurrentUser().getUid());
+                startActivity(i);
+                break;
             case R.id.action_signOut:
                 FirebaseAuth.getInstance().signOut();
                 checkLoggedIn();
-                return true;
+                break;
             case R.id.action_myProfile:
                 Intent intent = new Intent(this,MyProfileActivity.class);
                 startActivity(intent);
+                break;
 
             default:
                 return super.onOptionsItemSelected(item);
         }
+        return true;
     }
 
     /**

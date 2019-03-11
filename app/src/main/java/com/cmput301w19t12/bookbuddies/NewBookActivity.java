@@ -240,7 +240,7 @@ public class NewBookActivity extends AppCompatActivity implements PopupMenu.OnMe
         userLibRef.child(status).child(key).setValue(newBook);
         allBooksRef.child(status).child(key).setValue(newBook);
         addPhotoToDatabase(key);
-        Intent intent = new Intent(this, MyLibraryFragment.class);
+        Intent intent = new Intent(this, MainActivity.class);
         startActivity(intent);
     }
 }

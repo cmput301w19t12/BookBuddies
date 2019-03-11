@@ -166,13 +166,13 @@ public class MyLibraryFragment extends Fragment {
 
         Menu = view.findViewById(R.id.ExpandingMenu);
 
-        addNew = view.findViewById(R.id.addNewBook);
-        addNew.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View v){
-                Intent intent = new Intent(getActivity(), NewBookActivity.class);
-                startActivity(intent);}
-        });
+//        addNew = view.findViewById(R.id.addNewBook);
+//        addNew.setOnClickListener(new View.OnClickListener(){
+//            @Override
+//            public void onClick(View v){
+//                Intent intent = new Intent(getActivity(), NewBookActivity.class);
+//                startActivity(intent);}
+//        });
       
         bookTitles = new ArrayList<>();
         books = new ArrayList<>();
@@ -223,6 +223,7 @@ public class MyLibraryFragment extends Fragment {
                 + (listView.getDividerHeight() * (listAdapter.getGroupCount() - 1));
         if (height < 10)
             height = 200;
+        height+=100;
         params.height = height;
         listView.setLayoutParams(params);
         listView.requestLayout();
@@ -268,10 +269,13 @@ public class MyLibraryFragment extends Fragment {
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     Book book = snapshot.getValue(Book.class);
                     String title = snapshot.getValue(Book.class).getBookDetails().getTitle();
-                    if (user.getUid().equals(book.getOwner())) {
-                        bookTitles.add(title);
-                        books.add(book);
-                        //Log.i("STUFF",String.format("%s | %s",title,book.getBookDetails().getTitle()));
+                    try {
+                        if (user.getUid().equals(book.getOwner())) {
+                            bookTitles.add(title);
+                        }
+                    }
+                    catch (NullPointerException e) {
+                        //ignore the invalid data
                     }
                 }
                 menuChildHeaders.put(MenuHeaders.get(index), getCopy(bookTitles));
@@ -295,7 +299,6 @@ public class MyLibraryFragment extends Fragment {
         MenuHeaders.add("Accepted");
         MenuHeaders.add("Requested");
         MenuHeaders.add("Borrowed");
-//        MenuHeaders.add("Borrowed from buddy");
         menuChildHeaders = new HashMap<String, List<String>>();
         bookList = new HashMap<>();
 

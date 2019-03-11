@@ -27,6 +27,7 @@ import android.widget.ExpandableListAdapter;
 import android.widget.ExpandableListView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -37,6 +38,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.StorageReference;
+import com.google.gson.Gson;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
@@ -91,6 +93,8 @@ public class MyLibraryFragment extends Fragment {
 
     private OnFragmentInteractionListener mListener;
     private ArrayList<String> bookTitles;
+    private HashMap<String, List<Book>> bookList;
+    private ArrayList<Book> books;
     private Button expandAllButton;
 
     public MyLibraryFragment() {
@@ -170,7 +174,8 @@ public class MyLibraryFragment extends Fragment {
                 startActivity(intent);}
         });
       
-        bookTitles = new ArrayList<String>();
+        bookTitles = new ArrayList<>();
+        books = new ArrayList<>();
         Menu = (ExpandableListView) view.findViewById(R.id.ExpandingMenu);
         Menu.setOnGroupClickListener(new ExpandableListView.OnGroupClickListener() {
             @Override
@@ -232,30 +237,20 @@ public class MyLibraryFragment extends Fragment {
     public void onResume() {
         super.onResume();
         makeMenu();
-        Menu.setAdapter(new ExpandingMenuListAdapter(getContext(), MenuHeaders, menuChildHeaders));
+        Menu.setAdapter(new ExpandingMenuListAdapter(getContext(), MenuHeaders, menuChildHeaders,bookList));
         //TODO: Add the on click listener code here for when a book is clicked
         Menu.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
             @Override
             public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
-                ttl = "test";
-                author = "test";
-                isbn = "test";
-                owner = "test";
-                status = "test";
-                desc = "test";
-                switchtoDetails(ttl,author,isbn,owner,status,desc);
+                switchToDetails((Book) v.getTag());
                 return false;
             }
         });
     }
-    public void switchtoDetails(String ttl, String author, String isbn, String owner, String status, String desc){
+    public void switchToDetails(Book book){
         Intent intent = new Intent(MyLibraryFragment.this.getContext(), book_details.class);
-        intent.putExtra(EXTRA_ttl, ttl);
-        intent.putExtra(EXTRA_auth, author);
-        intent.putExtra(EXTRA_isbn, isbn);
-        intent.putExtra(EXTRA_owner, owner);
-        intent.putExtra(EXTRA_status, status);
-        intent.putExtra(EXTRA_desc, desc);
+        intent.putExtra("book",new Gson().toJson(book));
+       // intent.putExtra("ID",tag);
         startActivity(intent);
     }
     /**
@@ -275,9 +270,12 @@ public class MyLibraryFragment extends Fragment {
                     String title = snapshot.getValue(Book.class).getBookDetails().getTitle();
                     if (user.getUid().equals(book.getOwner())) {
                         bookTitles.add(title);
+                        books.add(book);
+                        //Log.i("STUFF",String.format("%s | %s",title,book.getBookDetails().getTitle()));
                     }
                 }
                 menuChildHeaders.put(MenuHeaders.get(index), getCopy(bookTitles));
+                bookList.put(MenuHeaders.get(index),getCopyBooks(books));
             }
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
@@ -299,6 +297,7 @@ public class MyLibraryFragment extends Fragment {
         MenuHeaders.add("Borrowed");
 //        MenuHeaders.add("Borrowed from buddy");
         menuChildHeaders = new HashMap<String, List<String>>();
+        bookList = new HashMap<>();
 
 
 
@@ -319,6 +318,12 @@ public class MyLibraryFragment extends Fragment {
      */
     public ArrayList<String> getCopy(ArrayList<String> myBookTitles) {
         ArrayList<String> titles = new ArrayList<String>();
+        titles.addAll(0, myBookTitles);
+        return titles;
+    }
+
+    public ArrayList<Book> getCopyBooks(ArrayList<Book> myBookTitles) {
+        ArrayList<Book> titles = new ArrayList<Book>();
         titles.addAll(0, myBookTitles);
         return titles;
     }

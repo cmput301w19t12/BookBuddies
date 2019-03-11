@@ -16,6 +16,7 @@ package com.cmput301w19t12.bookbuddies;
 
 import android.content.Context;
 import android.graphics.Typeface;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,9 +26,12 @@ import android.widget.TextView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
+import com.google.gson.Gson;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * An Expanding List Adapter which inherits from BaseExpandableListAdapter placing the
@@ -39,6 +43,7 @@ public class ExpandingMenuListAdapter extends BaseExpandableListAdapter {
     private Context context;
     private ArrayList<String> MenuHeader;
     private HashMap<String, List<String>> headerChildPairs;
+    private HashMap<String, List<Book>> childBooks;
 
     /**
      * Initializes the fields context, MenuHeader, Childheaders with the values that
@@ -47,10 +52,11 @@ public class ExpandingMenuListAdapter extends BaseExpandableListAdapter {
      * @param MenuHeader:ArrayList<String>
      * @param ChildHeaders:HashMap<String, List<String>>
      */
-    public ExpandingMenuListAdapter(Context context, ArrayList<String> MenuHeader, HashMap<String, List<String>> ChildHeaders){
+    public ExpandingMenuListAdapter(Context context, ArrayList<String> MenuHeader, HashMap<String, List<String>> ChildHeaders,HashMap<String,List<Book>> bookList){
         this.context = context;
         this.MenuHeader = MenuHeader;
         this.headerChildPairs = ChildHeaders;
+        this.childBooks = bookList;
     }
 
     /**
@@ -94,6 +100,22 @@ public class ExpandingMenuListAdapter extends BaseExpandableListAdapter {
     @Override
     public Object getChild(int groupPosition, int childPosition) {
         return headerChildPairs.get(MenuHeader.get(groupPosition)).get(childPosition);
+    }
+
+    /**
+     * Returns a book object with the given title
+     * @param title String
+     * @return book Book*/
+    public Book getChildBook(String title){
+        for(Map.Entry<String,List<Book>> entry  : childBooks.entrySet()){
+            for (Book book : entry.getValue()){
+                if (book.getBookDetails().getTitle().equals(title)){
+                    return book;
+                }
+            }
+
+        }
+        return null;
     }
 
     /**
@@ -157,13 +179,17 @@ public class ExpandingMenuListAdapter extends BaseExpandableListAdapter {
     @Override
     public View getChildView(int groupPosition, int childPosition, boolean isLastChild, View convertView, ViewGroup parent) {
         String childHeaderTitle = (String) getChild(groupPosition, childPosition);
+        Book book = getChildBook(childHeaderTitle);
         if (convertView == null) {
             LayoutInflater infalInflater = (LayoutInflater) this.context
                     .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             convertView = infalInflater.inflate(R.layout.list_item, null);
+            convertView.setTag(book);
+            Log.i("STUFFY",String.format("%s | %s",childHeaderTitle,book.getBookDetails().getTitle()));
         }
         TextView text = (TextView) convertView.findViewById(R.id.ChildHeader);
         text.setText(childHeaderTitle);
+        text.setTag(book);
         return convertView;
     }
 

@@ -17,6 +17,10 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+/**Presents the user with all the details of a given club
+ *
+ * @version 1.0*/
+
 public class ClubDetailsActivity extends AppCompatActivity {
 
     private DatabaseReference clubsRef;
@@ -43,6 +47,8 @@ public class ClubDetailsActivity extends AppCompatActivity {
         editButton = findViewById(R.id.clubDetailsEditButton);
         getClubInfo();
     }
+
+    /**Retrieves club info from database*/
     public void getClubInfo(){
         clubsRef = FirebaseDatabase.getInstance().getReference("Clubs");
         clubsRef.addValueEventListener(new ValueEventListener() {
@@ -84,6 +90,8 @@ public class ClubDetailsActivity extends AppCompatActivity {
             }
         });
     }
+
+    /**Populates UI fields*/
     public void populateClubInfo(){
         clubNameTV.setText(myClub.getName());
         if(myClub.getCurrentBook()!= null){

@@ -15,7 +15,9 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -62,9 +64,14 @@ import java.util.Map;
 public class MyLibraryFragment extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-
+    private static String ARG_PARAM1 = "param1";
+    private static String ARG_PARAM2 = "param2";
+    public static final String EXTRA_ttl = "com.cmput301w19t12.bookbuddies.ttl";
+    public static final String EXTRA_auth = "com.cmput301w19t12.bookbuddies.auth";
+    public static final String EXTRA_isbn = "com.cmput301w19t12.bookbuddies.isbn";
+    public static final String EXTRA_owner = "com.cmput301w19t12.bookbuddies.owner";
+    public static final String EXTRA_status = "com.cmput301w19t12.bookbuddies.status";
+    public static final String EXTRA_desc = "com.cmput301w19t12.bookbuddies.desc";
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
@@ -74,7 +81,7 @@ public class MyLibraryFragment extends Fragment {
     private ArrayList<String> MenuHeaders;
     private ExpandableListView Menu;
     private HashMap<String, List<String>> menuChildHeaders;
-    private Button addNew;
+    private FloatingActionButton addNew;
     private String ttl;
     private String author;
     private String isbn;
@@ -158,6 +165,17 @@ public class MyLibraryFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+        Menu = view.findViewById(R.id.ExpandingMenu);
+
+        addNew = view.findViewById(R.id.addNewBook);
+        addNew.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v){
+                Intent intent = new Intent(getActivity(), NewBookActivity.class);
+                startActivity(intent);}
+        });
+      
         bookTitles = new ArrayList<String>();
         Menu = (ExpandableListView) view.findViewById(R.id.ExpandingMenu);
         Menu.setOnGroupClickListener(new ExpandableListView.OnGroupClickListener() {
@@ -225,25 +243,27 @@ public class MyLibraryFragment extends Fragment {
         Menu.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
             @Override
             public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
-                /*ttl = parent.getExpandableListAdapter().getChild(groupPosition, childPosition).getid();
-                author = ;
-                isbn = ;
-                owner = ;
-                status = ;
-                desc = parent.getExpandableListAdapter().getChild(groupPosition, childPosition)
-                Intent intent = new Intent(, book_details.class);
-                intent.putExtra(EXTRA_ttl, ttl);
-                intent.putExtra(EXTRA_auth, author);
-                intent.putExtra(EXTRA_isbn, isbn);
-                intent.putExtra(EXTRA_owner, owner);
-                intent.putExtra(EXTRA_status, status);
-                intent.putExtra(EXTRA_desc, desc);
-                startActivity(intent);*/
+                ttl = "test";
+                author = "test";
+                isbn = "test";
+                owner = "test";
+                status = "test";
+                desc = "test";
+                switchtoDetails(ttl,author,isbn,owner,status,desc);
                 return false;
             }
         });
     }
-
+    public void switchtoDetails(String ttl, String author, String isbn, String owner, String status, String desc){
+        Intent intent = new Intent(MyLibraryFragment.this.getContext(), book_details.class);
+        intent.putExtra(EXTRA_ttl, ttl);
+        intent.putExtra(EXTRA_auth, author);
+        intent.putExtra(EXTRA_isbn, isbn);
+        intent.putExtra(EXTRA_owner, owner);
+        intent.putExtra(EXTRA_status, status);
+        intent.putExtra(EXTRA_desc, desc);
+        startActivity(intent);
+    }
     /**
      * Maps the user's book titles to their status where the book titles are retrieved from the
      * firebase database.

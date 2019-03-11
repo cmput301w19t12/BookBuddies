@@ -2,6 +2,7 @@ package com.cmput301w19t12.bookbuddies;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
@@ -16,6 +17,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.PopupMenu;
+
+import com.ceylonlabs.imageviewpopup.ImagePopup;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
@@ -77,6 +80,18 @@ public class NewBookActivity extends AppCompatActivity implements PopupMenu.OnMe
         editImage = findViewById(R.id.editImage);
         bookImage = findViewById(R.id.bookImage);
 
+        final ImagePopup imagePopup = new ImagePopup(this);
+        imagePopup.setBackgroundColor(Color.BLACK);
+        imagePopup.setFullScreen(true);
+        imagePopup.setImageOnClickClose(true);
+
+        bookImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                imagePopup.initiatePopup(bookImage.getDrawable());
+                imagePopup.viewPopup();
+            }
+        });
 
         addButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -224,6 +239,7 @@ public class NewBookActivity extends AppCompatActivity implements PopupMenu.OnMe
         userLibRef.child(status).child(key).setValue(newBook);
         allBooksRef.child(status).child(key).setValue(newBook);
         addPhotoToDatabase(key);
-
+        Intent intent = new Intent(this, MyLibraryFragment.class);
+        startActivity(intent);
     }
 }

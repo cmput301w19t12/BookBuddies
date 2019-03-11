@@ -178,4 +178,11 @@ public class ExpandingMenuListAdapter extends BaseExpandableListAdapter {
         return true;
     }
 
+    public boolean searchForTitle(int groupPosition, String text) {
+        if (headerChildPairs.get(MenuHeader.get(0)).contains(text)) {
+            return true;
+        }
+        return false;
+    }
+
 }

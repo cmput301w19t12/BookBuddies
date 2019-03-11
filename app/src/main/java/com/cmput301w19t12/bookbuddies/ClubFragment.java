@@ -65,6 +65,7 @@ public class ClubFragment extends Fragment {
     private String username;
     private Book book;
     private FloatingActionButton addButton;
+    private Context context;
 
     public ClubFragment() {
         // Required empty public constructor
@@ -166,6 +167,7 @@ public class ClubFragment extends Fragment {
                 startActivity(i);
             }
         });
+        context = this.getContext();
     }
 
     /**
@@ -196,7 +198,7 @@ public class ClubFragment extends Fragment {
                         myClubNames.add(club.getName());
                     }
                 }
-                clubsListView.setAdapter(new ArrayAdapter<String>(getContext(), android.R.layout.simple_list_item_1, myClubNames));
+                clubsListView.setAdapter(new ArrayAdapter<String>(context, android.R.layout.simple_list_item_1, myClubNames));
             }
 
             @Override

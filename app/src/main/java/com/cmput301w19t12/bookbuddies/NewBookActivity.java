@@ -195,6 +195,10 @@ public class NewBookActivity extends AppCompatActivity implements PopupMenu.OnMe
                // ...
            }
        });
+
+       //Needed for testing:
+       startActivity(new Intent(this, MainActivity.class));
+       //-----------------------------------------
    }
 
 

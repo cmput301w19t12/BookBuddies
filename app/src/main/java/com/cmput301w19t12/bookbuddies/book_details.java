@@ -1,16 +1,22 @@
 package com.cmput301w19t12.bookbuddies;
 
 import android.content.Intent;
+import android.graphics.Color;
+import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.ceylonlabs.imageviewpopup.ImagePopup;
 import com.firebase.ui.storage.images.FirebaseImageLoader;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -49,6 +55,8 @@ public class book_details extends AppCompatActivity {
         Bundle b = getIntent().getExtras();
         final String ID = b.getString("ID");
         book = new Gson().fromJson(b.getString("book"),Book.class);
+        BookDetails d = book.getBookDetails();
+        getImage(d.getUniqueID());
         titleField = findViewById(R.id.titleLayout);
         authorField = findViewById(R.id.authorLayout);
         ISBNField = findViewById(R.id.isbnLayout);
@@ -72,22 +80,52 @@ public class book_details extends AppCompatActivity {
             }
         });
 
-        BookDetails d = book.getBookDetails();
+
         statusField.setText(book.getStatus());
         titleField.setText(d.getTitle());
         authorField.setText(d.getAuthor());
         ISBNField.setText(d.getISBN());
         descriptionField.setText(d.getDescription());
 
+        makePopup();
 
-        //getImage(ID);
+
 
     }
 
     private void getImage(String ID){
-        StorageReference ref = FirebaseStorage.getInstance().getReference().child("images").child(ID);
-        Glide.with(this).load(ref)
-                .into((ImageView) findViewById(R.id.bookImage));
+        try {
+            StorageReference ref = FirebaseStorage.getInstance().getReference().child("images").child(ID);
+
+            ref.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                @Override
+                public void onSuccess(Uri uri) {
+                    Glide.with(getApplicationContext()).load(uri.toString())
+                            .into((ImageView) findViewById(R.id.bookImage));
+                }
+            });
+
+        }catch (Exception e){
+            Log.e("STUFF",e.getMessage());
+        }
+    }
+
+
+    // https://github.com/chathuralakmal/AndroidImagePopup
+    private void makePopup(){
+        final ImagePopup imagePopup = new ImagePopup(this);
+        imagePopup.setImageOnClickClose(true);
+        imagePopup.setBackgroundColor(Color.BLACK);
+        imagePopup.setFullScreen(true);
+        final ImageView image = findViewById(R.id.bookImage);
+
+        image.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                imagePopup.initiatePopup(image.getDrawable());
+                imagePopup.viewPopup();
+            }
+        });
     }
 
 }

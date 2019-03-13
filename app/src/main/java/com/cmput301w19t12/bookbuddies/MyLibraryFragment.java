@@ -272,6 +272,7 @@ public class MyLibraryFragment extends Fragment {
                     try {
                         if (user.getUid().equals(book.getOwner())) {
                             bookTitles.add(title);
+                            books.add(book);
                         }
                     }
                     catch (NullPointerException e) {

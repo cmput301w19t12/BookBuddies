@@ -1,0 +1,22 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.cmput301w19t12.android.bookbuddies.MainActivity">
+    <item
+        android:id="@+id/action_myProfile"
+        android:title="@string/myProfile" />
+    <item
+        android:id="@+id/action_settings"
+        android:orderInCategory="100"
+        android:title="@string/action_settings"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/action_signOut"
+        android:orderInCategory="100"
+        android:title="@string/signOutButton"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/action_view_detailed"
+        android:title="@string/detailedListMenuItem" />
+</menu>

@@ -17,6 +17,13 @@ public class Club {
     private Book currentBook;
     private ArrayList<Event> events;
 
+    public Club() {
+        owner = null;
+        name = null;
+        membersList = null;
+        currentBook = null;
+        events = null;
+    }
 
     /**Baseline constructor for the Club class
      * Assigns club owner and name, initializes both lists
@@ -26,6 +33,7 @@ public class Club {
         this.owner = owner;
         this.name = name;
         this.membersList = membersList;
+        this.membersList.add(owner);
         this.events = new ArrayList<>();
     }
 
@@ -85,22 +93,22 @@ public class Club {
 
     /**Adds a new event to the club
      * @param newEvent Event*/
-    /* public void createEvent(Event newEvent){
+     public void createEvent(Event newEvent){
         this.events.add(newEvent);
     }
-    */
+
     /**Deletes an event from the club
      * @param event Event*/
-    /*
+
     public void deleteEvent(Event event){
         this.events.remove(event);
     }
-    */
+
     /**Gets a list of all events associated with a club
      * @return events ArrayList<Event>*/
-    /*
+
     public ArrayList<Event> getEvents(){
         return this.events;
     }
-     */
+
 }

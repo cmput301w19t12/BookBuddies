@@ -8,6 +8,14 @@ package com.cmput301w19t12.bookbuddies;
  * @version 1.0*/
 
 public class BookDetails {
+    public BookDetails() {
+        this.title = null;
+        this.author = null;
+        this.description = null;
+        this.genre = null;
+        this.picturePath = null;
+        this.ISBN = null;
+    }
 
     private String title;
     private String author;
@@ -15,17 +23,31 @@ public class BookDetails {
     private String description;
     private String genre;
     private String ISBN;
+    private String UniqueID;
 
     /**Base constructor for book details
      * @param title String
      * @param author String
      * @param ISBN String
      * @param description String*/
-    BookDetails(String title, String author, String ISBN, String description){
+    BookDetails(String title, String author, String ISBN, String description, String UniqueID){
         this.title = title;
         this.author = author;
         this.ISBN = ISBN;
         this.description = description;
+        this.UniqueID = UniqueID;
+    }
+
+    /**Gets unique ID for the book
+     * @return UniqueID String*/
+    public String getUniqueID(){
+        return this.UniqueID;
+    }
+
+    /**Sets unique ID for the book
+     * @param UniqueID String*/
+    public void setUniqueID(String UniqueID){
+        this.UniqueID = UniqueID;
     }
 
     /**Gets the genre of the book
@@ -86,6 +108,18 @@ public class BookDetails {
      * @param title String*/
     public void setTitle(String title) {
         this.title = title;
+    }
+
+    /**Sets ISBN for the book
+     * @param ISBN String*/
+    public void setISBN(String ISBN){
+        this.ISBN = ISBN;
+    }
+
+    /**Gets ISBN for the book
+     * @return ISBN String*/
+    public String getISBN(){
+        return this.ISBN;
     }
 
 }

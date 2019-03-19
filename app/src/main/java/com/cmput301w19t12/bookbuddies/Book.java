@@ -15,7 +15,7 @@ public class Book {
      * @param owner String
      * @param bookDetails BookDetails
      * @param status String*/
-    Book(String owner, BookDetails bookDetails, String status){
+    public Book(String owner, BookDetails bookDetails, String status){
         this.owner = owner;
         this.bookDetails = bookDetails;
         this.status = status;

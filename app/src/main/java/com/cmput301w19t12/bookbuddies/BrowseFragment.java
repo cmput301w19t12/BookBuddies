@@ -1,14 +1,34 @@
 package com.cmput301w19t12.bookbuddies;
 
+import android.app.SearchManager;
 import android.content.Context;
+import android.database.MatrixCursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.BaseColumns;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.view.MenuItemCompat;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.SearchView;
+import android.widget.SimpleCursorAdapter;
+import android.widget.TextView;
+
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
+
+import java.util.ArrayList;
 
 
 /**
@@ -28,9 +48,12 @@ public class BrowseFragment extends Fragment {
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
-    private SearchView searchBar;
 
+    private SearchView searchBar;
     private OnFragmentInteractionListener mListener;
+    private ArrayList<Book> books;
+    private SimpleCursorAdapter adapter;
+    private CheckBox checkBox;
 
     public BrowseFragment() {
         // Required empty public constructor
@@ -66,14 +89,112 @@ public class BrowseFragment extends Fragment {
      @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
+        adapter = new SimpleCursorAdapter(getActivity(),android.R.layout.simple_list_item_1,null,new String[]{"Book"},new int[] {android.R.id.text1});
+        books = new ArrayList<>();
+
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_browse, container, false);
     }
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        checkBox = view.findViewById(R.id.showUnavailableCheck);
+        checkBox.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                checkBox.toggle();
+                Log.i("STUFF","IT GOT CLICKED");
+            }
+        });
+
         searchBar = (SearchView) view.findViewById(R.id.bookSearch);
         searchBar.setQueryHint("Search for books");
+        SearchManager searchManager = (SearchManager) getActivity().getSystemService(Context.SEARCH_SERVICE);
+        searchBar.setSearchableInfo(searchManager.getSearchableInfo(getActivity().getComponentName()));
+        searchBar.setSuggestionsAdapter(adapter);
+        searchBar.setIconifiedByDefault(false);
+
+        searchBar.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                //getAllMatches(newText);
+                getAvailableMatches(newText);
+                return false;
+            }
+        });
+
+    }
+
+    private void populateSuggestions(){
+        final MatrixCursor c = new MatrixCursor(new String[]{BaseColumns._ID,"Book"});
+        for (int i = 0; i < books.size(); i++){
+            c.addRow(new Object[]{i,books.get(i).getBookDetails().getTitle()});
+        }
+        adapter.changeCursor(c);
+    }
+
+    private void getAvailableMatches(final String text){
+        books.clear();
+        DatabaseReference availableRef = FirebaseDatabase.getInstance().getReference("Books").child("Available");
+        availableRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                String id = FirebaseAuth.getInstance().getUid();
+                for (DataSnapshot snap : dataSnapshot.getChildren()) {
+                    Book book = snap.getValue(Book.class);
+                    try {
+                        if (book.getOwner().equals(id) && book.getBookDetails().getTitle().contains(text)) {
+                            books.add(book);
+                            Log.i("STUFF", snap.getKey());
+                        }
+                    }catch (Exception e){
+                        // ignore
+                    }
+                }
+                populateSuggestions();
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    private void getAllMatches(final String text){
+        books.clear();
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Books");
+        ref.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                String UID = FirebaseAuth.getInstance().getUid();
+                for (DataSnapshot category : dataSnapshot.getChildren()) {
+                    for (DataSnapshot bookData : category.getChildren()) {
+                        Book book = bookData.getValue(Book.class);
+                        try {
+                            if (book.getOwner().equals(UID) && book.getBookDetails().getTitle().contains(text)) {
+                                books.add(book);
+                                Log.i("STUFF", bookData.getKey());
+                            }
+                        } catch (Exception e) {
+                            // ignore
+                        }
+                    }
+                }
+                populateSuggestions();
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
     }
 
     // TODO: Rename method, update argument and hook method into UI event

@@ -71,34 +71,34 @@ public class LogInActivity extends AppCompatActivity {
         final String email = emailField.getText().toString();
         final String password = passwordField.getText().toString();
 
-            try {
-                //Toast.makeText(LogInActivity.this, "IN TRY", Toast.LENGTH_LONG).show();
-                // attempt to sign in using the email and password of the user
-                mAuth.signInWithEmailAndPassword(email, password)
-                        .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                            @Override
-                            public void onComplete(@NonNull Task<AuthResult> task) {
-                                if (task.isSuccessful()) {
-                                    // if auth is successful, get the user and make a toast
-                                    FirebaseUser user = mAuth.getCurrentUser();
-                                    // UPDATE UI STUFF HERE
-                                    Toast.makeText(LogInActivity.this, String.format("%s is signed in",
-                                            email), Toast.LENGTH_LONG).show();
-                                    Log.i("STUFF", "LOGIN WORKED");
-                                    finish();
-                                } else {
-                                    // else print error to the log
-                                    Toast.makeText(LogInActivity.this, "USER DOES NOT EXIST", Toast.LENGTH_LONG).show();
-                                    Log.i("STUFF", "LOGIN ERROR");
-                                }
+        try {
+            //Toast.makeText(LogInActivity.this, "IN TRY", Toast.LENGTH_LONG).show();
+            // attempt to sign in using the email and password of the user
+            mAuth.signInWithEmailAndPassword(email, password)
+                    .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                        @Override
+                        public void onComplete(@NonNull Task<AuthResult> task) {
+                            if (task.isSuccessful()) {
+                                // if auth is successful, get the user and make a toast
+                                FirebaseUser user = mAuth.getCurrentUser();
+                                // UPDATE UI STUFF HERE
+                                Toast.makeText(LogInActivity.this, String.format("%s is signed in",
+                                        email), Toast.LENGTH_LONG).show();
+                                Log.i("STUFF", "LOGIN WORKED");
+                                finish();
+                            } else {
+                                // else print error to the log
+                                Toast.makeText(LogInActivity.this, "USER DOES NOT EXIST", Toast.LENGTH_LONG).show();
+                                Log.i("STUFF", "LOGIN ERROR");
                             }
-                        });
-            } catch (Exception e) {
-                e.printStackTrace();
-                Log.e("STUFF", e.getMessage());
-                // notify the user that an error has occurred
-                Toast.makeText(getApplicationContext(), "Error occurred during sign in", Toast.LENGTH_LONG).show();
-            }
+                        }
+                    });
+        } catch (Exception e) {
+            e.printStackTrace();
+            Log.e("STUFF", e.getMessage());
+            // notify the user that an error has occurred
+            Toast.makeText(getApplicationContext(), "Error occurred during sign in", Toast.LENGTH_LONG).show();
+        }
 
     }
 }

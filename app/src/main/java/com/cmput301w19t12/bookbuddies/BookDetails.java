@@ -36,6 +36,7 @@ public class BookDetails {
         this.ISBN = ISBN;
         this.description = description;
         this.UniqueID = UniqueID;
+        this.picturePath = null;
     }
 
     /**Gets unique ID for the book
@@ -43,6 +44,7 @@ public class BookDetails {
     public String getUniqueID(){
         return this.UniqueID;
     }
+
 
     /**Sets unique ID for the book
      * @param UniqueID String*/

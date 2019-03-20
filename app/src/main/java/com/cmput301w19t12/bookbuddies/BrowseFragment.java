@@ -1,7 +1,10 @@
 package com.cmput301w19t12.bookbuddies;
 
 import android.app.SearchManager;
+import android.app.SearchableInfo;
 import android.content.Context;
+import android.content.Intent;
+import android.database.Cursor;
 import android.database.MatrixCursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -29,6 +32,8 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 
 
 /**
@@ -51,7 +56,7 @@ public class BrowseFragment extends Fragment {
 
     private SearchView searchBar;
     private OnFragmentInteractionListener mListener;
-    private ArrayList<Book> books;
+    private Set<Book> books;
     private SimpleCursorAdapter adapter;
     private CheckBox checkBox;
 
@@ -89,9 +94,8 @@ public class BrowseFragment extends Fragment {
      @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-
+        books = new HashSet<>();
         adapter = new SimpleCursorAdapter(getActivity(),android.R.layout.simple_list_item_1,null,new String[]{"Book"},new int[] {android.R.id.text1});
-        books = new ArrayList<>();
 
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_browse, container, false);
@@ -99,6 +103,8 @@ public class BrowseFragment extends Fragment {
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+
+        // TODO Actually get the checkbox to work
         checkBox = view.findViewById(R.id.showUnavailableCheck);
         checkBox.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -108,6 +114,7 @@ public class BrowseFragment extends Fragment {
             }
         });
 
+        // Get search view and set searchable attributes
         searchBar = (SearchView) view.findViewById(R.id.bookSearch);
         searchBar.setQueryHint("Search for books");
         SearchManager searchManager = (SearchManager) getActivity().getSystemService(Context.SEARCH_SERVICE);
@@ -115,17 +122,42 @@ public class BrowseFragment extends Fragment {
         searchBar.setSuggestionsAdapter(adapter);
         searchBar.setIconifiedByDefault(false);
 
+        // set query listener to handle user typing detection and final submission
         searchBar.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
+                // once the user decides to submit a query, pass that query to the results activity
+                Intent intent = new Intent(BrowseFragment.this.getContext(),SearchResultsActivity.class);
+                intent.putExtra("query",query);
+                startActivity(intent);
                 return false;
             }
 
             @Override
             public boolean onQueryTextChange(String newText) {
-                //getAllMatches(newText);
-                getAvailableMatches(newText);
+                // Whenever the user changes the contents of the query field, create a list of
+                // suggestions that match the current contents of the query field
+                getSuggestions(newText);
                 return false;
+            }
+        });
+
+
+        searchBar.setOnSuggestionListener(new SearchView.OnSuggestionListener() {
+            @Override
+            public boolean onSuggestionSelect(int position) {
+                return false;
+            }
+
+            @Override
+            public boolean onSuggestionClick(int position) {
+                /*if the user clicks a suggestion, get the text from that suggestion
+                * and use it to fill the query field*/
+                Cursor cursor = searchBar.getSuggestionsAdapter().getCursor();
+                cursor.moveToPosition(position);
+                String suggestion = cursor.getString(1);
+                searchBar.setQuery(suggestion,true);
+                return true;
             }
         });
 
@@ -133,23 +165,30 @@ public class BrowseFragment extends Fragment {
 
     private void populateSuggestions(){
         final MatrixCursor c = new MatrixCursor(new String[]{BaseColumns._ID,"Book"});
+        Book[] bookArray = books.toArray(new Book[books.size()]);
+        // Make rows containing book titles
         for (int i = 0; i < books.size(); i++){
-            c.addRow(new Object[]{i,books.get(i).getBookDetails().getTitle()});
+            c.addRow(new Object[]{i,bookArray[i].getBookDetails().getTitle()});
         }
+        // change adapter to reflect the changes
         adapter.changeCursor(c);
     }
 
-    private void getAvailableMatches(final String text){
+    private void getSuggestions(final String text){
         books.clear();
+        // Get a ref to available books to suggest to the user
         DatabaseReference availableRef = FirebaseDatabase.getInstance().getReference("Books").child("Available");
         availableRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 String id = FirebaseAuth.getInstance().getUid();
+                // iterate over all the books stored in this part of the database
                 for (DataSnapshot snap : dataSnapshot.getChildren()) {
                     Book book = snap.getValue(Book.class);
                     try {
-                        if (book.getOwner().equals(id) && book.getBookDetails().getTitle().contains(text)) {
+                        BookDetails details = book.getBookDetails();
+                        // check if the book title or author contains the query text
+                        if (details.getAuthor().contains(text) || details.getTitle().contains(text)) {
                             books.add(book);
                             Log.i("STUFF", snap.getKey());
                         }
@@ -162,7 +201,7 @@ public class BrowseFragment extends Fragment {
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-
+                Log.e("FirebaseError",databaseError.getMessage());
             }
         });
     }
@@ -178,7 +217,8 @@ public class BrowseFragment extends Fragment {
                     for (DataSnapshot bookData : category.getChildren()) {
                         Book book = bookData.getValue(Book.class);
                         try {
-                            if (book.getOwner().equals(UID) && book.getBookDetails().getTitle().contains(text)) {
+                            BookDetails details = book.getBookDetails();
+                            if (details.getAuthor().contains(text) || details.getTitle().contains(text)) {
                                 books.add(book);
                                 Log.i("STUFF", bookData.getKey());
                             }

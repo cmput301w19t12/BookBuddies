@@ -53,7 +53,6 @@ public class book_details extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_book_details);
         Bundle b = getIntent().getExtras();
-        final String ID = b.getString("ID");
         book = new Gson().fromJson(b.getString("book"),Book.class);
         BookDetails d = book.getBookDetails();
         getImage(d.getUniqueID());

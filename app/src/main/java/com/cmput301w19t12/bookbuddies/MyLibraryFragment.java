@@ -249,7 +249,7 @@ public class MyLibraryFragment extends Fragment {
         });
     }
     public void switchToDetails(Book book){
-        Intent intent = new Intent(MyLibraryFragment.this.getContext(), book_details.class);
+        Intent intent = new Intent(MyLibraryFragment.this.getContext(), BookDetailsActivity.class);
         intent.putExtra("book",new Gson().toJson(book));
         startActivity(intent);
     }

@@ -115,7 +115,7 @@ public class SearchResultsActivity extends AppCompatActivity {
                         // get the book that contains the matching id and pass it to book details
                         for (Book book : books){
                             if (book.getBookDetails().getUniqueID().equals(view.getTag())){
-                                Intent intent = new Intent(SearchResultsActivity.this,book_details.class);
+                                Intent intent = new Intent(SearchResultsActivity.this,BookDetailsActivity.class);
                                 intent.putExtra("book",new Gson().toJson(book));
                                 startActivity(intent);
                             }

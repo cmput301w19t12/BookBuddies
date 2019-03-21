@@ -4,10 +4,12 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.net.Uri;
 import android.support.annotation.NonNull;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -34,17 +36,18 @@ import com.google.gson.Gson;
 
 
 
-public class book_details extends AppCompatActivity {
-    private EditText titleField;
-    private EditText authorField;
-    private EditText ISBNField;
-    private EditText ownerField;
-    private EditText statusField;
-    private EditText descriptionField;
+public class BookDetailsActivity extends AppCompatActivity {
+    private TextView titleField;
+    private TextView authorField;
+    private TextView ISBNField;
+    private TextView ownerField;
+    private TextView statusField;
+    private TextView descriptionField;
     private String username;
     private DatabaseReference userRef;
     private DatabaseReference userLibRef;
     private Book book;
+    private FloatingActionButton editButton;
 
 
     /**onCreate method inits all variables and sets click listeners*/
@@ -56,12 +59,26 @@ public class book_details extends AppCompatActivity {
         book = new Gson().fromJson(b.getString("book"),Book.class);
         BookDetails d = book.getBookDetails();
         getImage(d.getUniqueID());
-        titleField = findViewById(R.id.titleLayout);
-        authorField = findViewById(R.id.authorLayout);
-        ISBNField = findViewById(R.id.isbnLayout);
-        ownerField = findViewById(R.id.ownerLayout);
-        statusField = findViewById(R.id.statusLayout);
-        descriptionField = findViewById(R.id.descriptionLayout);
+        titleField = findViewById(R.id.titleEdit);
+        authorField = findViewById(R.id.authorEdit);
+        ISBNField = findViewById(R.id.ISBNEdit);
+        ownerField = findViewById(R.id.ownerEdit);
+        statusField = findViewById(R.id.statusEdit);
+        descriptionField = findViewById(R.id.DesEdit);
+        editButton = findViewById(R.id.editButton);
+
+        editButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(BookDetailsActivity.this,EditBookDetailsActivity.class);
+                intent.putExtra("book",new Gson().toJson(book));
+                startActivity(intent);
+            }
+        });
+
+
+
+
         userRef = FirebaseDatabase.getInstance().getReference("Users").child(book.getOwner()).child("username");
         userLibRef = FirebaseDatabase.getInstance().getReference("Books");
 

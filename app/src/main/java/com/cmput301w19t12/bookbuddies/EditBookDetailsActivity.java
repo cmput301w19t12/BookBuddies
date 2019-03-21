@@ -5,11 +5,11 @@ import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
-import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
+import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -18,6 +18,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.PopupMenu;
 
+import com.bumptech.glide.Glide;
 import com.ceylonlabs.imageviewpopup.ImagePopup;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -28,17 +29,11 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+import com.google.gson.Gson;
+
 import java.io.ByteArrayOutputStream;
 
-
-/**NewBookActivity allows user to create a new book in the database and add a picture to the book
- *
- * @author bgrenier
- * @version 1.0*/
-
-
-public class NewBookActivity extends AppCompatActivity implements PopupMenu.OnMenuItemClickListener {
-
+public class EditBookDetailsActivity extends AppCompatActivity implements PopupMenu.OnMenuItemClickListener {
 
     private DatabaseReference userLibRef;
     private DatabaseReference allBooksRef;
@@ -53,6 +48,8 @@ public class NewBookActivity extends AppCompatActivity implements PopupMenu.OnMe
     private EditText desField;
     private Button editImage;
     private ImageView bookImage;
+
+    private Book book;
 
     private static final int SELECT_PICTURE = 1;
 
@@ -110,6 +107,33 @@ public class NewBookActivity extends AppCompatActivity implements PopupMenu.OnMe
             }
         });
 
+        fillFields();
+
+    }
+
+    private void fillFields(){
+        Bundle b = getIntent().getExtras();
+        book = new Gson().fromJson(b.getString("book"),Book.class);
+        BookDetails details = book.getBookDetails();
+        titleField.setText(details.getTitle());
+        authorField.setText(details.getAuthor());
+        ISBNField.setText(details.getISBN());
+        desField.setText(details.getDescription());
+        String ID = details.getUniqueID();
+        try {
+            StorageReference ref = FirebaseStorage.getInstance().getReference().child("images").child(ID);
+
+            ref.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                @Override
+                public void onSuccess(Uri uri) {
+                    Glide.with(getApplicationContext()).load(uri.toString())
+                            .into((ImageView) findViewById(R.id.bookImage));
+                }
+            });
+
+        }catch (Exception e){
+            Log.e("STUFF",e.getMessage());
+        }
     }
 
     private boolean checkFields(){
@@ -136,16 +160,16 @@ public class NewBookActivity extends AppCompatActivity implements PopupMenu.OnMe
     }
 
     /**shows options for editing photo*/
-   public void showMenu(View v){
-       PopupMenu popupMenu = new PopupMenu(this,v);
+    public void showMenu(View v){
+        PopupMenu popupMenu = new PopupMenu(this,v);
 
-       popupMenu.setOnMenuItemClickListener(this);
-       popupMenu.inflate(R.menu.image_edit_main);
-       popupMenu.show();
-   }
+        popupMenu.setOnMenuItemClickListener(this);
+        popupMenu.inflate(R.menu.image_edit_main);
+        popupMenu.show();
+    }
 
-   @Override
-   public boolean onMenuItemClick(MenuItem item){
+    @Override
+    public boolean onMenuItemClick(MenuItem item){
         switch(item.getItemId()){
             case R.id.actionNewImage:
                 takePicture();
@@ -160,24 +184,31 @@ public class NewBookActivity extends AppCompatActivity implements PopupMenu.OnMe
                 return false;
 
         }
-   }
+    }
 
-   private void removeImage(){
-       bookImage.setImageDrawable(null);
-   }
-
-
-   private void takePicture() {
-       Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-       if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
-           startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
-       }
-
-   }
+    private void removeImage(){
+        bookImage.setImageDrawable(null);
+        String key = book.getBookDetails().getUniqueID();
+        mStorageRef.child("images").child(key).delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
+                Log.i("Picture","Picture successfully deleted");
+            }
+        });
+    }
 
 
-   @Override
-   protected void onActivityResult(int requestCode, int resultCode, Intent data){
+    private void takePicture() {
+        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
+            startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
+        }
+
+    }
+
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data){
         super.onActivityResult(requestCode,resultCode,data);
         Log.i("STUFF","STUFF");
         if(requestCode == SELECT_PICTURE && resultCode == RESULT_OK){
@@ -195,32 +226,34 @@ public class NewBookActivity extends AppCompatActivity implements PopupMenu.OnMe
             Bitmap imageBitMap = (Bitmap) extras.get("data");
             bookImage.setImageBitmap(imageBitMap);
         }
-   }
+    }
 
-   private void addPhotoToDatabase(String key){
-       Bitmap bitmap = ((BitmapDrawable) bookImage.getDrawable()).getBitmap();
-       ByteArrayOutputStream baos = new ByteArrayOutputStream();
-       bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
-       byte[] data = baos.toByteArray();
+    private void addPhotoToDatabase(String key){
+        if(bookImage.getDrawable() != null) {
+            Bitmap bitmap = ((BitmapDrawable) bookImage.getDrawable()).getBitmap();
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+            byte[] data = baos.toByteArray();
 
-       UploadTask uploadTask = mStorageRef.child("images").child(key).putBytes(data);
-       uploadTask.addOnFailureListener(new OnFailureListener() {
-           @Override
-           public void onFailure(@NonNull Exception exception) {
-               // Handle unsuccessful uploads
-           }
-       }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-           @Override
-           public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-               // taskSnapshot.getMetadata() contains file metadata such as size, content-type, etc.
-               // ...
-           }
-       });
+            UploadTask uploadTask = mStorageRef.child("images").child(key).putBytes(data);
+            uploadTask.addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception exception) {
+                    // Handle unsuccessful uploads
+                }
+            }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                @Override
+                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                    // taskSnapshot.getMetadata() contains file metadata such as size, content-type, etc.
+                    // ...
+                }
+            });
+        }
 
-       //Needed for testing:
-       startActivity(new Intent(this, MainActivity.class));
-       //-----------------------------------------
-   }
+        //Needed for testing:
+        startActivity(new Intent(this, MainActivity.class));
+        //-----------------------------------------
+    }
 
 
     private void getImageFromStorage(){
@@ -237,7 +270,7 @@ public class NewBookActivity extends AppCompatActivity implements PopupMenu.OnMe
         String author = authorField.getText().toString();
         String ISBN = ISBNField.getText().toString();
         String description = desField.getText().toString();
-        String key = userLibRef.push().getKey();
+        String key = book.getBookDetails().getUniqueID();
         BookDetails details = new BookDetails(title,author,ISBN,description,key);
         String status = "Available";
         Book newBook = new Book(user.getUid(),details,status);
@@ -245,7 +278,6 @@ public class NewBookActivity extends AppCompatActivity implements PopupMenu.OnMe
         userLibRef.child(status).child(key).setValue(newBook);
         allBooksRef.child(status).child(key).setValue(newBook);
         addPhotoToDatabase(key);
-        Intent intent = new Intent(this, MainActivity.class);
-        startActivity(intent);
+        finish();
     }
 }

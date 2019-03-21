@@ -3,10 +3,12 @@
     package="com.cmput301w19t12.bookbuddies">
 
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-feature android:name="android.hardware.camera" android:required="true" />
+    <uses-feature android:name="android.hardware.camera.autofocus" />
 
-    <uses-feature
-        android:name="android.hardware.camera"
-        android:required="true" />
+
 
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
@@ -46,6 +48,8 @@
         <activity android:name=".CreateAccountActivity" />
         <activity android:name=".NewBookActivity" />
         <activity android:name=".LogInActivity" />
+        <activity android:name=".LivePreviewActivity" android:exported="true">
+        </activity>
     </application>
 
 </manifest>

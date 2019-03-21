@@ -6,6 +6,9 @@
         android:id="@+id/action_myProfile"
         android:title="@string/myProfile" />
     <item
+        android:id="@+id/scanTest"
+        android:title="Scan" />
+    <item
         android:id="@+id/action_settings"
         android:orderInCategory="100"
         android:title="@string/action_settings"

@@ -47,6 +47,7 @@ public class NewBookActivity extends AppCompatActivity implements PopupMenu.OnMe
     private StorageReference mStorageRef;
 
     private FloatingActionButton addButton;
+    private FloatingActionButton scanButton;
     private EditText titleField;
     private EditText authorField;
     private EditText ISBNField;
@@ -55,8 +56,8 @@ public class NewBookActivity extends AppCompatActivity implements PopupMenu.OnMe
     private ImageView bookImage;
 
     private static final int SELECT_PICTURE = 1;
-
     private static final int REQUEST_IMAGE_CAPTURE = 2;
+    private static final int SCAN_ISBN = 3;
 
 
     @Override
@@ -107,6 +108,16 @@ public class NewBookActivity extends AppCompatActivity implements PopupMenu.OnMe
             @Override
             public void onClick(View v) {
                 showMenu(v);
+            }
+        });
+
+        scanButton = findViewById(R.id.scanButton);
+        scanButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // open ISBN scanning activity
+                Intent intent = new Intent(NewBookActivity.this, LivePreviewActivity.class);
+                startActivityForResult(intent,SCAN_ISBN);
             }
         });
 
@@ -179,7 +190,6 @@ public class NewBookActivity extends AppCompatActivity implements PopupMenu.OnMe
    @Override
    protected void onActivityResult(int requestCode, int resultCode, Intent data){
         super.onActivityResult(requestCode,resultCode,data);
-        Log.i("STUFF","STUFF");
         if(requestCode == SELECT_PICTURE && resultCode == RESULT_OK){
             Uri selectedImageUri = data.getData();
             try {
@@ -194,6 +204,11 @@ public class NewBookActivity extends AppCompatActivity implements PopupMenu.OnMe
             Bundle extras = data.getExtras();
             Bitmap imageBitMap = (Bitmap) extras.get("data");
             bookImage.setImageBitmap(imageBitMap);
+        }
+        else if(requestCode == SCAN_ISBN && resultCode == RESULT_OK){
+            // get returned isbn from scanner and put it in ISBN field
+            String result = data.getStringExtra("result");
+            ISBNField.setText(result);
         }
    }
 

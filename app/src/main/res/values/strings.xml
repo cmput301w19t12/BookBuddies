@@ -35,5 +35,7 @@
     <string name="AddClubTitle">Add a new club</string>
     <string name="detailedListMenuItem">Detailed Book List</string>
     <string name="showUnavailable">Show Unavailable Books</string>
+    <string name="scanTest">Scan</string>
+    <string name="seeRequestButton">See Requests</string>
 
 </resources>

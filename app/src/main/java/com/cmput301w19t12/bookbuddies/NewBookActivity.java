@@ -3,6 +3,7 @@ package com.cmput301w19t12.bookbuddies;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.graphics.Matrix;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
@@ -18,6 +19,12 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.PopupMenu;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 import com.ceylonlabs.imageviewpopup.ImagePopup;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -28,7 +35,19 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.util.ArrayList;
+
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.OkHttpClient;
+
 
 
 /**NewBookActivity allows user to create a new book in the database and add a picture to the book
@@ -55,6 +74,8 @@ public class NewBookActivity extends AppCompatActivity implements PopupMenu.OnMe
     private Button editImage;
     private ImageView bookImage;
 
+    private ArrayList<String> results;
+
     private static final int SELECT_PICTURE = 1;
     private static final int REQUEST_IMAGE_CAPTURE = 2;
     private static final int SCAN_ISBN = 3;
@@ -70,6 +91,8 @@ public class NewBookActivity extends AppCompatActivity implements PopupMenu.OnMe
         user = mAuth.getCurrentUser();
         allBooksRef = FirebaseDatabase.getInstance().getReference("Books");
         userLibRef = FirebaseDatabase.getInstance().getReference("Users").child(user.getUid()).child("Books").child("Owned");
+
+        results = new ArrayList<>();
 
 
         // get all the input fields
@@ -194,6 +217,7 @@ public class NewBookActivity extends AppCompatActivity implements PopupMenu.OnMe
             Uri selectedImageUri = data.getData();
             try {
                 Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), selectedImageUri);
+
                 bookImage.setImageBitmap(bitmap);
             }
             catch (Exception e){
@@ -203,14 +227,59 @@ public class NewBookActivity extends AppCompatActivity implements PopupMenu.OnMe
         else if(requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK){
             Bundle extras = data.getExtras();
             Bitmap imageBitMap = (Bitmap) extras.get("data");
+
+            Matrix matrix = new Matrix();
+            matrix.postRotate(90);
+            imageBitMap =  Bitmap.createBitmap(imageBitMap, 0, 0, imageBitMap.getWidth(), imageBitMap.getHeight(), matrix, true);
+
             bookImage.setImageBitmap(imageBitMap);
         }
         else if(requestCode == SCAN_ISBN && resultCode == RESULT_OK){
             // get returned isbn from scanner and put it in ISBN field
             String result = data.getStringExtra("result");
             ISBNField.setText(result);
+            getBookDetails(result);
         }
    }
+
+    private void getBookDetails(String ISBN){
+        String url = "https://www.googleapis.com/books/v1/volumes?q=isbn:" + ISBN;
+
+        // Instantiate the RequestQueue.
+        RequestQueue queue = Volley.newRequestQueue(this);
+
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        try {
+                            JSONObject json = new JSONObject(response);
+                            JSONArray jArray = json.getJSONArray("items");
+                            JSONObject volumeInfo = jArray.getJSONObject(0).getJSONObject("volumeInfo");
+                            String title = volumeInfo.getString("title");
+                            String description = volumeInfo.getString("description");
+                            JSONArray authors = volumeInfo.getJSONArray("authors");
+                            String author = authors.getString(0);
+                            if(!(title.isEmpty())) {
+                                titleField.setText(title);
+                            }
+                            if(!(author.isEmpty())) {
+                                authorField.setText(author);
+                            }
+                            if(!(description.isEmpty())) {
+                                desField.setText(description);
+                            }
+                        }catch (Exception e){
+                            //
+                        }
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+            }
+        });
+        queue.add(stringRequest);
+    }
 
    private void addPhotoToDatabase(String key){
        Bitmap bitmap = ((BitmapDrawable) bookImage.getDrawable()).getBitmap();
@@ -247,7 +316,7 @@ public class NewBookActivity extends AppCompatActivity implements PopupMenu.OnMe
 
 
 
-    public void addBookToDatabase(){
+    private void addBookToDatabase(){
         String title = titleField.getText().toString();
         String author = authorField.getText().toString();
         String ISBN = ISBNField.getText().toString();

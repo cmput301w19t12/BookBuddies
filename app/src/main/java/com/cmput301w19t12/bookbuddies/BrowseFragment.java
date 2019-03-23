@@ -187,8 +187,11 @@ public class BrowseFragment extends Fragment {
                     Book book = snap.getValue(Book.class);
                     try {
                         BookDetails details = book.getBookDetails();
+                        String author = details.getAuthor().toLowerCase();
+                        String title = details.getTitle().toLowerCase();
+                        String ISBN = details.getISBN().toLowerCase();
                         // check if the book title or author contains the query text
-                        if (details.getAuthor().contains(text) || details.getTitle().contains(text)) {
+                        if (author.contains(text) || title.contains(text) || ISBN.contains(text)) {
                             books.add(book);
                             Log.i("STUFF", snap.getKey());
                         }
@@ -206,36 +209,6 @@ public class BrowseFragment extends Fragment {
         });
     }
 
-    private void getAllMatches(final String text){
-        books.clear();
-        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Books");
-        ref.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                String UID = FirebaseAuth.getInstance().getUid();
-                for (DataSnapshot category : dataSnapshot.getChildren()) {
-                    for (DataSnapshot bookData : category.getChildren()) {
-                        Book book = bookData.getValue(Book.class);
-                        try {
-                            BookDetails details = book.getBookDetails();
-                            if (details.getAuthor().contains(text) || details.getTitle().contains(text)) {
-                                books.add(book);
-                                Log.i("STUFF", bookData.getKey());
-                            }
-                        } catch (Exception e) {
-                            // ignore
-                        }
-                    }
-                }
-                populateSuggestions();
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
-    }
 
     // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {

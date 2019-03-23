@@ -68,13 +68,7 @@ public class MyLibraryFragment extends Fragment {
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static String ARG_PARAM1 = "param1";
     private static String ARG_PARAM2 = "param2";
-    public static final String EXTRA_ttl = "com.cmput301w19t12.bookbuddies.ttl";
-    public static final String EXTRA_auth = "com.cmput301w19t12.bookbuddies.auth";
-    public static final String EXTRA_isbn = "com.cmput301w19t12.bookbuddies.isbn";
-    public static final String EXTRA_owner = "com.cmput301w19t12.bookbuddies.owner";
-    public static final String EXTRA_status = "com.cmput301w19t12.bookbuddies.status";
-    public static final String EXTRA_desc = "com.cmput301w19t12.bookbuddies.desc";
-    // TODO: Rename and change types of parameters
+
     private String mParam1;
     private String mParam2;
     private FirebaseUser user;
@@ -84,12 +78,6 @@ public class MyLibraryFragment extends Fragment {
     private ExpandableListView Menu;
     private HashMap<String, List<String>> menuChildHeaders;
     private FloatingActionButton addNew;
-    private String ttl;
-    private String author;
-    private String isbn;
-    private String owner;
-    private String status;
-    private String desc;
 
     private OnFragmentInteractionListener mListener;
     private ArrayList<String> bookTitles;
@@ -251,6 +239,11 @@ public class MyLibraryFragment extends Fragment {
     public void switchToDetails(Book book){
         Intent intent = new Intent(MyLibraryFragment.this.getContext(), BookDetailsActivity.class);
         intent.putExtra("book",new Gson().toJson(book));
+        boolean isOwner = false;
+        if(book.getOwner().equals(mAuth.getUid())){
+            isOwner = true;
+        }
+        intent.putExtra("isOwner",isOwner);
         startActivity(intent);
     }
     /**

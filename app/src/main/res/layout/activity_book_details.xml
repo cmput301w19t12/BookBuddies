@@ -156,6 +156,15 @@
                 android:layout_marginTop="70dp"
                 android:layout_marginLeft="150dp" />
 
+            <Button
+                android:id="@+id/requestButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/RequestButton"
+                android:layout_below="@id/statusLayout"
+                android:layout_marginTop="70dp"
+                android:layout_marginLeft="150dp" />
+
 
         </RelativeLayout>
     </android.support.v4.widget.NestedScrollView>

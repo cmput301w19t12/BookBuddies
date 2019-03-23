@@ -13,6 +13,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.ceylonlabs.imageviewpopup.ImagePopup;
@@ -48,6 +49,8 @@ public class BookDetailsActivity extends AppCompatActivity {
     private DatabaseReference userLibRef;
     private Book book;
     private FloatingActionButton editButton;
+    private Button requestBookButton;
+    private Button seeRequestsButton;
 
 
     /**onCreate method inits all variables and sets click listeners*/
@@ -58,7 +61,9 @@ public class BookDetailsActivity extends AppCompatActivity {
         Bundle b = getIntent().getExtras();
         book = new Gson().fromJson(b.getString("book"),Book.class);
         BookDetails d = book.getBookDetails();
-        getImage(d.getUniqueID());
+
+
+
         titleField = findViewById(R.id.titleEdit);
         authorField = findViewById(R.id.authorEdit);
         ISBNField = findViewById(R.id.ISBNEdit);
@@ -66,6 +71,39 @@ public class BookDetailsActivity extends AppCompatActivity {
         statusField = findViewById(R.id.statusEdit);
         descriptionField = findViewById(R.id.DesEdit);
         editButton = findViewById(R.id.editButton);
+
+
+        requestBookButton = findViewById(R.id.requestButton);
+        seeRequestsButton = findViewById(R.id.seeRequestsButton);
+        boolean isOwner = b.getBoolean("isOwner");
+        if (isOwner){
+            requestBookButton.setVisibility(View.INVISIBLE);
+            requestBookButton.setClickable(false);
+        }
+        else{
+            seeRequestsButton.setVisibility(View.INVISIBLE);
+            requestBookButton.setClickable(false);
+            //editButton.setVisibility(View.INVISIBLE);
+            editButton.setClickable(false);
+
+        }
+        seeRequestsButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(getApplicationContext(),"See Requests clicked",Toast.LENGTH_LONG).show();
+            }
+        });
+
+        requestBookButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(getApplicationContext(),"Request book clicked",Toast.LENGTH_LONG).show();
+            }
+        });
+
+
+        getImage(d.getUniqueID());
+
 
         editButton.setOnClickListener(new View.OnClickListener() {
             @Override

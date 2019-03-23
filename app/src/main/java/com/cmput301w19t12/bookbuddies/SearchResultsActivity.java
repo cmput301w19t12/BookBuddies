@@ -41,7 +41,7 @@ public class SearchResultsActivity extends AppCompatActivity {
         query = b.getString("query");
         books = new ArrayList<>();
         entries = new ArrayList<>();
-        getMatches(query);
+        getMatches(query.toLowerCase());
 
 
     }
@@ -63,8 +63,11 @@ public class SearchResultsActivity extends AppCompatActivity {
                         Book book = bookData.getValue(Book.class);
                         try {
                             BookDetails details = book.getBookDetails();
-                            // add book if it conatains the query and has the acceptable status
-                            if ((details.getAuthor().contains(text) || details.getTitle().contains(text))
+                            String author = details.getAuthor().toLowerCase();
+                            String title = details.getTitle().toLowerCase();
+                            String ISBN = details.getISBN();
+                            // add book if it contains the query and has the acceptable status
+                            if ((author.contains(text) || title.contains(text) || ISBN.contains(text))
                                     && acceptableStatus.contains(book.getStatus())) {
                                 books.add(book);
                                 Log.i("STUFF", bookData.getKey());

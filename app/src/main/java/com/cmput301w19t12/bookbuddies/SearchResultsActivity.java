@@ -57,7 +57,7 @@ public class SearchResultsActivity extends AppCompatActivity {
                 ArrayList<String> acceptableStatus = new ArrayList<>();
                 acceptableStatus.add("Available");
                 acceptableStatus.add("Requested");
-                // zearch through all books in the database
+                // search through all books in the database
                 for (DataSnapshot category : dataSnapshot.getChildren()) {
                     for (DataSnapshot bookData : category.getChildren()) {
                         Book book = bookData.getValue(Book.class);

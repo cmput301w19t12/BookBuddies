@@ -5,6 +5,7 @@ package com.cmput301w19t12.bookbuddies;
 import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
@@ -17,6 +18,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -30,12 +32,19 @@ import android.widget.Toast;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 public class MainActivity extends AppCompatActivity implements ClubFragment.OnFragmentInteractionListener,
         BrowseFragment.OnFragmentInteractionListener,
         MyLibraryFragment.OnFragmentInteractionListener {
 
-
+    private DatabaseReference userRef;
+    private FirebaseAuth mAuth;
+    private User user;
     @Override
     public void onFragmentInteraction(Uri uri) {
         //https://stackoverflow.com/questions/24777985/how-to-implement-onfragmentinteractionlistener
@@ -94,6 +103,8 @@ public class MainActivity extends AppCompatActivity implements ClubFragment.OnFr
 
         FirebaseApp.initializeApp(getApplicationContext());
 
+        mAuth = FirebaseAuth.getInstance();
+        userRef = FirebaseDatabase.getInstance().getReference("Users");
     }
 
     public void checkLoggedIn(){
@@ -143,8 +154,10 @@ public class MainActivity extends AppCompatActivity implements ClubFragment.OnFr
                 checkLoggedIn();
                 break;
             case R.id.action_myProfile:
-                Intent profileIntent = new Intent(this,MyProfileActivity.class);
-                startActivity(profileIntent);
+                getCurrentUser();
+               // Intent profileIntent = new Intent(this,MyProfileActivity.class);
+              //  profileIntent.putExtra("username", user.getUsername());
+             //   startActivity(profileIntent);
                 return true;
             case R.id.scanTest:
                 Intent intent = new Intent(this, LivePreviewActivity.class);
@@ -192,6 +205,24 @@ public class MainActivity extends AppCompatActivity implements ClubFragment.OnFr
             textView.setText(getString(R.string.section_format, getArguments().getInt(ARG_SECTION_NUMBER)));
             return rootView;
         }
+    }
+
+    public void getCurrentUser(){
+        userRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                FirebaseUser userDB = mAuth.getCurrentUser();
+                String userId = userDB.getUid();
+                user = dataSnapshot.child(userId).getValue(User.class);
+                Intent profileIntent = new Intent(MainActivity.this,MyProfileActivity.class);
+                profileIntent.putExtra("username", user.getUsername());
+                startActivity(profileIntent);
+            }
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+               //nothing
+            }
+        });
     }
 
 }

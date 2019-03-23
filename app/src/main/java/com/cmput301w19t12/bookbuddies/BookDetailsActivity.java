@@ -76,6 +76,15 @@ public class BookDetailsActivity extends AppCompatActivity {
             }
         });
 
+        ownerField.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(BookDetailsActivity.this, MyProfileActivity.class);
+                intent.putExtra("username", username);
+                startActivity(intent);
+            }
+        });
+
 
 
 

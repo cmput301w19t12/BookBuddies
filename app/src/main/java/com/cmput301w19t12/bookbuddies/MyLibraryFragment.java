@@ -9,7 +9,9 @@
  */
 package com.cmput301w19t12.bookbuddies;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -17,11 +19,13 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ExpandableListAdapter;
 import android.widget.ExpandableListView;
@@ -235,7 +239,64 @@ public class MyLibraryFragment extends Fragment {
                 return false;
             }
         });
+
+        Menu.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                if (ExpandableListView.getPackedPositionType(id) == ExpandableListView.PACKED_POSITION_TYPE_CHILD) {
+                    //int groupPosition = ExpandableListView.getPackedPositionGroup(id);
+                    //int childPosition = ExpandableListView.getPackedPositionChild(id);
+                    getDeleteConfirmation((Book) view.getTag()).show();
+                    return true;
+                }
+
+                return false;
+            }
+        });
+
     }
+
+    private AlertDialog getDeleteConfirmation(final Book book) {
+        return new AlertDialog.Builder(getContext())
+                .setTitle("Delete Book")
+                .setMessage("Are you sure you want to delete this book?")
+                .setPositiveButton("Delete", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        removeBook(book);
+                    }
+                })
+                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                })
+                .create();
+    }
+
+    public void removeBook(final Book book){
+        //toDO
+        final DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child("Books").child("Available");
+        ref.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    Book temp = snapshot.getValue(Book.class);
+                    if (temp.getBookDetails().getTitle().equals(book.getBookDetails().getTitle())) {
+                        ref.child(snapshot.getKey()).removeValue();
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+
     public void switchToDetails(Book book){
         Intent intent = new Intent(MyLibraryFragment.this.getContext(), BookDetailsActivity.class);
         intent.putExtra("book",new Gson().toJson(book));

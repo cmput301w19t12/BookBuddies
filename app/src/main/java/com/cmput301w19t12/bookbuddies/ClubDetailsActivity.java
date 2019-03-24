@@ -41,6 +41,7 @@ public class ClubDetailsActivity extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
         Intent intent = getIntent();
         clubName = intent.getStringExtra("CLUB DETAILS NAME");
+        intent.removeExtra("CLUB DETAILS NAME");
         clubNameTV = findViewById(R.id.clubDetailsName);
         clubEventTV = findViewById(R.id.clubDetailsClubEvents);
         clubBookTV = findViewById(R.id.clubDetailsBookName);
@@ -76,11 +77,12 @@ public class ClubDetailsActivity extends AppCompatActivity {
                 user = mAuth.getCurrentUser();
                 String userID = user.getUid();
                 User currentUser = dataSnapshot.child(userID).getValue(User.class);
-                if(myClub.getOwner() == currentUser){
+                if(myClub.getOwner().getUsername().equals(currentUser.getUsername())){
                     editButton.setVisibility(View.VISIBLE);
+                    Log.i("Club owner myclub", myClub.getOwner().getUsername());
                 } else {
                     //do not have adding members functionality yet, so no need to implement yet
-                    //editButton.setVisibility(View.GONE);
+                    editButton.setText("Join Club");
                 }
             }
 

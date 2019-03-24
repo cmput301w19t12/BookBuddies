@@ -7,11 +7,13 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -37,6 +39,8 @@ public class MyProfileActivity extends AppCompatActivity {
     private TextView phoneNum;
     private TextView email;
     private User user;
+    private User userViewed;
+    private String usernameToShow;
     private String userId;
     private Button addNew;
 
@@ -54,6 +58,9 @@ public class MyProfileActivity extends AppCompatActivity {
         userId = userDB.getUid();
         user = new User();
         addNew = findViewById(R.id.addNewBook);
+
+        Bundle b = getIntent().getExtras();
+        usernameToShow = b.getString("username");
         addNew.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v){
@@ -61,8 +68,9 @@ public class MyProfileActivity extends AppCompatActivity {
             }
         });
 
-        setTextViews();
+        getUserData();
 
+/*
         fullName.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
@@ -91,8 +99,34 @@ public class MyProfileActivity extends AppCompatActivity {
                 return true;
             }
         });
+*/
 
+    }
 
+    public void setEditListeners(){
+        if(userViewed.getUsername().equals(user.getUsername())){
+            fullName.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+                    openEditMenu(0);
+                    return true;
+                }
+            });
+            phoneNum.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+                    openEditMenu(1);
+                    return true;
+                }
+            });
+            email.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+                    openEditMenu(2);
+                    return true;
+                }
+            });
+        }
     }
 
     /**launches new book activity*/
@@ -101,42 +135,53 @@ public class MyProfileActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
-
-    /**Populates text views*/
-    public void setTextViews(){
+    public void getUserData(){
         userRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 FirebaseUser userDB = mAuth.getCurrentUser();
                 String userId = userDB.getUid();
                 user = dataSnapshot.child(userId).getValue(User.class);
-
-                if(user.getFullName().equals("")) {
-                    if(user.getUsername().equals("")) {
-                        fullName.setText("John Doe");
-                    } else {
-                        fullName.setText(user.getUsername());
+                for (DataSnapshot allUsers : dataSnapshot.getChildren()) {
+                    User tempUser = allUsers.getValue(User.class);
+                    try {
+                        String usernameViewed = tempUser.getUsername();
+                        if (usernameViewed.equals(usernameToShow)) {
+                            userViewed = tempUser;
+                            Log.i("USER", userViewed.getUsername());
+                            setTextViews();
+                            setEditListeners();
+                        }
+                    } catch (Exception e) {
+                        // ignore
                     }
-                } else {
-                    fullName.setText(user.getFullName());
                 }
-
-                if(user.getUsername().equals("")) {
-                    username.setText("no_username");
-                }else {
-                    username.setText(user.getUsername());
-                }
-                phoneNum.setText("Phone: " + user.getPhoneNumber());
-                email.setText("Email: " +user.getEmailAddress());
-
-
             }
-
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
 
             }
         });
+    }
+
+    /**Populates text views*/
+    public void setTextViews(){
+        if(userViewed.getFullName().equals("")) {
+            if(userViewed.getUsername().equals("")) {
+                fullName.setText("John Doe");
+            } else {
+                fullName.setText(userViewed.getUsername());
+            }
+        } else {
+            fullName.setText(userViewed.getFullName());
+        }
+        if(userViewed.getUsername().equals("")) {
+            username.setText("no_username");
+        }else {
+            username.setText(userViewed.getUsername());
+        }
+        phoneNum.setText("Phone: " + userViewed.getPhoneNumber());
+        email.setText("Email: " +userViewed.getEmailAddress());
     }
 
     /**Opens menu to edit profile information*/
@@ -168,14 +213,10 @@ public class MyProfileActivity extends AppCompatActivity {
                                         userRef.child(userId).setValue(user);
                                         break;
                                     case 1:
-                                        user.setUsername(userInput.getText().toString());
-                                        userRef.child(userId).setValue(user);
-                                        break;
-                                    case 2:
                                         user.setPhoneNumber(userInput.getText().toString());
                                         userRef.child(userId).setValue(user);
                                         break;
-                                    case 3:
+                                    case 2:
                                         user.setEmailAddress(userInput.getText().toString());
                                         userRef.child(userId).setValue(user);
                                         break;

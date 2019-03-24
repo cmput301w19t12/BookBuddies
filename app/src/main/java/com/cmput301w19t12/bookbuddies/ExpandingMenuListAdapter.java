@@ -185,7 +185,6 @@ public class ExpandingMenuListAdapter extends BaseExpandableListAdapter {
                     .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             convertView = infalInflater.inflate(R.layout.list_item, null);
             convertView.setTag(book);
-            Log.i("STUFFY",String.format("%s | %s",childHeaderTitle,book.getBookDetails().getTitle()));
         }
         TextView text = (TextView) convertView.findViewById(R.id.ChildHeader);
         text.setText(childHeaderTitle);

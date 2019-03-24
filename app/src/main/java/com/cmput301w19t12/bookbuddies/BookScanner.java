@@ -23,8 +23,8 @@ public class BookScanner {
     /**Scan the ISBN code on a book and return it
      * @return ISBN String*/
     public String scan(){
-        // however this works
-        // this.ISBN = a thing
+
         return this.ISBN;
     }
+
 }

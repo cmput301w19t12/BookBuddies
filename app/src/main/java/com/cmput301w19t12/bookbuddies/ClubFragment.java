@@ -205,7 +205,7 @@ public class ClubFragment extends Fragment {
                     for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                         club = snapshot.getValue(Club.class);
                         Log.i("Club names", "" + club.getName() + " | " + club.getOwner().getUsername() + " | " + username);
-                        if (((club.getOwner().getUsername()).equals(username)) || (club.getMembers().contains(username))) {
+                        if (((club.getOwner().getUsername()).equals(username)) /*|| (club.getMembers().contains(username))*/) {
                             myClubNames.add(club.getName());
                         }
                     }

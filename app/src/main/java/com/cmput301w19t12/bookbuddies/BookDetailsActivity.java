@@ -83,7 +83,7 @@ public class BookDetailsActivity extends AppCompatActivity {
         else{
             seeRequestsButton.setVisibility(View.INVISIBLE);
             requestBookButton.setClickable(false);
-            //editButton.setVisibility(View.INVISIBLE);
+            //actionButton.setVisibility(View.INVISIBLE);
             editButton.setClickable(false);
 
         }

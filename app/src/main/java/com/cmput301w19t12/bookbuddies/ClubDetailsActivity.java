@@ -32,7 +32,7 @@ public class ClubDetailsActivity extends AppCompatActivity {
     TextView clubNameTV;
     TextView clubBookTV;
     TextView clubEventTV;
-    Button editButton;
+    Button actionButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,10 +41,11 @@ public class ClubDetailsActivity extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
         Intent intent = getIntent();
         clubName = intent.getStringExtra("CLUB DETAILS NAME");
+        intent.removeExtra("CLUB DETAILS NAME");
         clubNameTV = findViewById(R.id.clubDetailsName);
         clubEventTV = findViewById(R.id.clubDetailsClubEvents);
         clubBookTV = findViewById(R.id.clubDetailsBookName);
-        editButton = findViewById(R.id.clubDetailsEditButton);
+        actionButton = findViewById(R.id.clubDetailsEditButton);
         getClubInfo();
     }
 
@@ -76,11 +77,18 @@ public class ClubDetailsActivity extends AppCompatActivity {
                 user = mAuth.getCurrentUser();
                 String userID = user.getUid();
                 User currentUser = dataSnapshot.child(userID).getValue(User.class);
-                if(myClub.getOwner() == currentUser){
-                    editButton.setVisibility(View.VISIBLE);
+                if(myClub.getOwner().getUsername().equals(currentUser.getUsername())){
+                    actionButton.setVisibility(View.VISIBLE);
+                    Log.i("Club owner myclub", myClub.getOwner().getUsername());
                 } else {
                     //do not have adding members functionality yet, so no need to implement yet
-                    //editButton.setVisibility(View.GONE);
+                    actionButton.setText("Join Club");
+                    actionButton.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+
+                        }
+                    });
                 }
             }
 

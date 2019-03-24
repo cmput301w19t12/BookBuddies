@@ -85,8 +85,8 @@ public class DetailedBookList extends AppCompatActivity {
 
     public String addBookToList(Book aBook) {
         String titleText = "Book Title: " + aBook.getBookDetails().getTitle();
-        String statusText = "Book Status: " + aBook.getBookDetails().getTitle();
-        String descriptionText = "Book Description: " + aBook.getBookDetails().getTitle();
+        String statusText = "Book Status: " + aBook.getStatus();
+        String descriptionText = "Book Description: " + aBook.getBookDetails().getDescription();
         String concatText = "\n" + titleText + "\n" + statusText + "\n" + descriptionText + "\n";
         return concatText;
     }

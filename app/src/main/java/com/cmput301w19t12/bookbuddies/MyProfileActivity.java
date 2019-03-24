@@ -23,6 +23,11 @@ import com.google.firebase.database.ValueEventListener;
 
 import org.w3c.dom.Text;
 
+
+/**Presents the user with their profile information
+ *
+ * @verion 1.0*/
+
 public class MyProfileActivity extends AppCompatActivity {
 
     private DatabaseReference userRef;
@@ -89,10 +94,15 @@ public class MyProfileActivity extends AppCompatActivity {
 
 
     }
+
+    /**launches new book activity*/
     public void switchToNewBook(){
         Intent intent = new Intent(this, NewBookActivity.class);
         startActivity(intent);
     }
+
+
+    /**Populates text views*/
     public void setTextViews(){
         userRef.addValueEventListener(new ValueEventListener() {
             @Override
@@ -129,6 +139,7 @@ public class MyProfileActivity extends AppCompatActivity {
         });
     }
 
+    /**Opens menu to edit profile information*/
     public void openEditMenu(final int field){
 
         LayoutInflater li = LayoutInflater.from(this);

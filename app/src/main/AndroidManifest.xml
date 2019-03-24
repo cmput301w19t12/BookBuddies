@@ -18,7 +18,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".DetailedBookList"></activity>
+        <activity android:name=".ClubDetailsActivity"></activity>
         <activity android:name=".AddClubActivity" />
         <activity android:name=".book_details" />
         <activity android:name=".MyProfileActivity" />

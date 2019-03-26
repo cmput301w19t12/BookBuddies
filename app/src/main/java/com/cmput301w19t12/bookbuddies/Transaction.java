@@ -1,6 +1,14 @@
 package com.cmput301w19t12.bookbuddies;
 
 import android.location.Location;
+import android.support.annotation.NonNull;
+
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
 import java.util.Date;
 
 /**Transaction class represents a book transaction between two users
@@ -10,22 +18,48 @@ import java.util.Date;
  * @version 1.0*/
 
 public class Transaction {
-    private User owner;
+    public User owner;
     private User borrower;
     private Location location;
     private Book book;
     private Date time;
+    private String transactionType;
+    private String transactionID;
+    private boolean ownerScanned;
+    private boolean borrowerScanned;
 
     /**Base constructor for a Transaction
      * @param owner User
      * @param borrower User
      * @param book Book*/
-    Transaction(User owner, User borrower, Book book,Location location,Date time){
+    Transaction(User owner, User borrower, Book book,String transactionType,String key){
         this.owner = owner;
         this.borrower = borrower;
         this.book = book;
-        this.location = location;
-        this.time = time;
+        this.ownerScanned = false;
+        this.borrowerScanned = false;
+        this.transactionType = transactionType;
+        this.transactionID = key;
+
+    }
+
+    Transaction(){}
+
+
+    public void setTransactionType(String transactionType){
+        this.transactionType = transactionType;
+    }
+
+    public void setTransactionID(String id) {
+        this.transactionID = id;
+    }
+
+    public String getTransactionID(){
+        return this.transactionID;
+    }
+
+    public String getTransactionType(){
+        return this.transactionType;
     }
 
     /**Gets the time of the transaction
@@ -87,5 +121,89 @@ public class Transaction {
     public void setOwner(User owner) {
         this.owner = owner;
     }
+
+
+    public void completeBorrow(){
+        if(transactionComplete()) {
+            DatabaseReference tempRef = FirebaseDatabase.getInstance().getReference("Books").child("Accepted").child(book.getBookDetails().getUniqueID());
+            tempRef.removeValue();
+            tempRef = FirebaseDatabase.getInstance().getReference("Books").child("Borrowed").child(book.getBookDetails().getUniqueID());
+            book.setStatus("Borrowed");
+            tempRef.setValue(book);
+            FirebaseDatabase.getInstance().getReference("Transactions").child(transactionID).removeValue();
+        }
+    }
+
+    public void completeReturn(){
+        if(transactionComplete()){
+            DatabaseReference tempRef = FirebaseDatabase.getInstance().getReference("Books").child("Borrowed").child(book.getBookDetails().getUniqueID());
+            tempRef.removeValue();
+            tempRef = FirebaseDatabase.getInstance().getReference("Books").child("Accepted").child(book.getBookDetails().getUniqueID());
+            book.setStatus("Accepted");
+            tempRef.setValue(book);
+            FirebaseDatabase.getInstance().getReference("Transactions").child(transactionID).removeValue();
+        }
+    }
+
+
+    public void transactionToDatabase(){
+        FirebaseDatabase.getInstance().getReference("Transactions").child(transactionID).setValue(this);
+    }
+
+    public boolean transactionComplete(){
+        return ownerScanned && borrowerScanned;
+    }
+
+    public void setOwnerScanned(boolean bool){
+        this.ownerScanned = bool;
+    }
+
+    public boolean getOwnerScanned(){
+        return this.ownerScanned;
+    }
+
+    public boolean hasOwnerScanned(){
+        DatabaseReference temp = FirebaseDatabase.getInstance().getReference("Transactions").child(transactionID);
+        temp.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                Transaction t = dataSnapshot.getValue(Transaction.class);
+                ownerScanned = t.getOwnerScanned();
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+        return ownerScanned;
+    }
+
+    public void setBorrowerScanned(boolean bool){
+        this.borrowerScanned = bool;
+    }
+
+    public boolean getBorrowerScanned(){
+        return this.borrowerScanned;
+    }
+
+    public boolean hasBorrowerScanned(){
+        DatabaseReference temp = FirebaseDatabase.getInstance().getReference("Transactions").child(transactionID);
+        temp.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                Transaction t = dataSnapshot.getValue(Transaction.class);
+                borrowerScanned = t.getBorrowerScanned();
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+        return borrowerScanned;
+    }
+
+
 
 }

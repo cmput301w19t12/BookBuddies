@@ -13,6 +13,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -46,6 +47,7 @@ import com.google.gson.Gson;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -231,10 +233,21 @@ public class MyLibraryFragment extends Fragment {
         super.onResume();
         makeMenu();
         Menu.setAdapter(new ExpandingMenuListAdapter(getContext(), MenuHeaders, menuChildHeaders,bookList));
-        //TODO: Add the on click listener code here for when a book is clicked
         Menu.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
             @Override
             public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
+
+               /* Book temp = (Book) v.getTag();
+                if(temp.getStatus().equals("Accepted")) {
+                    User owner = new User();
+                    owner.setEmailAddress("grenierb96@gmail.com");
+                    User borrower = new User();
+                    borrower.setEmailAddress("dexterf98@gmail.com");
+                    String key = FirebaseDatabase.getInstance().getReference("Transactions").push().getKey();
+                    Transaction t = new Transaction(owner,borrower, temp, "borrowing",key);
+                    t.transactionToDatabase();
+                }*/
+
                 switchToDetails((Book) v.getTag());
                 return false;
             }
@@ -295,7 +308,6 @@ public class MyLibraryFragment extends Fragment {
             }
         });
     }
-
 
     public void switchToDetails(Book book){
         Intent intent = new Intent(MyLibraryFragment.this.getContext(), BookDetailsActivity.class);

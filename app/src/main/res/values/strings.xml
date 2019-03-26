@@ -38,5 +38,6 @@
     <string name="scanTest">Scan</string>
     <string name="seeRequestButton">See Requests</string>
     <string name="RequestButton">Request Book</string>
+    <string name="acceptButton">Accept Request</string>
 
 </resources>

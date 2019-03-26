@@ -37,6 +37,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.gson.Gson;
 
 public class MainActivity extends AppCompatActivity implements ClubFragment.OnFragmentInteractionListener,
         BrowseFragment.OnFragmentInteractionListener,
@@ -86,7 +87,8 @@ public class MainActivity extends AppCompatActivity implements ClubFragment.OnFr
         setContentView(R.layout.activity_main);
 
         checkLoggedIn();
-        //startActivity(new Intent(MainActivity.this,NewBookActivity.class));
+
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         // Create the adapter that will return a fragment for each of the three
@@ -105,6 +107,33 @@ public class MainActivity extends AppCompatActivity implements ClubFragment.OnFr
 
         mAuth = FirebaseAuth.getInstance();
         userRef = FirebaseDatabase.getInstance().getReference("Users");
+
+
+
+       DatabaseReference tempRef = FirebaseDatabase.getInstance().getReference("Transactions");
+        tempRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                String email = mAuth.getCurrentUser().getEmail();
+                for (DataSnapshot snap : dataSnapshot.getChildren()){
+                    Transaction t = snap.getValue(Transaction.class);
+                    if(email.equals(t.getOwner().getEmailAddress()) || email.equals(t.getBorrower().getEmailAddress())){
+                        Log.i("STUFF",t.getTransactionID());
+                        Log.i("STUFF",t.getOwner().getEmailAddress());
+                        Log.i("STUFF",t.getBorrower().getEmailAddress());
+                        Log.i("STUFF",t.getBook().getBookDetails().getTitle());
+                        Intent i = new Intent(MainActivity.this,BookTransactionActivity.class);
+                        i.putExtra("Transaction",new Gson().toJson(t));
+                        startActivity(i);
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
     }
 
     public void checkLoggedIn(){

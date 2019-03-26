@@ -90,7 +90,7 @@ public class NewBookActivity extends AppCompatActivity implements PopupMenu.OnMe
         mStorageRef = FirebaseStorage.getInstance().getReference();
         user = mAuth.getCurrentUser();
         allBooksRef = FirebaseDatabase.getInstance().getReference("Books");
-        userLibRef = FirebaseDatabase.getInstance().getReference("Users").child(user.getUid()).child("Books").child("Owned");
+        //userLibRef = FirebaseDatabase.getInstance().getReference("Users").child(user.getUid()).child("Books").child("Owned");
 
         results = new ArrayList<>();
 
@@ -321,12 +321,11 @@ public class NewBookActivity extends AppCompatActivity implements PopupMenu.OnMe
         String author = authorField.getText().toString();
         String ISBN = ISBNField.getText().toString();
         String description = desField.getText().toString();
-        String key = userLibRef.push().getKey();
+        String key = allBooksRef.push().getKey();
         BookDetails details = new BookDetails(title,author,ISBN,description,key);
-        String status = "Available";
+        String status = "Accepted";
         Book newBook = new Book(user.getUid(),details,status);
 
-        userLibRef.child(status).child(key).setValue(newBook);
         allBooksRef.child(status).child(key).setValue(newBook);
         addPhotoToDatabase(key);
         Intent intent = new Intent(this, MainActivity.class);

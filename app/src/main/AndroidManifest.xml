@@ -4,13 +4,14 @@
 
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.CAMERA" />
-    <uses-permission android:name="android.permission.INTERNET"/>
-    <uses-feature android:name="android.hardware.camera" android:required="true" />
+    <uses-permission android:name="android.permission.INTERNET" />
+
+    <uses-feature
+        android:name="android.hardware.camera"
+        android:required="true" />
     <uses-feature android:name="android.hardware.camera.autofocus" />
-    <uses-permission android:name="android.permission.INTERNET"/>
 
-
-
+    <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
     <application
@@ -21,7 +22,9 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".EditBookDetailsActivity"></activity>
+        <activity android:name=".RequestViewActivity"></activity>
+        <activity android:name=".BookTransactionActivity" />
+        <activity android:name=".EditBookDetailsActivity" />
         <activity android:name=".SearchResultsActivity" />
         <activity android:name=".DetailedBookList" />
         <activity android:name=".ClubDetailsActivity" />
@@ -55,8 +58,9 @@
         <activity android:name=".ClubChatActivity" />
         <activity android:name=".ClubEventsActivity" />
         <activity android:name=".ClubMembersActivity" />
-        <activity android:name=".LivePreviewActivity" android:exported="true">
-        </activity>
+        <activity
+            android:name=".LivePreviewActivity"
+            android:exported="true" />
     </application>
 
 </manifest>

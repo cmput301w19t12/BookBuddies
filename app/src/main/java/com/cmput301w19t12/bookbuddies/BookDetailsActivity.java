@@ -1,5 +1,6 @@
 package com.cmput301w19t12.bookbuddies;
 
+import android.app.DownloadManager;
 import android.content.Intent;
 import android.graphics.Color;
 import android.net.Uri;
@@ -20,6 +21,7 @@ import com.ceylonlabs.imageviewpopup.ImagePopup;
 import com.firebase.ui.storage.images.FirebaseImageLoader;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -81,8 +83,9 @@ public class BookDetailsActivity extends AppCompatActivity {
             requestBookButton.setClickable(false);
         }
         else{
+            checkPriorRequests();
             seeRequestsButton.setVisibility(View.INVISIBLE);
-            requestBookButton.setClickable(false);
+            seeRequestsButton.setClickable(false);
             //editButton.setVisibility(View.INVISIBLE);
             editButton.setClickable(false);
 
@@ -91,13 +94,33 @@ public class BookDetailsActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Toast.makeText(getApplicationContext(),"See Requests clicked",Toast.LENGTH_LONG).show();
+                Intent intent = new Intent(BookDetailsActivity.this,RequestViewActivity.class);
+                intent.putExtra("bookID",book.getBookDetails().getUniqueID());
+                startActivity(intent);
             }
         });
 
         requestBookButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(getApplicationContext(),"Request book clicked",Toast.LENGTH_LONG).show();
+                final String ID = FirebaseAuth.getInstance().getUid();
+                final String key = FirebaseDatabase.getInstance().getReference().push().getKey();
+                Toast.makeText(getApplicationContext(),"Request Sent",Toast.LENGTH_LONG).show();
+                DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Users").child(ID);
+                ref.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        User temp = dataSnapshot.getValue(User.class);
+                        BookRequest request = new BookRequest(ID,book,key,temp.getUsername());
+                        request.Send();
+                        requestBookButton.setEnabled(false);
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
             }
         });
 
@@ -151,9 +174,29 @@ public class BookDetailsActivity extends AppCompatActivity {
         descriptionField.setText(d.getDescription());
 
         makePopup();
+    }
 
+    private void checkPriorRequests(){
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Notifications").child("BookRequests");
+        ref.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                String ID = FirebaseAuth.getInstance().getUid();
+                String bookID = book.getBookDetails().getUniqueID();
+                for(DataSnapshot snap : dataSnapshot.getChildren()){
+                    BookRequest r = snap.getValue(BookRequest.class);
+                    String bID = r.getRequestedBook().getBookDetails().getUniqueID();
+                    if(r.getRequesterID().equals(ID) && bID.equals(bookID)){
+                        requestBookButton.setEnabled(false);
+                    }
+                }
+            }
 
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
 
+            }
+        });
     }
 
     private void getImage(String ID){

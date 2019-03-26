@@ -24,4 +24,7 @@
     <item
         android:id="@+id/action_view_detailed"
         android:title="@string/detailedListMenuItem" />
+    <item
+        android:id="@+id/action_Notifications"
+        android:title="@string/notifications" />
 </menu>

@@ -9,9 +9,12 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.Cursor;
+import android.database.MatrixCursor;
 import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.BaseColumns;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
@@ -23,8 +26,12 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CursorAdapter;
 import android.widget.ListView;
+import android.widget.SearchView;
+import android.widget.SimpleCursorAdapter;
 
+import com.cmput301w19t12.bookbuddies.common.GraphicOverlay;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.ChildEventListener;
@@ -66,6 +73,9 @@ public class ClubFragment extends Fragment {
     private Book book;
     private FloatingActionButton addButton;
     private Context context;
+    private SearchView searchBar;
+    private ArrayList<Club> suggestedClubs;
+    private SimpleCursorAdapter adapter;
 
     public ClubFragment() {
         // Required empty public constructor
@@ -101,6 +111,7 @@ public class ClubFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        adapter = new SimpleCursorAdapter(getActivity(), android.R.layout.simple_list_item_1, null, new String[]{"Clubs"} , new int[] {android.R.id.text1});
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_club, container, false);
     }
@@ -155,6 +166,7 @@ public class ClubFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         clubsListView = (ListView) view.findViewById(R.id.clubsListView);
         myClubNames = new ArrayList<String>();
+        suggestedClubs = new ArrayList<Club>();
         authorizeUser();
         configureListView();
         populateClubsList();
@@ -177,6 +189,79 @@ public class ClubFragment extends Fragment {
                 startActivity(intent);
             }
         });
+
+        searchBar = (SearchView) view.findViewById(R.id.clubSearch);
+        searchBar.setIconifiedByDefault(false);
+        searchBar.setQueryHint("Search for clubs");
+        searchBar.setSuggestionsAdapter(adapter);
+        searchBar.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                Intent i = new Intent(ClubFragment.this.getContext(), ClubDetailsActivity.class);
+                i.putExtra("CLUB DETAILS NAME", query);
+                startActivity(i);
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                getSuggestions(newText);
+                return false;
+            }
+        });
+
+        searchBar.setOnSuggestionListener(new SearchView.OnSuggestionListener() {
+            @Override
+            public boolean onSuggestionSelect(int position) {
+                return false;
+            }
+
+            @Override
+            public boolean onSuggestionClick(int position) {
+                Cursor cursor = searchBar.getSuggestionsAdapter().getCursor();
+                cursor.moveToPosition(position);
+                String suggestion = cursor.getString(1);
+                searchBar.setQuery(suggestion, true);
+                return false;
+            }
+        });
+    }
+
+    private void getSuggestions(final String newText) {
+        suggestedClubs.clear();
+        DatabaseReference clubsRef = FirebaseDatabase.getInstance().getReference("Clubs");
+        clubsRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    try {
+                        Club club = snapshot.getValue(Club.class);
+                        String clubName = club.getName();
+                        String ownerUsername = club.getOwner().getUsername();
+                        if (clubName.contains(newText) || ownerUsername.contains(newText)) {
+                            suggestedClubs.add(club);
+                        }
+                    }
+                    catch (NullPointerException e) {
+                        //ignore any invalid club info
+                    }
+                }
+                populateSuggestionList();
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    private void populateSuggestionList() {
+        final MatrixCursor c = new MatrixCursor(new String[]{BaseColumns._ID, "Clubs"});
+        for (int i = 0; i < suggestedClubs.size(); i++) {
+            c.addRow(new Object[]{i, suggestedClubs.get(i).getName()});
+        }
+        adapter.changeCursor(c);
     }
 
     /**

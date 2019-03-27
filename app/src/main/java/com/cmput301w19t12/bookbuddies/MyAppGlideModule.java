@@ -11,6 +11,10 @@ import com.google.firebase.storage.StorageReference;
 
 import java.io.InputStream;
 
+/**Glide module used to simplify image retrieval from firebase storage
+ *
+ * @see BookDetailsActivity*/
+
 @GlideModule
 public class MyAppGlideModule extends AppGlideModule {
     @Override

@@ -146,7 +146,7 @@ public class Transaction {
         tempRef.removeValue();
         tempRef = FirebaseDatabase.getInstance().getReference("Books").child("Available").child(book.getBookDetails().getUniqueID());
         book.setStatus("Available");
-        book.setCurrentBorrower("");
+        book.setCurrentBorrower(null);
         tempRef.setValue(book);
         // close this transaction
         FirebaseDatabase.getInstance().getReference("Transactions").child(transactionID).removeValue();

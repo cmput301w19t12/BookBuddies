@@ -30,10 +30,14 @@ public class Book {
         this.currentBorrower = null;
     }
 
+    /**returns the current borrower of this book
+     * @return currentBorrower String*/
     public String getCurrentBorrower() {
         return currentBorrower;
     }
 
+    /**sets the current borrower of this book
+     * @param currentBorrower String*/
     public void setCurrentBorrower(String currentBorrower) {
         this.currentBorrower = currentBorrower;
     }

@@ -64,7 +64,7 @@ public class MainActivity extends AppCompatActivity implements ClubFragment.OnFr
                 //Write your code if there's no result
             }
         }
-    }//onActivityResult
+    }
 
     /**
      * The {@link android.support.v4.view.PagerAdapter} that will provide
@@ -141,11 +141,6 @@ public class MainActivity extends AppCompatActivity implements ClubFragment.OnFr
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
         switch(id) {
             case R.id.action_view_detailed:
                 Intent i = new Intent(this, DetailedBookList.class);
@@ -162,11 +157,6 @@ public class MainActivity extends AppCompatActivity implements ClubFragment.OnFr
               //  profileIntent.putExtra("username", user.getUsername());
              //   startActivity(profileIntent);
                 return true;
-            case R.id.scanTest:
-                Intent intent = new Intent(this, LivePreviewActivity.class);
-                startActivityForResult(intent,1);
-                return true;
-
 
             default:
                 return super.onOptionsItemSelected(item);

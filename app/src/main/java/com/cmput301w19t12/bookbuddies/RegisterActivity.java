@@ -42,7 +42,7 @@ public class RegisterActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-//        setContentView(R.layout.activity_register);
+        setContentView(R.layout.activity_create_account);
         mAuth = FirebaseAuth.getInstance();
         userRef = FirebaseDatabase.getInstance().getReference("Users");
 //        registerButton = findViewById(R.id.register_Button);

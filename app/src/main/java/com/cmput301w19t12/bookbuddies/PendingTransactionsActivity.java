@@ -14,6 +14,15 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 
+/**Presents the user with a list of pending transactions attached to their account
+ *
+ * @author bgrenier
+ * @version 1.0
+ *
+ * @see Transaction
+ * @see PendingTransactionsAdapter*/
+
+
 public class PendingTransactionsActivity extends AppCompatActivity {
 
     ArrayList<Transaction> borrowsListFromMe;
@@ -38,6 +47,8 @@ public class PendingTransactionsActivity extends AppCompatActivity {
         ref.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                /*Get the transactions this user is participating in, and organize them into the
+                * appropriate lists*/
                 for (DataSnapshot snap : dataSnapshot.getChildren()){
                     Transaction t = snap.getValue(Transaction.class);
                     String tOwnerEmail = t.getOwner().getEmailAddress();

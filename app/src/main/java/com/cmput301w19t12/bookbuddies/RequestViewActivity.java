@@ -14,6 +14,15 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 
+
+/**Allows the user to see all the pending requests on a particular book
+ *
+ * @author bgrenier
+ * @version 1.0
+ *
+ * @see BookRequest
+ * @see RequestViewAdapter*/
+
 public class RequestViewActivity extends AppCompatActivity {
 
     private ArrayList<BookRequest> entries;
@@ -24,6 +33,7 @@ public class RequestViewActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_request_view);
 
+        // get the id of the book of concern passed in from previous activity
         Bundle b = getIntent().getExtras();
         bookID = b.getString("bookID");
         entries = new ArrayList<>();
@@ -31,6 +41,8 @@ public class RequestViewActivity extends AppCompatActivity {
     }
 
     private void getMatches(){
+        // get all the request for this book from firebase
+
         entries.clear();
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Notifications").child("BookRequests");
         ref.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -53,6 +65,7 @@ public class RequestViewActivity extends AppCompatActivity {
     }
 
     private void makeList(){
+        // set the array adapter to the layout
         RequestViewAdapter requestViewAdapter = new RequestViewAdapter(getApplicationContext(),entries);
         ListView listView = findViewById(R.id.requestListView);
         listView.setAdapter(requestViewAdapter);

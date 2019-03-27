@@ -28,7 +28,9 @@ import org.w3c.dom.Text;
 
 /**Presents the user with their profile information
  *
- * @verion 1.0*/
+ * @verion 1.0
+ *
+ * @see User*/
 
 public class MyProfileActivity extends AppCompatActivity {
 
@@ -42,7 +44,7 @@ public class MyProfileActivity extends AppCompatActivity {
     private User userViewed;
     private String usernameToShow;
     private String userId;
-    private Button addNew;
+    private Button viewPendingTransactions;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,14 +59,14 @@ public class MyProfileActivity extends AppCompatActivity {
         FirebaseUser userDB = mAuth.getCurrentUser();
         userId = userDB.getUid();
         user = new User();
-        addNew = findViewById(R.id.addNewBook);
+        viewPendingTransactions = findViewById(R.id.viewPendingTransactionsButton);
 
         Bundle b = getIntent().getExtras();
         usernameToShow = b.getString("username");
-        addNew.setOnClickListener(new View.OnClickListener(){
+        viewPendingTransactions.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v){
-                switchToNewBook();
+                viewTransactionsList();
             }
         });
 
@@ -103,6 +105,10 @@ public class MyProfileActivity extends AppCompatActivity {
 
     }
 
+    private void viewTransactionsList(){
+        startActivity(new Intent(MyProfileActivity.this,PendingTransactionsActivity.class));
+    }
+
     public void setEditListeners(){
         if(userViewed.getUsername().equals(user.getUsername())){
             fullName.setOnLongClickListener(new View.OnLongClickListener() {
@@ -127,12 +133,6 @@ public class MyProfileActivity extends AppCompatActivity {
                 }
             });
         }
-    }
-
-    /**launches new book activity*/
-    public void switchToNewBook(){
-        Intent intent = new Intent(this, NewBookActivity.class);
-        startActivity(intent);
     }
 
     public void getUserData(){

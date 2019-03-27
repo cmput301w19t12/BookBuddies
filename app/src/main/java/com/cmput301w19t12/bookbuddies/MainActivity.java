@@ -110,7 +110,7 @@ public class MainActivity extends AppCompatActivity implements ClubFragment.OnFr
 
 
 
-       DatabaseReference tempRef = FirebaseDatabase.getInstance().getReference("Transactions");
+       /*DatabaseReference tempRef = FirebaseDatabase.getInstance().getReference("Transactions");
         tempRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -133,7 +133,7 @@ public class MainActivity extends AppCompatActivity implements ClubFragment.OnFr
             public void onCancelled(@NonNull DatabaseError databaseError) {
 
             }
-        });
+        });*/
     }
 
     public void checkLoggedIn(){

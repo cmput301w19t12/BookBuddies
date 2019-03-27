@@ -122,46 +122,62 @@ public class Transaction {
         this.owner = owner;
     }
 
-
+    /**complete the borrow process by moving the book from accepted to borrowed
+     * and closing the current transaction and then opening a return transaction for when
+     * the book is to be returned*/
     public void completeBorrow(){
-        if(transactionComplete()) {
-            DatabaseReference tempRef = FirebaseDatabase.getInstance().getReference("Books").child("Accepted").child(book.getBookDetails().getUniqueID());
-            tempRef.removeValue();
-            tempRef = FirebaseDatabase.getInstance().getReference("Books").child("Borrowed").child(book.getBookDetails().getUniqueID());
-            book.setStatus("Borrowed");
-            tempRef.setValue(book);
-            FirebaseDatabase.getInstance().getReference("Transactions").child(transactionID).removeValue();
-        }
+        // move books location in firebase
+        DatabaseReference tempRef = FirebaseDatabase.getInstance().getReference("Books").child("Accepted").child(book.getBookDetails().getUniqueID());
+        tempRef.removeValue();
+        tempRef = FirebaseDatabase.getInstance().getReference("Books").child("Borrowed").child(book.getBookDetails().getUniqueID());
+        book.setStatus("Borrowed");
+        tempRef.setValue(book);
+        // close this transaction, and open new return transaction
+        FirebaseDatabase.getInstance().getReference("Transactions").child(transactionID).removeValue();
+        Transaction returnTransaction = new Transaction(owner,borrower,book,"returning",transactionID);
+        returnTransaction.transactionToDatabase();
+
     }
 
+    /**complete the return process by moving the book from borrowed to available and closing this transaction*/
     public void completeReturn(){
-        if(transactionComplete()){
-            DatabaseReference tempRef = FirebaseDatabase.getInstance().getReference("Books").child("Borrowed").child(book.getBookDetails().getUniqueID());
-            tempRef.removeValue();
-            tempRef = FirebaseDatabase.getInstance().getReference("Books").child("Accepted").child(book.getBookDetails().getUniqueID());
-            book.setStatus("Accepted");
-            tempRef.setValue(book);
-            FirebaseDatabase.getInstance().getReference("Transactions").child(transactionID).removeValue();
-        }
+        // move the book location in firebase
+        DatabaseReference tempRef = FirebaseDatabase.getInstance().getReference("Books").child("Borrowed").child(book.getBookDetails().getUniqueID());
+        tempRef.removeValue();
+        tempRef = FirebaseDatabase.getInstance().getReference("Books").child("Available").child(book.getBookDetails().getUniqueID());
+        book.setStatus("Available");
+        book.setCurrentBorrower("");
+        tempRef.setValue(book);
+        // close this transaction
+        FirebaseDatabase.getInstance().getReference("Transactions").child(transactionID).removeValue();
+
     }
 
-
+    /**write the transaction to firebase*/
     public void transactionToDatabase(){
         FirebaseDatabase.getInstance().getReference("Transactions").child(transactionID).setValue(this);
     }
 
+    /**check if both users have scanned the book detailed in this transaction*/
     public boolean transactionComplete(){
         return ownerScanned && borrowerScanned;
     }
 
+    /**sets ownerScanned
+     * @param bool boolean*/
     public void setOwnerScanned(boolean bool){
         this.ownerScanned = bool;
     }
 
+    /**returns ownerScanned
+     * @return ownerScanned boolean*/
     public boolean getOwnerScanned(){
         return this.ownerScanned;
     }
 
+    /**returns the firebase value of ownerScanned in firebase for this transaction, and also updates
+     * the local variable
+     *@return ownerScanned boolean*/
     public boolean hasOwnerScanned(){
         DatabaseReference temp = FirebaseDatabase.getInstance().getReference("Transactions").child(transactionID);
         temp.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -179,14 +195,21 @@ public class Transaction {
         return ownerScanned;
     }
 
+    /**sets borrowerScanned
+     * @param bool boolean*/
     public void setBorrowerScanned(boolean bool){
         this.borrowerScanned = bool;
     }
 
+    /**returns borrowerScanned
+     * @return borrowerScanned*/
     public boolean getBorrowerScanned(){
         return this.borrowerScanned;
     }
 
+    /**returns the firebase value of borrowerScanned in firebase for this transaction, and also updates
+     * the local variable
+     *@return borrowerScanned boolean*/
     public boolean hasBorrowerScanned(){
         DatabaseReference temp = FirebaseDatabase.getInstance().getReference("Transactions").child(transactionID);
         temp.addListenerForSingleValueEvent(new ValueEventListener() {

@@ -32,7 +32,7 @@ public class Transaction {
      * @param owner User
      * @param borrower User
      * @param book Book*/
-    Transaction(User owner, User borrower, Book book,String transactionType,String key){
+    Transaction(User owner, User borrower, Book book, String transactionType, String key){
         this.owner = owner;
         this.borrower = borrower;
         this.book = book;

@@ -15,7 +15,7 @@ import java.util.ArrayList;
  * accept of decline
  *
  * @author bgrenier
- * @version
+ * @version 1.0
  * @see ArrayAdapter
  * @see RequestViewActivity
  * @see BookRequest*/
@@ -56,6 +56,7 @@ public class RequestViewAdapter extends ArrayAdapter<BookRequest> {
             @Override
             public void onClick(View v) {
                 request.Accept();
+                acceptButton.setEnabled(false);
                 notifyDataSetChanged();
             }
         });
@@ -65,6 +66,7 @@ public class RequestViewAdapter extends ArrayAdapter<BookRequest> {
             @Override
             public void onClick(View v) {
                 request.deleteThisRequest();
+                declineButton.setEnabled(false);
                 notifyDataSetChanged();
             }
         });

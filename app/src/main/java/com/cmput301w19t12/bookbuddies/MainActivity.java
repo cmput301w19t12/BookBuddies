@@ -64,7 +64,7 @@ public class MainActivity extends AppCompatActivity implements ClubFragment.OnFr
                 //Write your code if there's no result
             }
         }
-    }//onActivityResult
+    }
 
     /**
      * The {@link android.support.v4.view.PagerAdapter} that will provide
@@ -108,32 +108,6 @@ public class MainActivity extends AppCompatActivity implements ClubFragment.OnFr
         mAuth = FirebaseAuth.getInstance();
         userRef = FirebaseDatabase.getInstance().getReference("Users");
 
-
-
-       /*DatabaseReference tempRef = FirebaseDatabase.getInstance().getReference("Transactions");
-        tempRef.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                String email = mAuth.getCurrentUser().getEmail();
-                for (DataSnapshot snap : dataSnapshot.getChildren()){
-                    Transaction t = snap.getValue(Transaction.class);
-                    if(email.equals(t.getOwner().getEmailAddress()) || email.equals(t.getBorrower().getEmailAddress())){
-                        Log.i("STUFF",t.getTransactionID());
-                        Log.i("STUFF",t.getOwner().getEmailAddress());
-                        Log.i("STUFF",t.getBorrower().getEmailAddress());
-                        Log.i("STUFF",t.getBook().getBookDetails().getTitle());
-                        Intent i = new Intent(MainActivity.this,BookTransactionActivity.class);
-                        i.putExtra("Transaction",new Gson().toJson(t));
-                        startActivity(i);
-                    }
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });*/
     }
 
     public void checkLoggedIn(){
@@ -167,11 +141,6 @@ public class MainActivity extends AppCompatActivity implements ClubFragment.OnFr
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
         switch(id) {
             case R.id.action_view_detailed:
                 Intent i = new Intent(this, DetailedBookList.class);
@@ -188,11 +157,6 @@ public class MainActivity extends AppCompatActivity implements ClubFragment.OnFr
               //  profileIntent.putExtra("username", user.getUsername());
              //   startActivity(profileIntent);
                 return true;
-            case R.id.scanTest:
-                Intent intent = new Intent(this, LivePreviewActivity.class);
-                startActivityForResult(intent,1);
-                return true;
-
 
             default:
                 return super.onOptionsItemSelected(item);

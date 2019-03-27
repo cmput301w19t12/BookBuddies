@@ -10,11 +10,21 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
+
+/**generates search result views given a string array
+ *
+ * @author bgrenier
+ * @version 1.0
+ *
+ * @see SearchResultsActivity
+ */
+
 public class SearchResultAdapter extends ArrayAdapter<String[]> {
     public SearchResultAdapter(Context context,ArrayList<String[]> entries){
         super(context,0,entries);
     }
 
+    /**generates a view for a single */
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         String[] entry = getItem(position);

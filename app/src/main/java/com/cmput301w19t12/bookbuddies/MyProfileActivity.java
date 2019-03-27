@@ -63,6 +63,7 @@ public class MyProfileActivity extends AppCompatActivity {
 
         Bundle b = getIntent().getExtras();
         usernameToShow = b.getString("username");
+
         viewPendingTransactions.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v){
@@ -111,6 +112,7 @@ public class MyProfileActivity extends AppCompatActivity {
 
     public void setEditListeners(){
         if(userViewed.getUsername().equals(user.getUsername())){
+            enableViewTransactions();
             fullName.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View v) {
@@ -135,6 +137,11 @@ public class MyProfileActivity extends AppCompatActivity {
         }
     }
 
+    private void enableViewTransactions(){
+        viewPendingTransactions.setVisibility(View.VISIBLE);
+        viewPendingTransactions.setClickable(true);
+    }
+
     public void getUserData(){
         userRef.addValueEventListener(new ValueEventListener() {
             @Override
@@ -151,6 +158,7 @@ public class MyProfileActivity extends AppCompatActivity {
                             Log.i("USER", userViewed.getUsername());
                             setTextViews();
                             setEditListeners();
+
                         }
                     } catch (Exception e) {
                         // ignore

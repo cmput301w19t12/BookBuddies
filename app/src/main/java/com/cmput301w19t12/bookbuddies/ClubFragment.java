@@ -111,6 +111,7 @@ public class ClubFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
         adapter = new SimpleCursorAdapter(getActivity(), android.R.layout.simple_list_item_1, null, new String[]{"Clubs"} , new int[] {android.R.id.text1});
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_club, container, false);

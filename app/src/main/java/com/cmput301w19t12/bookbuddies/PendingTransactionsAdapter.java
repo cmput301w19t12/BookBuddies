@@ -2,17 +2,25 @@ package com.cmput301w19t12.bookbuddies;
 
 import android.content.Context;
 import android.content.Intent;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.TextView;
-
 import com.google.gson.Gson;
-
 import java.util.ArrayList;
+
+
+
+/**creates views from an array of transactions
+ *
+ * @author bgrenier
+ * @version 1.0
+ *
+ * @see Transaction
+ * @see PendingTransactionsActivity*/
+
 
 public class PendingTransactionsAdapter extends ArrayAdapter<Transaction> {
     private TextView transactionDetails;
@@ -25,6 +33,11 @@ public class PendingTransactionsAdapter extends ArrayAdapter<Transaction> {
     }
 
 
+    /**Returns a new view for a single transaction containing the required information
+     * @param position int
+     * @param convertView View
+     * @param parent ViewGroup
+     * @return convertView View*/
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         final Transaction transaction = getItem(position);
@@ -44,7 +57,7 @@ public class PendingTransactionsAdapter extends ArrayAdapter<Transaction> {
         startTransaction.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.i("STUFF","THIS EVEN GOT CLICKED");
+                // open the transaction process
                 Intent intent = new Intent(context,BookTransactionActivity.class);
                 intent.putExtra("Transaction",new Gson().toJson(transaction));
                 context .startActivity(intent);

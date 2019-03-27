@@ -18,11 +18,7 @@ public class Club {
     private ArrayList<Event> events;
 
     public Club() {
-        owner = null;
-        name = null;
-        membersList = null;
-        currentBook = null;
-        events = null;
+        this.membersList = new ArrayList<>();
     }
 
     /**Baseline constructor for the Club class

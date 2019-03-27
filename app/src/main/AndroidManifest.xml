@@ -12,6 +12,8 @@
         android:required="true" />
     <uses-feature android:name="android.hardware.camera.autofocus" />
 
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
     <application
@@ -22,13 +24,14 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <activity android:name=".Notification.MyNotificationsActivity"></activity>
+        <activity android:name=".ClubDetailsActivity" />
         <activity android:name=".PendingTransactionsActivity"></activity>
         <activity android:name=".RequestViewActivity" />
         <activity android:name=".BookTransactionActivity" />
         <activity android:name=".EditBookDetailsActivity" />
         <activity android:name=".SearchResultsActivity" />
         <activity android:name=".DetailedBookList" />
-        <activity android:name=".ClubDetailsActivity" />
         <activity android:name=".AddClubActivity" />
         <activity android:name=".BookDetailsActivity" />
         <activity android:name=".MyProfileActivity" />
@@ -42,6 +45,12 @@
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/file_paths" />
         </provider>
+
+        <service android:name=".notifications.MyFirebaseIdService">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
 
         <activity
             android:name=".MainActivity"

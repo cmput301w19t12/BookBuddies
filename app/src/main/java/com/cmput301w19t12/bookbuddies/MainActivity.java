@@ -29,6 +29,7 @@ import android.widget.TableLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.cmput301w19t12.bookbuddies.Notification.MyNotificationsActivity;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -157,6 +158,14 @@ public class MainActivity extends AppCompatActivity implements ClubFragment.OnFr
               //  profileIntent.putExtra("username", user.getUsername());
              //   startActivity(profileIntent);
                 return true;
+            case R.id.scanTest:
+                Intent intent = new Intent(this, LivePreviewActivity.class);
+                startActivityForResult(intent,1);
+                return true;
+            case R.id.action_Notifications:
+                Intent notificationIntent = new Intent(this, MyNotificationsActivity.class);
+                startActivity(notificationIntent);
+                break;
 
             default:
                 return super.onOptionsItemSelected(item);

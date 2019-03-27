@@ -31,6 +31,7 @@ import android.widget.ListView;
 import android.widget.SearchView;
 import android.widget.SimpleCursorAdapter;
 
+import com.cmput301w19t12.bookbuddies.Notification.MyNotificationsActivity;
 import com.cmput301w19t12.bookbuddies.common.GraphicOverlay;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -76,6 +77,7 @@ public class ClubFragment extends Fragment {
     private SearchView searchBar;
     private ArrayList<Club> suggestedClubs;
     private SimpleCursorAdapter adapter;
+    private Button seeRequestsButton;
 
     public ClubFragment() {
         // Required empty public constructor
@@ -188,6 +190,15 @@ public class ClubFragment extends Fragment {
                 Intent intent = new Intent(ClubFragment.this.getActivity(), ClubDetailsActivity.class);
                 intent.putExtra("CLUB DETAILS NAME", myClubNames.get(position));
                 startActivity(intent);
+            }
+        });
+
+        seeRequestsButton = (Button) view.findViewById(R.id.seeClubRequest);
+        seeRequestsButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent notificationIntent = new Intent(ClubFragment.this.getActivity(), MyNotificationsActivity.class);
+                startActivity(notificationIntent);
             }
         });
 

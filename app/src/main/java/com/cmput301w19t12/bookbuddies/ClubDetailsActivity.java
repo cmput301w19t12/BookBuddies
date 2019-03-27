@@ -98,8 +98,8 @@ public class ClubDetailsActivity extends AppCompatActivity {
                             DatabaseReference ref = FirebaseDatabase.getInstance().getReference();
                             String clubOwnerUsername = myClub.getOwner().getUsername();
                             String key = ref.push().getKey();
-                            ClubRequestNotification notification = new ClubRequestNotification(clubOwnerUsername, currentUser.getUsername(), clubName);
-                            ref.child("Notification").child("Club Requests").child(clubOwnerUsername).child(key).setValue(notification);
+                            ClubRequestNotification notification = new ClubRequestNotification(clubOwnerUsername, currentUser.getUsername(), clubName, "PENDING");
+                            ref.child("Notifications").child("Club Requests").child(clubOwnerUsername).child(key).setValue(notification);
                             Toast.makeText(ClubDetailsActivity.this, "REQUEST SENT", Toast.LENGTH_LONG).show();
                         }
                     });

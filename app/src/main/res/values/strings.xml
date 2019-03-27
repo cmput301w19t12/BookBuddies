@@ -41,5 +41,6 @@
     <string name="clubNotifTitle">Club Requests</string>
     <string name="bookRequestTitle">Book Requests</string>
     <string name="notifications">Notifications</string>
+    <string name="seeClubRequests">Club Requests</string>
 
 </resources>

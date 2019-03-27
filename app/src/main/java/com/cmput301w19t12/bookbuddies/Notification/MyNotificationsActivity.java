@@ -1,6 +1,8 @@
 package com.cmput301w19t12.bookbuddies.Notification;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -23,7 +25,7 @@ import java.util.ArrayList;
 
 public class MyNotificationsActivity extends AppCompatActivity {
 
-    private ArrayList<String> clubNotifications;
+    private ArrayList<ClubRequestNotification> clubNotifications;
     private Context context;
     private ListView clubNotifList;
     private User currentUser;
@@ -32,9 +34,14 @@ public class MyNotificationsActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_my_notifications);
-        clubNotifications = new ArrayList<String>();
+        clubNotifications = new ArrayList<ClubRequestNotification>();
         context = this;
         clubNotifList = (ListView) findViewById(R.id.clubRequestListView);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
         getCurrentUser();
     }
 
@@ -61,18 +68,16 @@ public class MyNotificationsActivity extends AppCompatActivity {
 
     private void addClubNotifications() {
         clubNotifications.clear();
-        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Notification").child("Club Requests").child(currentUser.getUsername());
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Notifications").child("Club Requests").child(currentUser.getUsername());
         ref.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     ClubRequestNotification notification = snapshot.getValue(ClubRequestNotification.class);
-                    String notifString = notification.getClubName()+"\n"+notification.toString();
-                    clubNotifications.add(notifString);
+                    clubNotifications.add(notification);
                 }
-                ArrayAdapter<String> adapter = new ArrayAdapter<String>(context, android.R.layout.simple_list_item_1, clubNotifications);
+                final CustomNotificationArrayAdapter adapter = new CustomNotificationArrayAdapter(context, clubNotifications);
                 clubNotifList.setAdapter(adapter);
-                configureListView();
             }
 
 
@@ -83,12 +88,5 @@ public class MyNotificationsActivity extends AppCompatActivity {
         });
     }
 
-    private void configureListView() {
-        clubNotifList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                //TODO: Make alert dialog to add user to group
-            }
-        });
-    }
+
 }

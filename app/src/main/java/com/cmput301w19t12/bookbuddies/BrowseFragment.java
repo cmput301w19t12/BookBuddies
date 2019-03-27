@@ -45,14 +45,6 @@ import java.util.Set;
  * create an instance of this fragment.
  */
 public class BrowseFragment extends Fragment {
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
 
     private SearchView searchBar;
     private OnFragmentInteractionListener mListener;
@@ -64,37 +56,22 @@ public class BrowseFragment extends Fragment {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment BrowseFragment.
-     */
-    // TODO: Rename and change types and number of parameters
+
     public static BrowseFragment newInstance(String param1, String param2) {
         BrowseFragment fragment = new BrowseFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
         return fragment;
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
     }
 
      @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         books = new HashSet<>();
+        // simpleCursorAdapter deprecated but it works so I'm scared to change it
         adapter = new SimpleCursorAdapter(getActivity(),android.R.layout.simple_list_item_1,null,new String[]{"Book"},new int[] {android.R.id.text1});
 
         // Inflate the layout for this fragment
@@ -177,26 +154,34 @@ public class BrowseFragment extends Fragment {
     private void getSuggestions(final String text){
         books.clear();
         // Get a ref to available books to suggest to the user
-        DatabaseReference availableRef = FirebaseDatabase.getInstance().getReference("Books").child("Available");
+        DatabaseReference availableRef = FirebaseDatabase.getInstance().getReference("Books");
         availableRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 String id = FirebaseAuth.getInstance().getUid();
-                // iterate over all the books stored in this part of the database
-                for (DataSnapshot snap : dataSnapshot.getChildren()) {
-                    Book book = snap.getValue(Book.class);
-                    try {
-                        BookDetails details = book.getBookDetails();
-                        String author = details.getAuthor().toLowerCase();
-                        String title = details.getTitle().toLowerCase();
-                        String ISBN = details.getISBN().toLowerCase();
-                        // check if the book title or author contains the query text
-                        if (author.contains(text) || title.contains(text) || ISBN.contains(text)) {
-                            books.add(book);
-                            Log.i("STUFF", snap.getKey());
+                ArrayList<String> acceptedStatuses = new ArrayList<>();
+                acceptedStatuses.add("Requested");
+                acceptedStatuses.add("Available");
+                for(DataSnapshot item : dataSnapshot.getChildren()){
+                    if(acceptedStatuses.contains(item.getKey())) {
+                        // iterate over all the books stored in this part of the database
+                        for (DataSnapshot snap : item.getChildren()) {
+                            Book book = snap.getValue(Book.class);
+                            try {
+                                BookDetails details = book.getBookDetails();
+                                String author = details.getAuthor().toLowerCase();
+                                String title = details.getTitle().toLowerCase();
+                                String ISBN = details.getISBN().toLowerCase();
+                                // check if the book title or author contains the query text
+                                if ((author.contains(text) || title.contains(text) || ISBN.contains(text))
+                                        && (!(book.getOwner().equals(id)))) {
+                                    books.add(book);
+                                    Log.i("STUFF", snap.getKey());
+                                }
+                            } catch (Exception e) {
+                                // ignore
+                            }
                         }
-                    }catch (Exception e){
-                        // ignore
                     }
                 }
                 populateSuggestions();
@@ -210,7 +195,6 @@ public class BrowseFragment extends Fragment {
     }
 
 
-    // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
         if (mListener != null) {
             mListener.onFragmentInteraction(uri);
@@ -246,7 +230,6 @@ public class BrowseFragment extends Fragment {
      * >Communicating with Other Fragments</a> for more information.
      */
     public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
     }
 }

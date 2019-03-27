@@ -25,7 +25,9 @@ import java.util.ArrayList;
  * matching results in a listView
  *
  * @author bgrenier
- * @version 1.0*/
+ * @version 1.0
+ *
+ * @see SearchResultAdapter*/
 
 
 public class SearchResultsActivity extends AppCompatActivity {
@@ -59,21 +61,23 @@ public class SearchResultsActivity extends AppCompatActivity {
                 acceptableStatus.add("Requested");
                 // search through all books in the database
                 for (DataSnapshot category : dataSnapshot.getChildren()) {
-                    for (DataSnapshot bookData : category.getChildren()) {
-                        Book book = bookData.getValue(Book.class);
-                        try {
-                            BookDetails details = book.getBookDetails();
-                            String author = details.getAuthor().toLowerCase();
-                            String title = details.getTitle().toLowerCase();
-                            String ISBN = details.getISBN();
-                            // add book if it contains the query and has the acceptable status
-                            if ((author.contains(text) || title.contains(text) || ISBN.contains(text))
-                                    && acceptableStatus.contains(book.getStatus())) {
-                                books.add(book);
-                                Log.i("STUFF", bookData.getKey());
+                    if(acceptableStatus.contains(category.getKey())) {
+                        for (DataSnapshot bookData : category.getChildren()) {
+                            Book book = bookData.getValue(Book.class);
+                            try {
+                                BookDetails details = book.getBookDetails();
+                                String author = details.getAuthor().toLowerCase();
+                                String title = details.getTitle().toLowerCase();
+                                String ISBN = details.getISBN();
+                                // add book if it contains the query and has the acceptable status
+                                if ((author.contains(text) || title.contains(text) || ISBN.contains(text))
+                                        && !(book.getOwner().equals(UID))) {
+                                    books.add(book);
+                                    Log.i("STUFF", bookData.getKey());
+                                }
+                            } catch (Exception e) {
+                                // ignore
                             }
-                        } catch (Exception e) {
-                            // ignore
                         }
                     }
                 }
@@ -87,7 +91,7 @@ public class SearchResultsActivity extends AppCompatActivity {
         });
     }
 
-    // makes an array of String arrays containing the info needed to creake the entries for the results list
+    // makes an array of String arrays containing the info needed to create the entries for the results list
     private void makeList(){
         DatabaseReference userRef = FirebaseDatabase.getInstance().getReference("Users");
         userRef.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -104,7 +108,6 @@ public class SearchResultsActivity extends AppCompatActivity {
                         }
                     }
                 }
-
 
                 // set custom array adapter to the listView
                SearchResultAdapter resultsAdapter = new SearchResultAdapter(getApplicationContext(),entries);

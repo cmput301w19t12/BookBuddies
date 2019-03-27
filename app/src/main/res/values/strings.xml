@@ -42,5 +42,13 @@
     <string name="bookRequestTitle">Book Requests</string>
     <string name="notifications">Notifications</string>
     <string name="seeClubRequests">Club Requests</string>
+    <string name="acceptButton">Accept Request</string>
+    <string name="declineButton">Decline Request</string>
+    <string name="viewPendingTransactionsButton">View Pending Transactions</string>
+    <string name="startTransaction">Start Transaction</string>
+    <string name="pendingBorrowsFrom">Borrows from me</string>
+    <string name="pendingReturnsFrom">Returns to me</string>
+    <string name="pendingBorrowsTo">My Borrows</string>
+    <string name="pendingReturnsTo">My Returns</string>
 
 </resources>

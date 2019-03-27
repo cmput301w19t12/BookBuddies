@@ -38,6 +38,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.gson.Gson;
 
 public class MainActivity extends AppCompatActivity implements ClubFragment.OnFragmentInteractionListener,
         BrowseFragment.OnFragmentInteractionListener,
@@ -64,7 +65,7 @@ public class MainActivity extends AppCompatActivity implements ClubFragment.OnFr
                 //Write your code if there's no result
             }
         }
-    }//onActivityResult
+    }
 
     /**
      * The {@link android.support.v4.view.PagerAdapter} that will provide
@@ -87,7 +88,8 @@ public class MainActivity extends AppCompatActivity implements ClubFragment.OnFr
         setContentView(R.layout.activity_main);
 
         checkLoggedIn();
-        //startActivity(new Intent(MainActivity.this,NewBookActivity.class));
+
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         // Create the adapter that will return a fragment for each of the three
@@ -106,6 +108,7 @@ public class MainActivity extends AppCompatActivity implements ClubFragment.OnFr
 
         mAuth = FirebaseAuth.getInstance();
         userRef = FirebaseDatabase.getInstance().getReference("Users");
+
     }
 
     public void checkLoggedIn(){
@@ -138,11 +141,6 @@ public class MainActivity extends AppCompatActivity implements ClubFragment.OnFr
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
 
         switch(id) {
             case R.id.action_view_detailed:

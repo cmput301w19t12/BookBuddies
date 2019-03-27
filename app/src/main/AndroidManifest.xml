@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="com.cmput301w19t12.bookbuddies">
 
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
@@ -25,6 +26,9 @@
         android:theme="@style/AppTheme">
         <activity android:name=".Notification.MyNotificationsActivity"></activity>
         <activity android:name=".ClubDetailsActivity" />
+        <activity android:name=".PendingTransactionsActivity"></activity>
+        <activity android:name=".RequestViewActivity" />
+        <activity android:name=".BookTransactionActivity" />
         <activity android:name=".EditBookDetailsActivity" />
         <activity android:name=".SearchResultsActivity" />
         <activity android:name=".DetailedBookList" />
@@ -66,7 +70,7 @@
         <activity android:name=".ClubMembersActivity" />
         <activity
             android:name=".LivePreviewActivity"
-            android:exported="true"></activity>
+            android:exported="true" />
     </application>
 
 </manifest>

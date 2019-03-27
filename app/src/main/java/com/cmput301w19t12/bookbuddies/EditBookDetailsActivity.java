@@ -273,7 +273,7 @@ public class EditBookDetailsActivity extends AppCompatActivity implements PopupM
         String key = book.getBookDetails().getUniqueID();
         BookDetails details = new BookDetails(title,author,ISBN,description,key);
         String status = "Available";
-        Book newBook = new Book(user.getUid(),details,status);
+        Book newBook = new Book(user.getUid(),details,status,null);
 
         userLibRef.child(status).child(key).setValue(newBook);
         allBooksRef.child(status).child(key).setValue(newBook);

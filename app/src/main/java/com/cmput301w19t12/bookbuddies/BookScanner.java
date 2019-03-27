@@ -3,6 +3,8 @@ package com.cmput301w19t12.bookbuddies;
 /**BookScanner class represents barcode scanning functionality
  * A scanned book has an ISBN
  *
+ * MIGHT REFACTOR TO USE THIS BUT PROBABLY WON'T HAVE TIME
+ *
  * @author Team 12
  * @version 1.0
  * */

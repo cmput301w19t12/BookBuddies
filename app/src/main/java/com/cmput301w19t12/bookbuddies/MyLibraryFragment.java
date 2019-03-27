@@ -9,19 +9,24 @@
  */
 package com.cmput301w19t12.bookbuddies;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ExpandableListAdapter;
 import android.widget.ExpandableListView;
@@ -42,6 +47,7 @@ import com.google.gson.Gson;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -154,13 +160,13 @@ public class MyLibraryFragment extends Fragment {
 
         Menu = view.findViewById(R.id.ExpandingMenu);
 
-//        addNew = view.findViewById(R.id.addNewBook);
-//        addNew.setOnClickListener(new View.OnClickListener(){
-//            @Override
-//            public void onClick(View v){
-//                Intent intent = new Intent(getActivity(), NewBookActivity.class);
-//                startActivity(intent);}
-//        });
+        addNew = view.findViewById(R.id.addNewBook);
+        addNew.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v){
+                Intent intent = new Intent(getActivity(), NewBookActivity.class);
+                startActivity(intent);}
+        });
       
         bookTitles = new ArrayList<>();
         books = new ArrayList<>();
@@ -227,15 +233,69 @@ public class MyLibraryFragment extends Fragment {
         super.onResume();
         makeMenu();
         Menu.setAdapter(new ExpandingMenuListAdapter(getContext(), MenuHeaders, menuChildHeaders,bookList));
-        //TODO: Add the on click listener code here for when a book is clicked
         Menu.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
             @Override
             public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
+
                 switchToDetails((Book) v.getTag());
                 return false;
             }
         });
+
+        Menu.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                if (ExpandableListView.getPackedPositionType(id) == ExpandableListView.PACKED_POSITION_TYPE_CHILD) {
+                    getDeleteConfirmation((Book) view.getTag()).show();
+                    return true;
+                }
+
+                return false;
+            }
+        });
+
     }
+
+    private AlertDialog getDeleteConfirmation(final Book book) {
+        return new AlertDialog.Builder(getContext())
+                .setTitle("Delete Book")
+                .setMessage("Are you sure you want to delete this book?")
+                .setPositiveButton("Delete", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        removeBook(book);
+                    }
+                })
+                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                })
+                .create();
+    }
+
+    public void removeBook(final Book book){
+        //toDO
+        final DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child("Books").child("Available");
+        ref.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    String UniqueIDBook = snapshot.getKey();
+                    if (book.getBookDetails().getUniqueID().equals(UniqueIDBook)) {
+                        ref.child(UniqueIDBook).removeValue();
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+    }
+
     public void switchToDetails(Book book){
         Intent intent = new Intent(MyLibraryFragment.this.getContext(), BookDetailsActivity.class);
         intent.putExtra("book",new Gson().toJson(book));
@@ -260,10 +320,18 @@ public class MyLibraryFragment extends Fragment {
                 bookTitles.clear();
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     Book book = snapshot.getValue(Book.class);
-                    String title = snapshot.getValue(Book.class).getBookDetails().getTitle();
+                    BookDetails fullDescription = book.getBookDetails();
+                    String title = fullDescription.getTitle();
+                    String author =  fullDescription.getAuthor();
+                    String borrower = book.getCurrentBorrower();
+                    if(borrower == null){
+                        borrower = "No Borrower";
+                    }
+                    String descriptionDisplay = (title + "\n" + author + "\n" + borrower);
+
                     try {
                         if (user.getUid().equals(book.getOwner())) {
-                            bookTitles.add(title);
+                            bookTitles.add(descriptionDisplay);
                             books.add(book);
                         }
                     }

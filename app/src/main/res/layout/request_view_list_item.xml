@@ -12,15 +12,24 @@
             android:id="@+id/usernameField"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
+            android:layout_weight="0.25"
             android:text="TextView" />
+
+        <Button
+            android:id="@+id/declineButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.10"
+            android:textSize="10dp"
+            android:text="@string/declineButton" />
 
         <Button
             android:id="@+id/acceptButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="0.15"
+            android:layout_weight="0.10"
             android:textSize="10dp"
             android:text="@string/acceptButton" />
+
     </LinearLayout>
 </android.support.constraint.ConstraintLayout>

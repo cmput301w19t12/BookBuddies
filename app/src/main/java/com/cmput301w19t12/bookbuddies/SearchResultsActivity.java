@@ -25,7 +25,9 @@ import java.util.ArrayList;
  * matching results in a listView
  *
  * @author bgrenier
- * @version 1.0*/
+ * @version 1.0
+ *
+ * @see SearchResultAdapter*/
 
 
 public class SearchResultsActivity extends AppCompatActivity {
@@ -68,7 +70,8 @@ public class SearchResultsActivity extends AppCompatActivity {
                             String ISBN = details.getISBN();
                             // add book if it contains the query and has the acceptable status
                             if ((author.contains(text) || title.contains(text) || ISBN.contains(text))
-                                    && acceptableStatus.contains(book.getStatus())) {
+                                    && acceptableStatus.contains(book.getStatus())
+                                    && !(book.getOwner().equals(UID ))) {
                                 books.add(book);
                                 Log.i("STUFF", bookData.getKey());
                             }
@@ -87,7 +90,7 @@ public class SearchResultsActivity extends AppCompatActivity {
         });
     }
 
-    // makes an array of String arrays containing the info needed to creake the entries for the results list
+    // makes an array of String arrays containing the info needed to create the entries for the results list
     private void makeList(){
         DatabaseReference userRef = FirebaseDatabase.getInstance().getReference("Users");
         userRef.addListenerForSingleValueEvent(new ValueEventListener() {

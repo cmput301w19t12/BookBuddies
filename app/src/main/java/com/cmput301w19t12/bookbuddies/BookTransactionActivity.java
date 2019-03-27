@@ -25,17 +25,37 @@ import com.google.gson.Gson;
 
 import java.util.Calendar;
 
+
+
+/**
+ * Handles the event of a book being passed from one user to the other, either in the event of an
+ * initial borrowing, or the return of previously borrowed book.
+ * The behaviour of this activity will be chosen dynamically based on whether the current user is the
+ * owner or the borrower of the book, and based on if the current transaction is a borrow or a return
+ * event
+ *
+ * @author bgrenier
+ * @version 1.0
+ *
+ * @see Transaction*/
+
+
 public class BookTransactionActivity extends AppCompatActivity {
     private Transaction transaction;
+
+    // transaction scan codes to modify behaviour of a scan
     private static final int BORROW_OWNER_SCAN = 1;
     private static final int BORROW_BORROWER_SCAN = 2;
     private static final int RETURN_OWNER_SCAN = 3;
     private static final int RETURN_BORROWER_SCAN = 4;
+
+    // relevant fields needed throughout the activity
     private String ISBN;
     private User owner;
     private User borrower;
     private Book book;
 
+    // the only two UI elements associated with this activity
     private TextView instructionBox;
     private Button actionButton;
 
@@ -52,11 +72,16 @@ public class BookTransactionActivity extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
         FirebaseUser user = mAuth.getCurrentUser();
 
+        // get the transaction that was passed from the previous activity in JSON format
         Bundle b = getIntent().getExtras();
         transaction = new Gson().fromJson(b.getString("Transaction"),Transaction.class);
         owner = transaction.getOwner();
         borrower = transaction.getBorrower();
         book = transaction.getBook();
+
+
+        /*The following string of logic will determine what behaviour is required for the rest of
+        * the activity*/
 
         if (transaction.getTransactionType().equals("borrowing")){
             if(user.getEmail().equals(owner.getEmailAddress())){
@@ -101,6 +126,7 @@ public class BookTransactionActivity extends AppCompatActivity {
 
     }
 
+    /**Initiate the borrowers side of a borrow transaction*/
     public void doBorrowerSideBorrow(){
         if(transaction.hasOwnerScanned()) {
             doScan(BORROW_BORROWER_SCAN);
@@ -110,10 +136,12 @@ public class BookTransactionActivity extends AppCompatActivity {
         }
     }
 
+    /**Initiate the owners side of a borrow transaction*/
     public void doOwnerSideBorrow(){
         doScan(BORROW_OWNER_SCAN);
     }
 
+    /**Initiate the owners side of a return transaction*/
     public void doOwnerSideReturn(){
         if(transaction.hasBorrowerScanned()){
             doScan(RETURN_OWNER_SCAN);
@@ -123,11 +151,14 @@ public class BookTransactionActivity extends AppCompatActivity {
         }
     }
 
+    /**Initiate the borrower side of a return transaction*/
     public void doBorrowerSideReturn(){
         doScan(RETURN_BORROWER_SCAN);
     }
 
-    public void doScan(int USER) {
+    // opens the scanner with a specific intent
+    // USER is the scanner intent code
+    private void doScan(int USER) {
         Intent intent = new Intent(BookTransactionActivity.this, LivePreviewActivity.class);
         startActivityForResult(intent, USER);
 
@@ -146,12 +177,10 @@ public class BookTransactionActivity extends AppCompatActivity {
                 ISBN = data.getStringExtra("result");
                 verifyBorrower();
                 completeBorrow();
-
             }
             else if(requestCode == RETURN_OWNER_SCAN){
                 ISBN = data.getStringExtra("result");
                 verifyOwnership();
-                completeReturn();
             }
             else if(requestCode == RETURN_BORROWER_SCAN){
                 ISBN = data.getStringExtra("result");
@@ -160,26 +189,31 @@ public class BookTransactionActivity extends AppCompatActivity {
         }
     }
 
+    // notify the database that the borrower has scanned the book
     private void verifyBorrower(){
-        //if (ISBN.equals(book.getBookDetails().getISBN())){
+        if (ISBN.equals(book.getBookDetails().getISBN())){
             transaction.setBorrowerScanned(true);
             transaction.transactionToDatabase();
-
-        //}
-    }
-
-    public void completeReturn(){
-        if(transaction.transactionComplete()){
-            transaction.completeReturn();
         }
     }
 
+    // Finish a return transaction and exit activity
+    private void completeReturn(){
+        if(transaction.transactionComplete()){
+            transaction.completeReturn();
+            finish();
+        }
+    }
+
+    // Finish a borrow transaction and exit activity
     private void completeBorrow(){
         if(transaction.transactionComplete()){
             transaction.completeBorrow();
+            finish();
         }
     }
 
+    // Verify that the scanner is the owner of the book
     private void verifyOwnership(){
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Books").child(book.getStatus()).child(book.getBookDetails().getUniqueID());
         ref.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -191,6 +225,8 @@ public class BookTransactionActivity extends AppCompatActivity {
                     transaction.setOwnerScanned(true);
                     transaction.transactionToDatabase();
                 }
+
+                completeReturn();
             }
 
 

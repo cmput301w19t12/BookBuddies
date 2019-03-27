@@ -160,13 +160,13 @@ public class MyLibraryFragment extends Fragment {
 
         Menu = view.findViewById(R.id.ExpandingMenu);
 
-//        addNew = view.findViewById(R.id.addNewBook);
-//        addNew.setOnClickListener(new View.OnClickListener(){
-//            @Override
-//            public void onClick(View v){
-//                Intent intent = new Intent(getActivity(), NewBookActivity.class);
-//                startActivity(intent);}
-//        });
+        addNew = view.findViewById(R.id.addNewBook);
+        addNew.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v){
+                Intent intent = new Intent(getActivity(), NewBookActivity.class);
+                startActivity(intent);}
+        });
       
         bookTitles = new ArrayList<>();
         books = new ArrayList<>();

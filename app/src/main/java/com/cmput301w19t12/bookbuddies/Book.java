@@ -10,21 +10,32 @@ public class Book {
     private String status;
     private BookDetails bookDetails;
     private String owner;
+    private String currentBorrower;
 
     /**Base constructor for a book
      * @param owner String
      * @param bookDetails BookDetails
      * @param status String*/
-    public Book(String owner, BookDetails bookDetails, String status){
+    public Book(String owner, BookDetails bookDetails, String status, String currentBorrower){
         this.owner = owner;
         this.bookDetails = bookDetails;
         this.status = status;
+        this.currentBorrower = currentBorrower;
     }
 
     public Book() {
         this.status = null;
         this.bookDetails = null;
         this.status = null;
+        this.currentBorrower = null;
+    }
+
+    public String getCurrentBorrower() {
+        return currentBorrower;
+    }
+
+    public void setCurrentBorrower(String currentBorrower) {
+        this.currentBorrower = currentBorrower;
     }
 
     /**Gets owner name

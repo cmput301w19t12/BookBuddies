@@ -162,6 +162,10 @@ public class MainActivity extends AppCompatActivity implements ClubFragment.OnFr
                 Intent notificationIntent = new Intent(this, MyNotificationsActivity.class);
                 startActivity(notificationIntent);
                 break;
+            case R.id.menu_maps:
+                Intent mapsIntent = new Intent(this, MapsActivity.class);
+                startActivity(mapsIntent);
+                break;
 
             default:
                 return super.onOptionsItemSelected(item);

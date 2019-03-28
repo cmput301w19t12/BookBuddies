@@ -53,5 +53,10 @@
     <string name="viewPendingRequestsButton">View My Requests</string>
     <string name="viewBooksBorrowing">View Books I am Borrowing</string>
     <string name="seeBookButton">See Book</string>
+    <string name="goToClubChatButton">Club Chat</string>
+    <string name="sendMessage">Send</string>
+    <string name="messageHint">Message</string>
+    <string name="title_activity_maps">Map</string>
+
 
 </resources>

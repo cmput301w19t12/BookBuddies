@@ -38,6 +38,8 @@
         <activity android:name=".AddClubActivity" android:noHistory="true"/>
         <activity android:name=".BookDetailsActivity" />
         <activity android:name=".MyProfileActivity" />
+        <meta-data android:name="com.google.android.geo.API_KEY" android:value="@string/google_maps_key"/>
+        <activity android:name=".MapsActivity" android:label="@string/title_activity_maps"> </activity>
 
         <provider
             android:name="android.support.v4.content.FileProvider"

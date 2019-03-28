@@ -34,7 +34,7 @@ public class ClubTest {
 		assertEquals(testClub.getName(), "newclubname");
 	}
 
-
+/*
 	@Test
 	public void bookTest() {
 		assertEquals(testClub.getCurrentBook(), null);
@@ -42,7 +42,7 @@ public class ClubTest {
 		testClub.setCurrentBook(testBook);
 		assertEquals(testClub.getCurrentBook(), testBook);
 	}
-
+*/
 	@Test
 	public void eventsTest(){
 		testClub.createEvent(testEvent);

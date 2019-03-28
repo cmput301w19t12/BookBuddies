@@ -65,8 +65,9 @@ public class ClubChatActivity extends AppCompatActivity {
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                         User user = dataSnapshot.getValue(User.class);
                         Message newMessage = new Message(messageText, Calendar.getInstance().getTime(),user);
-                        club.getGroupChat().getMessageList().add(0,newMessage);
-                        FirebaseDatabase.getInstance().getReference("Clubs").child(club.getClubID()).child("groupChat").setValue(club.getGroupChat());
+                        //club.getGroupChat().getMessageList().add(0,newMessage);
+                        messages.add(0,newMessage);
+                        FirebaseDatabase.getInstance().getReference("Clubs").child(club.getClubID()).child("groupChat").setValue(messages);
                         onStart();
                     }
 

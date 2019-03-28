@@ -17,7 +17,7 @@ public class Club {
     private Book currentBook;
     private ArrayList<Event> events;
 
-    public Club() {
+    Club() {
         this.membersList = new ArrayList<>();
     }
 
@@ -29,7 +29,7 @@ public class Club {
         this.owner = owner;
         this.name = name;
         this.membersList = membersList;
-        this.membersList.add(owner);
+        //this.membersList.add(owner);
         this.events = new ArrayList<>();
     }
 
@@ -47,22 +47,26 @@ public class Club {
 
     /**Gets a list of all members in a club
      * @return membersList ArrayList<User>*/
-    public ArrayList<User> getMembers() {
+    public ArrayList<User> getMembersList() {
         return this.membersList;
     }
 
+    public void setMembersList(ArrayList<User> membersList){
+        this.membersList = membersList;
+    }
+/*
     /**Adds a member to the club
      * @param member User*/
-    public void addMember(User member) {
+   /* public void addMember(User member) {
         this.membersList.add(member);
     }
-
+*//*
     /**Removes a member from the group
      * @param user User*/
-    public void deleteMember(User user){
+/*    public void deleteMember(User user){
         this.membersList.remove(user);
     }
-
+*/
     /**Gets name of the club
      * @return name String*/
     public String getName() {

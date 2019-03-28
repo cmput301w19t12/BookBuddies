@@ -67,11 +67,11 @@ public class MyNotificationsActivity extends AppCompatActivity {
     }
 
     private void addClubNotifications() {
-        clubNotifications.clear();
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Notifications").child("Club Requests").child(currentUser.getUsername());
         ref.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                clubNotifications.clear();
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     ClubRequestNotification notification = snapshot.getValue(ClubRequestNotification.class);
                     clubNotifications.add(notification);

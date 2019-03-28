@@ -90,6 +90,7 @@ public class MyLibraryFragment extends Fragment {
     private HashMap<String, List<Book>> bookList;
     private ArrayList<Book> books;
     private Button expandAllButton;
+    private HashMap<String,User> allUsers;
 
     public MyLibraryFragment() {
         // Required empty public constructor
@@ -124,6 +125,23 @@ public class MyLibraryFragment extends Fragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
+
+        allUsers = new HashMap<>();
+        DatabaseReference users = FirebaseDatabase.getInstance().getReference("Users");
+        users.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                allUsers.clear();
+                for(DataSnapshot snapshot : dataSnapshot.getChildren()){
+                    allUsers.put(snapshot.getKey(), snapshot.getValue(User.class));
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
 
     }
 
@@ -326,6 +344,11 @@ public class MyLibraryFragment extends Fragment {
                     String borrower = book.getCurrentBorrower();
                     if(borrower == null){
                         borrower = "No Borrower";
+                    } else {
+                        User u = allUsers.get(borrower);
+                        if(u != null){
+                            borrower = u.getUsername();
+                        }
                     }
                     String descriptionDisplay = (title + "\n" + author + "\n" + borrower);
 

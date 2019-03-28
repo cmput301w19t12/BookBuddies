@@ -158,10 +158,6 @@ public class MainActivity extends AppCompatActivity implements ClubFragment.OnFr
               //  profileIntent.putExtra("username", user.getUsername());
              //   startActivity(profileIntent);
                 return true;
-            case R.id.scanTest:
-                Intent intent = new Intent(this, LivePreviewActivity.class);
-                startActivityForResult(intent,1);
-                return true;
             case R.id.action_Notifications:
                 Intent notificationIntent = new Intent(this, MyNotificationsActivity.class);
                 startActivity(notificationIntent);

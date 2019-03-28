@@ -91,37 +91,6 @@ public class MyProfileActivity extends AppCompatActivity {
 
         getUserData();
 
-/*
-        fullName.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
-                openEditMenu(0);
-                return true;
-            }
-        });
-        username.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
-                openEditMenu(1);
-                return true;
-            }
-        });
-        phoneNum.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
-                openEditMenu(2);
-                return true;
-            }
-        });
-        email.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
-                openEditMenu(3);
-                return true;
-            }
-        });
-*/
-
     }
 
     private void viewBorrowingList(){

@@ -67,6 +67,7 @@ public class ClubChatActivity extends AppCompatActivity {
                         Message newMessage = new Message(messageText, Calendar.getInstance().getTime(),user);
                         club.getGroupChat().getMessageList().add(0,newMessage);
                         FirebaseDatabase.getInstance().getReference("Clubs").child(club.getClubID()).child("groupChat").setValue(club.getGroupChat());
+                        onStart();
                     }
 
                     @Override
@@ -88,8 +89,10 @@ public class ClubChatActivity extends AppCompatActivity {
                 Chat temp = dataSnapshot.getValue(Chat.class);
                 if(temp != null) {
                     messages = temp.getMessageList();
+                    adapter = new ChatMessageAdapter(ClubChatActivity.this,messages);
+                    messageList.setAdapter(adapter);
                 }
-                adapter.notifyDataSetChanged();
+
             }
 
             @Override

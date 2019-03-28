@@ -9,8 +9,11 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -22,6 +25,8 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+
+import java.util.ArrayList;
 
 /**Presents the user with all the details of a given club
  *
@@ -40,6 +45,8 @@ public class ClubDetailsActivity extends AppCompatActivity {
     TextView clubBookTV;
     TextView clubEventTV;
     Button actionButton;
+    ArrayList<String> membersList;
+    ListView clubMembersListView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,7 +60,10 @@ public class ClubDetailsActivity extends AppCompatActivity {
         clubEventTV = findViewById(R.id.clubDetailsClubEvents);
         clubBookTV = findViewById(R.id.clubDetailsBookName);
         actionButton = findViewById(R.id.clubDetailsEditButton);
+        clubMembersListView = findViewById(R.id.clubMembersListView);
         getClubInfo();
+
+
     }
 
     /**Retrieves club info from database*/
@@ -90,9 +100,22 @@ public class ClubDetailsActivity extends AppCompatActivity {
                     Log.i("Club owner myclub", myClub.getOwner().getUsername());
                     actionButton.setVisibility(View.INVISIBLE);
                     setEditListeners();
-                }
-
-                else {
+                } else if(membersList.contains(currentUser.getUsername())){
+                    actionButton.setText("Leave Club");
+                    actionButton.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Clubs");
+                            ArrayList<User> allMembers = myClub.getMembersList();
+                            allMembers.remove(currentUser);
+                            myClub.setMembersList(allMembers);
+                            ref.child(myClubKey).removeValue();
+                            myClubKey = ref.push().getKey();
+                            ref.child(myClubKey).setValue(myClub);
+                            populateClubInfo();
+                        }
+                    });
+                } else {
                     actionButton.setText("Join Club");
                     actionButton.setOnClickListener(new View.OnClickListener() {
                         @Override
@@ -185,6 +208,21 @@ public class ClubDetailsActivity extends AppCompatActivity {
 
     /**Populates UI fields*/
     public void populateClubInfo(){
+        membersList = new ArrayList<>();
+        for(User member: myClub.getMembersList()){
+            membersList.add(member.getUsername());
+        }
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, membersList);
+        clubMembersListView.setAdapter(adapter);
+        clubMembersListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Intent i = new Intent(ClubDetailsActivity.this,MyProfileActivity.class);
+                i.putExtra("username", clubMembersListView.getItemAtPosition(position).toString());
+                startActivity(i);
+            }
+        });
+
         if(myClub.getName().equals("")) {
             clubNameTV.setText("This Club has no Name.");
         }else{

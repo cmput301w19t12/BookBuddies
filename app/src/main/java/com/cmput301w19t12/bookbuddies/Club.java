@@ -52,6 +52,7 @@ public class Club {
     }
 
     public void setMembersList(ArrayList<User> membersList){
+        this.membersList = new ArrayList<>();
         this.membersList = membersList;
     }
 /*

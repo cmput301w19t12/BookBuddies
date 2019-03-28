@@ -8,47 +8,37 @@ import java.util.Date;
  * @version 1.0*/
 
 public class Message {
-    private String text;
-    private Date time;
-    private User sender;
+    private User messageSender;
+    private String messageText;
+    private Date messageTime;
 
-    /**Base constructor
-     * @param messageText String
-     * @param messageTime Date
-     * @param sender User*/
-    Message(String messageText, Date messageTime, User sender){
-        this.text = messageText;
-        this.time = messageTime;
-        this.sender = sender;
+    Message(String text, Date time, User sender){
+        this.messageSender = sender;
+        this.messageText = text;
+        this.messageTime = time;
     }
 
-    /**sets the text contents of the message
-     * @param messageText String*/
-    public void setMessageText(String messageText){
-        this.text = messageText;
+    public void setMessageText(String text){
+        this.messageText = text;
     }
 
-    /**Gets the contents of the message
-     * @return text String*/
     public String getMessageText(){
-        return this.text;
+        return this.messageText;
     }
 
-    /**Sets the time the message was sent
-     * @param messageTime Date*/
-    public void setMessageTime(Date messageTime){
-        this.time = messageTime;
+    public void setMessageTime(Date time){
+        this.messageTime = time;
     }
 
-    /**Gets the time the message was sent
-     * @return time Date*/
     public Date getMessageTime(){
-        return this.time;
+        return this.messageTime;
     }
 
-    /**gets the sender user of the message
-     * @return sender User*/
     public User getSender(){
-        return this.sender;
+        return this.messageSender;
+    }
+
+    public String getSenderUsername() {
+        return this.messageSender.getUsername();
     }
 }

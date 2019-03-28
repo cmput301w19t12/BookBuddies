@@ -16,21 +16,48 @@ public class Club {
     private ArrayList<User> membersList;
     private Book currentBook;
     private ArrayList<Event> events;
+    private Chat groupChat;
+    private String clubID;
 
     Club() {
         this.membersList = new ArrayList<>();
+        this.groupChat = new Chat();
     }
 
     /**Baseline constructor for the Club class
      * Assigns club owner and name, initializes both lists
      * @param owner User
      * @param name String*/
-    Club(User owner, String name, ArrayList<User> membersList){
+    Club(User owner, String name, ArrayList<User> membersList,String clubID){
         this.owner = owner;
         this.name = name;
         this.membersList = membersList;
         //this.membersList.add(owner);
         this.events = new ArrayList<>();
+        this.groupChat = new Chat();
+        this.clubID = clubID;
+    }
+
+
+    public String getClubID() {
+        return clubID;
+    }
+
+    public void setClubID(String clubID) {
+        this.clubID = clubID;
+    }
+
+    /**
+     * sets the chat
+     * @param  chat Chat*/
+    public void setGroupChat(Chat chat){
+        this.groupChat = chat;
+    }
+
+    /**returns the chat
+     * @return groupChat Chat*/
+    public Chat getGroupChat(){
+        return this.groupChat;
     }
 
     /**Gets book being currently read by the club
@@ -54,19 +81,7 @@ public class Club {
     public void setMembersList(ArrayList<User> membersList){
         this.membersList = membersList;
     }
-/*
-    /**Adds a member to the club
-     * @param member User*/
-   /* public void addMember(User member) {
-        this.membersList.add(member);
-    }
-*//*
-    /**Removes a member from the group
-     * @param user User*/
-/*    public void deleteMember(User user){
-        this.membersList.remove(user);
-    }
-*/
+
     /**Gets name of the club
      * @return name String*/
     public String getName() {

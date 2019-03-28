@@ -18,6 +18,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.gson.Gson;
 
 /**Presents the user with all the details of a given club
  *
@@ -35,6 +36,7 @@ public class ClubDetailsActivity extends AppCompatActivity {
     TextView clubBookTV;
     TextView clubEventTV;
     Button actionButton;
+    Button clubChatButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,6 +50,7 @@ public class ClubDetailsActivity extends AppCompatActivity {
         clubEventTV = findViewById(R.id.clubDetailsClubEvents);
         clubBookTV = findViewById(R.id.clubDetailsBookName);
         actionButton = findViewById(R.id.clubDetailsEditButton);
+        clubChatButton = findViewById(R.id.clubChatButton);
         getClubInfo();
     }
 
@@ -119,6 +122,15 @@ public class ClubDetailsActivity extends AppCompatActivity {
         if(myClub.getCurrentBook()!= null){
             clubBookTV.setText(myClub.getCurrentBook().getBookDetails().getTitle());
         }
+
+        clubChatButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(ClubDetailsActivity.this,ClubChatActivity.class);
+                intent.putExtra("club",new Gson().toJson(myClub));
+                startActivity(intent);
+            }
+        });
         //Do not have events functionality added yet
         //clubEventTV.setText(myClub.getEvents().get(0).getEventId());
 

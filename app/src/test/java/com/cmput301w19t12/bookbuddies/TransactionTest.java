@@ -16,12 +16,12 @@ public class TransactionTest {
     User testUser = new User("username", "password");
     User testUser2 = new User("username2", "password2");
     User testUser3 = new User("username3", "password3");
-    Book testBook = new Book("Owner",new BookDetails("","","","",""),"Available");
-    Book testBook2 = new Book("Owner2",new BookDetails("","","","",""),"Available");
+    Book testBook = new Book("Owner",new BookDetails("","","","",""),"Available","");
+    Book testBook2 = new Book("Owner2",new BookDetails("","","","",""),"Available","");
     Location location = new Location("");
     Calendar cal = Calendar.getInstance();
     Date date = cal.getTime();
-    Transaction testTransaction = new Transaction(testUser,testUser2,testBook,location,date);
+    Transaction testTransaction = new Transaction(testUser,testUser2,testBook,"","");
 
     @Test
 	public void ownerTest() {

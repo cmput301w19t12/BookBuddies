@@ -98,7 +98,13 @@ public class ClubDetailsActivity extends AppCompatActivity {
                 final User currentUser = dataSnapshot.child(userID).getValue(User.class);
                 if(myClub.getOwner().getUsername().equals(currentUser.getUsername())){
                     Log.i("Club owner myclub", myClub.getOwner().getUsername());
-                    actionButton.setVisibility(View.INVISIBLE);
+                    actionButton.setText("Delete Club");
+                    actionButton.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            getDeleteConfirmation().show();
+                        }
+                    });
                     setEditListeners();
                 } else if(membersList.contains(currentUser.getUsername())){
                     actionButton.setText("Leave Club");
@@ -203,6 +209,28 @@ public class ClubDetailsActivity extends AppCompatActivity {
 
         // show it
         alertDialog.show();
+    }
+
+    private android.app.AlertDialog getDeleteConfirmation() {
+        return new android.app.AlertDialog.Builder(this)
+                .setTitle("Delete Club")
+                .setMessage("Are you sure you want to delete this club?")
+                .setPositiveButton("Delete", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Clubs");
+                        ref.child(myClubKey).removeValue();
+                        populateClubInfo();
+                        finish();
+                    }
+                })
+                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                })
+                .create();
     }
 
 

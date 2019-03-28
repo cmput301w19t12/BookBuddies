@@ -8,7 +8,9 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.cmput301w19t12.bookbuddies.Notification.ClubRequestNotification;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -76,17 +78,29 @@ public class ClubDetailsActivity extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 user = mAuth.getCurrentUser();
                 String userID = user.getUid();
-                User currentUser = dataSnapshot.child(userID).getValue(User.class);
+                final User currentUser = dataSnapshot.child(userID).getValue(User.class);
                 if(myClub.getOwner().getUsername().equals(currentUser.getUsername())){
-                    actionButton.setVisibility(View.VISIBLE);
                     Log.i("Club owner myclub", myClub.getOwner().getUsername());
-                } else {
+                    actionButton.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+
+                        }
+                    });
+                }
+
+                else {
                     //do not have adding members functionality yet, so no need to implement yet
                     actionButton.setText("Join Club");
                     actionButton.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-
+                            DatabaseReference ref = FirebaseDatabase.getInstance().getReference();
+                            String clubOwnerUsername = myClub.getOwner().getUsername();
+                            String key = ref.push().getKey();
+                            ClubRequestNotification notification = new ClubRequestNotification(clubOwnerUsername, currentUser.getUsername(), clubName, "PENDING");
+                            ref.child("Notifications").child("Club Requests").child(clubOwnerUsername).child(key).setValue(notification);
+                            Toast.makeText(ClubDetailsActivity.this, "REQUEST SENT", Toast.LENGTH_LONG).show();
                         }
                     });
                 }

@@ -13,7 +13,8 @@ public class BookTest {
     BookDetails testBookDetatails = new BookDetails(title,author,ISBN,description,ID);
     String owner = "Me";
     String status = "available";
-    Book testBook = new Book(owner,testBookDetatails,status);
+    String borrower = "John";
+    Book testBook = new Book(owner,testBookDetatails,status,borrower);
 
     @Test
     public void getDetailsTest(){
@@ -46,16 +47,20 @@ public class BookTest {
     public void getBookTest(){
         assertEquals(testBook.getOwner(),owner);
         assertEquals(testBook.getStatus(),status);
+        assertEquals(testBook.getCurrentBorrower(),borrower);
     }
 
     @Test
     public void setBookTest(){
         owner = "new owner";
         status = "Borrowed";
+        borrower = "Dallas";
         testBook.setOwner(owner);
         testBook.setStatus(status);
+        testBook.setCurrentBorrower(borrower);
         assertEquals(testBook.getOwner(),owner);
         assertEquals(testBook.getStatus(),status);
+        assertEquals(testBook.getCurrentBorrower(),borrower);
 
     }
 }

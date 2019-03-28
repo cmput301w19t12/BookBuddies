@@ -25,6 +25,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.gson.Gson;
 
 import java.util.ArrayList;
 
@@ -45,6 +46,7 @@ public class ClubDetailsActivity extends AppCompatActivity {
     TextView clubBookTV;
     TextView clubEventTV;
     Button actionButton;
+    Button clubChatButton;
     ArrayList<String> membersList;
     ListView clubMembersListView;
 
@@ -60,6 +62,7 @@ public class ClubDetailsActivity extends AppCompatActivity {
         clubEventTV = findViewById(R.id.clubDetailsClubEvents);
         clubBookTV = findViewById(R.id.clubDetailsBookName);
         actionButton = findViewById(R.id.clubDetailsEditButton);
+        clubChatButton = findViewById(R.id.clubChatButton);
         clubMembersListView = findViewById(R.id.clubMembersListView);
         getClubInfo();
 
@@ -240,6 +243,17 @@ public class ClubDetailsActivity extends AppCompatActivity {
         for(User member: myClub.getMembersList()){
             membersList.add(member.getUsername());
         }
+
+        clubChatButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(ClubDetailsActivity.this,ClubChatActivity.class);
+                intent.putExtra("club",new Gson().toJson(myClub));
+                startActivity(intent);
+            }
+        });
+        //Do not have events functionality added yet
+        //clubEventTV.setText(myClub.getEvents().get(0).getEventId());
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, membersList);
         clubMembersListView.setAdapter(adapter);
         clubMembersListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {

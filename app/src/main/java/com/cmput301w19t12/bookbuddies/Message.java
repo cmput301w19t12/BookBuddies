@@ -22,6 +22,8 @@ public class Message {
         this.sender = sender;
     }
 
+    Message(){}
+
     /**sets the text contents of the message
      * @param messageText String*/
     public void setMessageText(String messageText){
@@ -50,5 +52,11 @@ public class Message {
      * @return sender User*/
     public User getSender(){
         return this.sender;
+    }
+
+    /**sets the sender user
+     * @param sender User*/
+    public void setSender(User sender){
+        this.sender = sender;
     }
 }

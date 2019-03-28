@@ -25,10 +25,17 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
 
-        <activity android:name=".MyRequestsActivity"></activity>
+
+        <service android:name=".notifications.MyFirebaseIdService">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
+
+        <activity android:name=".MyRequestsActivity" />
         <activity android:name=".MyBorrowingBooksActivity" />
         <activity android:name=".PendingTransactionsActivity" />
-        <activity android:name=".Notification.MyNotificationsActivity"></activity>
+        <activity android:name=".Notification.MyNotificationsActivity" />
         <activity android:name=".ClubDetailsActivity" />
         <activity android:name=".RequestViewActivity" />
         <activity android:name=".BookTransactionActivity" />

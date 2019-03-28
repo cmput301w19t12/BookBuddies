@@ -250,9 +250,9 @@ public class ClubFragment extends Fragment {
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     try {
                         Club club = snapshot.getValue(Club.class);
-                        String clubName = club.getName();
+                        String clubName = club.getName().toLowerCase();
                         String ownerUsername = club.getOwner().getUsername();
-                        if (clubName.contains(newText) || ownerUsername.contains(newText)) {
+                        if (clubName.contains(newText.toLowerCase()) || ownerUsername.toLowerCase().contains(newText.toLowerCase())) {
                             suggestedClubs.add(club);
                         }
                     }

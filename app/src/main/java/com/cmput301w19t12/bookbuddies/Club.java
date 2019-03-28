@@ -14,7 +14,7 @@ public class Club {
     private User owner;
     private String name;
     private ArrayList<User> membersList;
-    private Book currentBook;
+    private String currentBook;
     private ArrayList<Event> events;
     private Chat groupChat;
     private String clubID;
@@ -62,13 +62,13 @@ public class Club {
 
     /**Gets book being currently read by the club
      * @return currentBook Book*/
-    public Book getCurrentBook() {
+    public String getCurrentBook() {
         return this.currentBook;
     }
 
     /**Sets the book that the club is reading
      * @param currentBook Book*/
-    public void setCurrentBook(Book currentBook) {
+    public void setCurrentBook(String currentBook) {
         this.currentBook = currentBook;
     }
 
@@ -79,6 +79,7 @@ public class Club {
     }
 
     public void setMembersList(ArrayList<User> membersList){
+        this.membersList = new ArrayList<>();
         this.membersList = membersList;
     }
 

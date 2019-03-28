@@ -42,7 +42,7 @@
         <activity android:name=".EditBookDetailsActivity" />
         <activity android:name=".SearchResultsActivity" />
         <activity android:name=".DetailedBookList" />
-        <activity android:name=".AddClubActivity" />
+        <activity android:name=".AddClubActivity" android:noHistory="true"/>
         <activity android:name=".BookDetailsActivity" />
         <activity android:name=".MyProfileActivity" />
 

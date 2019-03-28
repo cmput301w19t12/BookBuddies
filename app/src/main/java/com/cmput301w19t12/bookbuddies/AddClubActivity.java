@@ -75,7 +75,7 @@ public class AddClubActivity extends AppCompatActivity {
         Club newClub = new Club(owner, name, membersList,key);
         newClub.getGroupChat().getMessageList().add(new Message("Welcome to BookBuddies Chat!", Calendar.getInstance().getTime(),new User("BookBuddies","null")));
         newClub.getEvents().add(new Event());
-        newClub.setCurrentBook(new Book());
+        newClub.setCurrentBook("");
         if(key != null) {
             clubsRef.child(key).setValue(newClub);
         }

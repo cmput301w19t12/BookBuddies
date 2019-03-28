@@ -30,11 +30,13 @@ public class CustomNotificationArrayAdapter extends ArrayAdapter<ClubRequestNoti
     private final ArrayList<ClubRequestNotification> Requests;
     private String username;
     private User userToAdd;
+    private CustomNotificationArrayAdapter adapter;
 
     public CustomNotificationArrayAdapter(@NonNull Context context, @NonNull ArrayList<ClubRequestNotification> Requests) {
         super(context, 0, Requests);
         this.context = context;
         this.Requests = Requests;
+        this.adapter = this;
     }
 
     @NonNull
@@ -79,6 +81,7 @@ public class CustomNotificationArrayAdapter extends ArrayAdapter<ClubRequestNoti
                     Log.i("DOne adding member", "");
                     removeNotification(mRequest);
                     Log.i("DOne removing notif", "");
+                    adapter.notifyDataSetChanged();
                 }
             });
 
@@ -87,6 +90,7 @@ public class CustomNotificationArrayAdapter extends ArrayAdapter<ClubRequestNoti
                 public void onClick(View v) {
                     ClubRequestNotification notification = new ClubRequestNotification(mRequest.getNotifiedByUsername(), mRequest.getNotifiedUsername(), mRequest.getClubName(), "DENIED");
                     removeNotification(mRequest);
+                    adapter.notifyDataSetChanged();
                 }
             });
         }
@@ -124,7 +128,9 @@ public class CustomNotificationArrayAdapter extends ArrayAdapter<ClubRequestNoti
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     Club club = snapshot.getValue(Club.class);
                     if (club.getName().equals(notification.getClubName())) {
-                        club.addMember(user);
+                        ArrayList<User> membersList = club.getMembersList();
+                        membersList.add(user);
+                        club.setMembersList(membersList);
                         ref.child(snapshot.getKey()).removeValue();
                         String key = ref.push().getKey();
                         ref.child(key).setValue(club);
@@ -149,6 +155,7 @@ public class CustomNotificationArrayAdapter extends ArrayAdapter<ClubRequestNoti
                         if (snapshot.getValue(ClubRequestNotification.class).getClubName().equals(request.getClubName())) {
                             ref.child(snapshot.getKey()).removeValue();
                             Log.i("Requested club", request.getClubName());
+                            Requests.remove(request);
                         }
                     }
                     catch (NullPointerException e) {

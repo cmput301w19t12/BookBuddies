@@ -51,7 +51,7 @@ public class AddClubActivity extends AppCompatActivity {
      * is called to create the club and save it in the database.
      */
     public void configureSaveButton() {
-        saveClubButton = (FloatingActionButton) findViewById(R.id.createClub);
+        saveClubButton = findViewById(R.id.createClub);
         saveClubButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -67,12 +67,16 @@ public class AddClubActivity extends AppCompatActivity {
     public void createClub() {
         clubsRef = FirebaseDatabase.getInstance().getReference().child("Clubs");
         String key = clubsRef.push().getKey();
-        EditText clubNameField = (EditText) findViewById(R.id.clubName);
+        EditText clubNameField = findViewById(R.id.clubName);
         String name = clubNameField.getText().toString();
-        Club newClub = new Club(owner, name, new ArrayList<User>());
+        ArrayList<User> membersList = new ArrayList<>();
+        membersList.add(owner);
+        Club newClub = new Club(owner, name, membersList);
         newClub.getEvents().add(new Event());
         newClub.setCurrentBook(new Book());
-        clubsRef.child(key).setValue(newClub);
+        if(key != null) {
+            clubsRef.child(key).setValue(newClub);
+        }
         returnToMainActivity();
     }
 

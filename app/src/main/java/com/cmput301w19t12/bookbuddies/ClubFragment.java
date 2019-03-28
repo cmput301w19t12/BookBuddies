@@ -70,8 +70,8 @@ public class ClubFragment extends Fragment {
     private User owner;
     private ListView clubsListView;
     private ArrayList<String> myClubNames;
-    private String username;
-    private Book book;
+    //private String username;
+    //private Book book;
     private FloatingActionButton addButton;
     private Context context;
     private SearchView searchBar;
@@ -120,12 +120,13 @@ public class ClubFragment extends Fragment {
     }
 
     // TODO: Rename method, update argument and hook method into UI event
+   /*
     public void onButtonPressed(Uri uri) {
         if (mListener != null) {
             mListener.onFragmentInteraction(uri);
         }
     }
-
+*/
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
@@ -167,14 +168,14 @@ public class ClubFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        clubsListView = (ListView) view.findViewById(R.id.clubsListView);
-        myClubNames = new ArrayList<String>();
-        suggestedClubs = new ArrayList<Club>();
+        clubsListView =  view.findViewById(R.id.clubsListView);
+        myClubNames = new ArrayList<>();
+        suggestedClubs = new ArrayList<>();
         authorizeUser();
         configureListView();
         populateClubsList();
 
-        addButton = (FloatingActionButton) view.findViewById(R.id.addClubButton);
+        addButton =  view.findViewById(R.id.addClubButton);
         addButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -193,7 +194,7 @@ public class ClubFragment extends Fragment {
             }
         });
 
-        seeRequestsButton = (Button) view.findViewById(R.id.seeClubRequest);
+        seeRequestsButton = view.findViewById(R.id.seeClubRequest);
         seeRequestsButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -202,7 +203,7 @@ public class ClubFragment extends Fragment {
             }
         });
 
-        searchBar = (SearchView) view.findViewById(R.id.clubSearch);
+        searchBar =  view.findViewById(R.id.clubSearch);
         searchBar.setIconifiedByDefault(false);
         searchBar.setQueryHint("Search for clubs");
         searchBar.setSuggestionsAdapter(adapter);
@@ -238,6 +239,7 @@ public class ClubFragment extends Fragment {
             }
         });
     }
+
 
     private void getSuggestions(final String newText) {
         suggestedClubs.clear();
@@ -283,6 +285,7 @@ public class ClubFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
+        authorizeUser();
         populateClubsList();
     }
 
@@ -291,24 +294,31 @@ public class ClubFragment extends Fragment {
      * of the club the club is added to the listview for the user to see.
      */
     public void populateClubsList() {
+        myClubNames.clear();
         clubsRef = FirebaseDatabase.getInstance().getReference("Clubs");
         clubsRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 Club club;
                 myClubNames.clear();
-
                 try {
                     for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                         club = snapshot.getValue(Club.class);
-                        Log.i("Club names", "" + club.getName() + " | " + club.getOwner().getUsername() + " | " + username);
-                        if (((club.getOwner().getUsername()).equals(username)) /*|| (club.getMembers().contains(username))*/) {
+                        ArrayList<User> members = club.getMembersList();
+                        if ((club.getOwner().getUsername()).equals(owner.getUsername())){
                             myClubNames.add(club.getName());
+                        }else {
+                            for (User member : members) {
+                                if (member.getUsername().equals(owner.getUsername())) {
+                                    myClubNames.add(club.getName());
+                                }
+                            }
                         }
                     }
-                    clubsListView.setAdapter(new ArrayAdapter<String>(context, android.R.layout.simple_list_item_1, myClubNames));
+                    clubsListView.setAdapter(new ArrayAdapter<>(context, android.R.layout.simple_list_item_1, myClubNames));
+                    Log.i("DEBUG",myClubNames.toString());
                 }catch (Exception e){
-                    Log.e("Club list making",e.getMessage());
+                   Log.e("Club list making",e.getMessage());
                 }
             }
 
@@ -331,7 +341,7 @@ public class ClubFragment extends Fragment {
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
                 String clubName = clubsListView.getAdapter().getItem(position).toString();
                 getDeleteConfirmation(clubName).show();
-                return false;
+                return true;
             }
         });
     }
@@ -343,13 +353,14 @@ public class ClubFragment extends Fragment {
     public void authorizeUser() {
         mAuth = FirebaseAuth.getInstance();
         user = mAuth.getCurrentUser();
+
         DatabaseReference userRef = FirebaseDatabase.getInstance().getReference("Users").child(user.getUid());
 
         userRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 owner = dataSnapshot.getValue(User.class);
-                username = owner.getUsername();
+               // username = owner.getUsername();
             }
 
             @Override
@@ -396,7 +407,7 @@ public class ClubFragment extends Fragment {
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()){
                     Club club = snapshot.getValue(Club.class);
                     Log.i("Club owner", ""+club.getOwner().getUsername()+" | "+club.getName()+" | ");
-                    if (club.getOwner().getUsername().equals(username) && club.getName().equals(clubName)) {
+                    if (club.getOwner().getUsername().equals(owner.getUsername()) && club.getName().equals(clubName)) {
                         ref.child(snapshot.getKey()).removeValue();
                         populateClubsList();
                     }

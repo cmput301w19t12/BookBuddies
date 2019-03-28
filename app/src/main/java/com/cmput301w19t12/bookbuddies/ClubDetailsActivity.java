@@ -1,12 +1,16 @@
 package com.cmput301w19t12.bookbuddies;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.annotation.NonNull;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -31,6 +35,7 @@ public class ClubDetailsActivity extends AppCompatActivity {
     private FirebaseUser user;
     String clubName;
     Club myClub;
+    String myClubKey;
     TextView clubNameTV;
     TextView clubBookTV;
     TextView clubEventTV;
@@ -60,8 +65,10 @@ public class ClubDetailsActivity extends AppCompatActivity {
                 Club club;
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     club = snapshot.getValue(Club.class);
+                    String clubKey = snapshot.getKey();
                     if (club.getName().equals(clubName)) {
                         myClub = club;
+                        myClubKey = clubKey;
                         populateClubInfo();
                     }
                 }
@@ -81,16 +88,11 @@ public class ClubDetailsActivity extends AppCompatActivity {
                 final User currentUser = dataSnapshot.child(userID).getValue(User.class);
                 if(myClub.getOwner().getUsername().equals(currentUser.getUsername())){
                     Log.i("Club owner myclub", myClub.getOwner().getUsername());
-                    actionButton.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-
-                        }
-                    });
+                    actionButton.setVisibility(View.INVISIBLE);
+                    setEditListeners();
                 }
 
                 else {
-                    //do not have adding members functionality yet, so no need to implement yet
                     actionButton.setText("Join Club");
                     actionButton.setOnClickListener(new View.OnClickListener() {
                         @Override
@@ -113,16 +115,87 @@ public class ClubDetailsActivity extends AppCompatActivity {
         });
     }
 
+    public void setEditListeners(){
+        clubNameTV.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                openEditMenu(0);
+                return true;
+            }
+        });
+        clubBookTV.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                openEditMenu(1);
+                return true;
+            }
+        });
+    }
+
+    public void openEditMenu(final int field){
+
+        LayoutInflater li = LayoutInflater.from(this);
+        View promptsView = li.inflate(R.layout.prompts, null);
+
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
+                this);
+
+        // set prompts.xml to alertdialog builder
+        alertDialogBuilder.setView(promptsView);
+
+        final EditText userInput = (EditText) promptsView
+                .findViewById(R.id.promptUserInput);
+
+        // set dialog message
+        alertDialogBuilder
+                .setCancelable(false)
+                .setPositiveButton("OK",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog,int id) {
+                                // get user input and set it to result
+                                // edit text
+                                switch(field){
+                                    case 0:
+                                        myClub.setName(userInput.getText().toString());
+                                        clubsRef.child(myClubKey).setValue(myClub);
+                                        clubName = myClub.getName();
+                                        break;
+                                    case 1:
+                                        myClub.setCurrentBook(userInput.getText().toString());
+                                        clubsRef.child(myClubKey).setValue(myClub);
+                                        break;
+                                }
+
+                            }
+                        })
+                .setNegativeButton("Cancel",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog,int id) {
+                                dialog.cancel();
+                            }
+                        });
+
+        // create alert dialog
+        AlertDialog alertDialog = alertDialogBuilder.create();
+
+        // show it
+        alertDialog.show();
+    }
+
+
     /**Populates UI fields*/
     public void populateClubInfo(){
-        clubNameTV.setText(myClub.getName());
-        if(myClub.getCurrentBook()!= null){
-            clubBookTV.setText(myClub.getCurrentBook().getBookDetails().getTitle());
+        if(myClub.getName().equals("")) {
+            clubNameTV.setText("This Club has no Name.");
+        }else{
+            clubNameTV.setText(myClub.getName());
         }
-        //Do not have events functionality added yet
-        //clubEventTV.setText(myClub.getEvents().get(0).getEventId());
 
-
+        if((myClub.getCurrentBook() == null) || myClub.getCurrentBook().equals("")){
+            clubBookTV.setText("No Book Selected.");
+        } else{
+            clubBookTV.setText(myClub.getCurrentBook());
+        }
 
     }
 

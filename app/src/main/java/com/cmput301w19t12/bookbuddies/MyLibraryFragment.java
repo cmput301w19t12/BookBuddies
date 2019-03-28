@@ -90,6 +90,7 @@ public class MyLibraryFragment extends Fragment {
     private HashMap<String, List<Book>> bookList;
     private ArrayList<Book> books;
     private Button expandAllButton;
+    private HashMap<String,User> allUsers;
 
     public MyLibraryFragment() {
         // Required empty public constructor
@@ -124,6 +125,23 @@ public class MyLibraryFragment extends Fragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
+
+        allUsers = new HashMap<>();
+        DatabaseReference users = FirebaseDatabase.getInstance().getReference("Users");
+        users.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                allUsers.clear();
+                for(DataSnapshot snapshot : dataSnapshot.getChildren()){
+                    allUsers.put(snapshot.getKey(), snapshot.getValue(User.class));
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
 
     }
 
@@ -160,13 +178,13 @@ public class MyLibraryFragment extends Fragment {
 
         Menu = view.findViewById(R.id.ExpandingMenu);
 
-//        addNew = view.findViewById(R.id.addNewBook);
-//        addNew.setOnClickListener(new View.OnClickListener(){
-//            @Override
-//            public void onClick(View v){
-//                Intent intent = new Intent(getActivity(), NewBookActivity.class);
-//                startActivity(intent);}
-//        });
+        addNew = view.findViewById(R.id.addNewBook);
+        addNew.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v){
+                Intent intent = new Intent(getActivity(), NewBookActivity.class);
+                startActivity(intent);}
+        });
       
         bookTitles = new ArrayList<>();
         books = new ArrayList<>();
@@ -237,17 +255,6 @@ public class MyLibraryFragment extends Fragment {
             @Override
             public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
 
-               /* Book temp = (Book) v.getTag();
-                if(temp.getStatus().equals("Accepted")) {
-                    User owner = new User();
-                    owner.setEmailAddress("grenierb96@gmail.com");
-                    User borrower = new User();
-                    borrower.setEmailAddress("dexterf98@gmail.com");
-                    String key = FirebaseDatabase.getInstance().getReference("Transactions").push().getKey();
-                    Transaction t = new Transaction(owner,borrower, temp, "borrowing",key);
-                    t.transactionToDatabase();
-                }*/
-
                 switchToDetails((Book) v.getTag());
                 return false;
             }
@@ -257,8 +264,6 @@ public class MyLibraryFragment extends Fragment {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
                 if (ExpandableListView.getPackedPositionType(id) == ExpandableListView.PACKED_POSITION_TYPE_CHILD) {
-                    //int groupPosition = ExpandableListView.getPackedPositionGroup(id);
-                    //int childPosition = ExpandableListView.getPackedPositionChild(id);
                     getDeleteConfirmation((Book) view.getTag()).show();
                     return true;
                 }
@@ -295,9 +300,9 @@ public class MyLibraryFragment extends Fragment {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                    Book temp = snapshot.getValue(Book.class);
-                    if (temp.getBookDetails().getTitle().equals(book.getBookDetails().getTitle())) {
-                        ref.child(snapshot.getKey()).removeValue();
+                    String UniqueIDBook = snapshot.getKey();
+                    if (book.getBookDetails().getUniqueID().equals(UniqueIDBook)) {
+                        ref.child(UniqueIDBook).removeValue();
                     }
                 }
             }
@@ -333,10 +338,23 @@ public class MyLibraryFragment extends Fragment {
                 bookTitles.clear();
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     Book book = snapshot.getValue(Book.class);
-                    String title = snapshot.getValue(Book.class).getBookDetails().getTitle();
+                    BookDetails fullDescription = book.getBookDetails();
+                    String title = fullDescription.getTitle();
+                    String author =  fullDescription.getAuthor();
+                    String borrower = book.getCurrentBorrower();
+                    if(borrower == null){
+                        borrower = "No Borrower";
+                    } else {
+                        User u = allUsers.get(borrower);
+                        if(u != null){
+                            borrower = u.getUsername();
+                        }
+                    }
+                    String descriptionDisplay = (title + "\n" + author + "\n" + borrower);
+
                     try {
                         if (user.getUid().equals(book.getOwner())) {
-                            bookTitles.add(title);
+                            bookTitles.add(descriptionDisplay);
                             books.add(book);
                         }
                     }

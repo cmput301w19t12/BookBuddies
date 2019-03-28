@@ -55,47 +55,6 @@
         app:layout_constraintStart_toEndOf="@+id/imageView"
         app:layout_constraintTop_toBottomOf="@+id/profilePhoneNum" />
 
-    <android.support.v7.widget.CardView
-        android:id="@+id/cardView"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_marginTop="24dp"
-        app:cardBackgroundColor="@android:color/holo_blue_light"
-        app:cardCornerRadius="20dp"
-        app:cardElevation="100dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imageView">
-
-        <TextView
-            android:id="@+id/profileViewMyBooks"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="My Books"
-            android:textSize="30sp" />
-
-    </android.support.v7.widget.CardView>
-
-    <android.support.v7.widget.CardView
-        android:id="@+id/profileMyWishlistCard"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        app:cardBackgroundColor="@android:color/holo_blue_light"
-        app:cardCornerRadius="20dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/cardView">
-
-        <TextView
-            android:id="@+id/profileMyWishlist"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="My Wishlist"
-            android:textSize="30sp"
-            tools:layout_editor_absoluteY="118dp" />
-    </android.support.v7.widget.CardView>
-
     <ImageView
         android:id="@+id/imageView"
         android:layout_width="150dp"
@@ -110,20 +69,48 @@
         tools:srcCompat="@tools:sample/avatars" />
 
     <Button
-        android:id="@+id/addNewBook"
+        android:id="@+id/viewPendingTransactionsButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
-        android:layout_marginRight="8dp"
         android:layout_marginBottom="8dp"
-        android:text="@string/addNewBook"
+        android:text="@string/viewPendingTransactionsButton"
+        android:visibility="invisible"
+        android:clickable="false"
         android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@id/viewPendingRequests"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <Button
+        android:id="@+id/viewPendingRequests"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
+        android:text="@string/viewPendingRequestsButton"
+        android:textStyle="bold"
+        android:visibility="invisible"
+        android:clickable="false"
+        app:layout_constraintBottom_toTopOf="@id/viewBooksBorrowing"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <Button
+        android:id="@+id/viewBooksBorrowing"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
+        android:text="@string/viewBooksBorrowing"
+        android:textStyle="bold"
+        android:visibility="invisible"
+        android:clickable="false"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/profileMyWishlistCard" />
+        app:layout_constraintStart_toStartOf="parent" />
 
 </android.support.constraint.ConstraintLayout>

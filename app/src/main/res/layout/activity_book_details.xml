@@ -132,6 +132,7 @@
                     android:hint="@string/descriptionHint" />
             </android.support.design.widget.TextInputLayout>
 
+
             <android.support.design.widget.FloatingActionButton
                 android:id="@+id/editButton"
                 android:layout_width="wrap_content"

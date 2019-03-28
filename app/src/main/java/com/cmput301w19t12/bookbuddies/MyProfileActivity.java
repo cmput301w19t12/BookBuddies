@@ -28,7 +28,9 @@ import org.w3c.dom.Text;
 
 /**Presents the user with their profile information
  *
- * @verion 1.0*/
+ * @verion 1.0
+ *
+ * @see User*/
 
 public class MyProfileActivity extends AppCompatActivity {
 
@@ -42,7 +44,9 @@ public class MyProfileActivity extends AppCompatActivity {
     private User userViewed;
     private String usernameToShow;
     private String userId;
-    private Button addNew;
+    private Button viewPendingTransactions;
+    private Button viewMyRequestsButton;
+    private Button viewMyBorrowingBooks;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,54 +61,53 @@ public class MyProfileActivity extends AppCompatActivity {
         FirebaseUser userDB = mAuth.getCurrentUser();
         userId = userDB.getUid();
         user = new User();
-        addNew = findViewById(R.id.addNewBook);
+        viewPendingTransactions = findViewById(R.id.viewPendingTransactionsButton);
+        viewMyRequestsButton = findViewById(R.id.viewPendingRequests);
+        viewMyBorrowingBooks = findViewById(R.id.viewBooksBorrowing);
 
         Bundle b = getIntent().getExtras();
         usernameToShow = b.getString("username");
-        addNew.setOnClickListener(new View.OnClickListener(){
+
+        viewPendingTransactions.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v){
-                switchToNewBook();
+                viewTransactionsList();
+            }
+        });
+
+        viewMyRequestsButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                viewRequestsList();
+            }
+        });
+
+        viewMyBorrowingBooks.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                viewBorrowingList();
             }
         });
 
         getUserData();
 
-/*
-        fullName.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
-                openEditMenu(0);
-                return true;
-            }
-        });
-        username.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
-                openEditMenu(1);
-                return true;
-            }
-        });
-        phoneNum.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
-                openEditMenu(2);
-                return true;
-            }
-        });
-        email.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
-                openEditMenu(3);
-                return true;
-            }
-        });
-*/
+    }
 
+    private void viewBorrowingList(){
+        startActivity(new Intent(MyProfileActivity.this,MyBorrowingBooksActivity.class));
+    }
+
+    private void viewRequestsList(){
+        startActivity(new Intent(MyProfileActivity.this,MyRequestsActivity.class));
+    }
+
+    private void viewTransactionsList(){
+        startActivity(new Intent(MyProfileActivity.this,PendingTransactionsActivity.class));
     }
 
     public void setEditListeners(){
         if(userViewed.getUsername().equals(user.getUsername())){
+            enableButtons();
             fullName.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View v) {
@@ -129,10 +132,13 @@ public class MyProfileActivity extends AppCompatActivity {
         }
     }
 
-    /**launches new book activity*/
-    public void switchToNewBook(){
-        Intent intent = new Intent(this, NewBookActivity.class);
-        startActivity(intent);
+    private void enableButtons(){
+        viewPendingTransactions.setVisibility(View.VISIBLE);
+        viewPendingTransactions.setClickable(true);
+        viewMyRequestsButton.setVisibility(View.VISIBLE);
+        viewMyRequestsButton.setClickable(true);
+        viewMyBorrowingBooks.setVisibility(View.VISIBLE);
+        viewMyBorrowingBooks.setClickable(true);
     }
 
     public void getUserData(){
@@ -151,6 +157,7 @@ public class MyProfileActivity extends AppCompatActivity {
                             Log.i("USER", userViewed.getUsername());
                             setTextViews();
                             setEditListeners();
+
                         }
                     } catch (Exception e) {
                         // ignore

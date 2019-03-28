@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="com.cmput301w19t12.bookbuddies">
 
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
@@ -12,6 +13,7 @@
     <uses-feature android:name="android.hardware.camera.autofocus" />
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
     <application
@@ -23,14 +25,17 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
 
-        <activity android:name=".RequestViewActivity"></activity>
+        <activity android:name=".MyRequestsActivity"></activity>
+        <activity android:name=".MyBorrowingBooksActivity" />
+        <activity android:name=".PendingTransactionsActivity" />
+        <activity android:name=".Notification.MyNotificationsActivity"></activity>
+        <activity android:name=".ClubDetailsActivity" />
+        <activity android:name=".RequestViewActivity" />
         <activity android:name=".BookTransactionActivity" />
         <activity android:name=".EditBookDetailsActivity" />
-
         <activity android:name=".SearchResultsActivity" />
         <activity android:name=".DetailedBookList" />
-        <activity android:name=".ClubDetailsActivity" />
-        <activity android:name=".AddClubActivity" />
+        <activity android:name=".AddClubActivity" android:noHistory="true"/>
         <activity android:name=".BookDetailsActivity" />
         <activity android:name=".MyProfileActivity" />
 

@@ -82,6 +82,13 @@ public class User {
 
     public User(){ }
 
+    public boolean equals(Object o){
+        if(! (o instanceof User)) return false; //a Person can't be equal to a non-person
+
+        User u = (User) o;
+        return this.username == null && u.getUsername() == null || this.username.equals(u.getUsername());
+    }
+
     /**Gets user email address
      * @return emailAddress String*/
     public String getEmailAddress() {

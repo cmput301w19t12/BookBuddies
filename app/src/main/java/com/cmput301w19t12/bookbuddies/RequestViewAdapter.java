@@ -26,10 +26,14 @@ public class RequestViewAdapter extends ArrayAdapter<BookRequest> {
     private Button acceptButton;
     private Button declineButton;
     private Context context;
+    RequestViewAdapter adapter;
+    ArrayList<BookRequest> entries;
 
     public RequestViewAdapter(Context context, ArrayList<BookRequest> entries){
         super(context,0,entries);
         this.context = context;
+        this.adapter = this;
+        this.entries = entries;
     }
 
 
@@ -39,7 +43,7 @@ public class RequestViewAdapter extends ArrayAdapter<BookRequest> {
      * @param parent ViewGroup
      * @return convertView View*/
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
+    public View getView(final int position, View convertView, ViewGroup parent) {
         final BookRequest request = getItem(position);
 
         if(convertView == null) {
@@ -57,7 +61,9 @@ public class RequestViewAdapter extends ArrayAdapter<BookRequest> {
             public void onClick(View v) {
                 request.Accept();
                 acceptButton.setEnabled(false);
-                notifyDataSetChanged();
+                declineButton.setEnabled(false);
+                removeAllRequestsForBook(request.getRequestedBook().getBookDetails().getUniqueID());
+                adapter.notifyDataSetChanged();
             }
         });
 
@@ -67,13 +73,24 @@ public class RequestViewAdapter extends ArrayAdapter<BookRequest> {
             public void onClick(View v) {
                 request.deleteThisRequest();
                 declineButton.setEnabled(false);
-                notifyDataSetChanged();
+                acceptButton.setEnabled(false);
+                entries.remove(position);
+                adapter.notifyDataSetChanged();
             }
         });
 
         usernameField.setText(request.getRequesterUsername());
 
         return convertView;
+    }
+
+    private void removeAllRequestsForBook(String thisID){
+        for (BookRequest r : entries){
+            String rID = r.getRequestedBook().getBookDetails().getUniqueID();
+            if(rID.equals(thisID)){
+                entries.remove(r);
+            }
+        }
     }
 
 }

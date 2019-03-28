@@ -52,6 +52,7 @@ public class BookDetailsActivity extends AppCompatActivity {
     private Button seeRequestsButton;
 
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -71,7 +72,8 @@ public class BookDetailsActivity extends AppCompatActivity {
         seeRequestsButton = findViewById(R.id.seeRequestsButton);
 
         boolean isOwner = b.getBoolean("isOwner");
-        setUI(isOwner);
+        boolean isBorrower = b.getBoolean("isBorrowing");
+        setUI(isOwner,isBorrower);
         getImage(d.getUniqueID());
         setClickListeners();
         getOwnerUsername();
@@ -87,9 +89,9 @@ public class BookDetailsActivity extends AppCompatActivity {
 
 
 
-    private void setUI(boolean isOwner){
+    private void setUI(boolean isOwner, boolean isBorrower){
         // change UI based on if the user is the owner of this book
-        if (isOwner){
+        if (isOwner) {
             requestBookButton.setVisibility(View.INVISIBLE);
             requestBookButton.setClickable(false);
         }
@@ -99,6 +101,9 @@ public class BookDetailsActivity extends AppCompatActivity {
             seeRequestsButton.setClickable(false);
             editButton.hide();
             editButton.setClickable(false);
+        }
+        if(isBorrower){
+            requestBookButton.setEnabled(false);
         }
     }
 

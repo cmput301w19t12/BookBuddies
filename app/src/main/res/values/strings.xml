@@ -46,5 +46,8 @@
     <string name="pendingReturnsFrom">Returns to me</string>
     <string name="pendingBorrowsTo">My Borrows</string>
     <string name="pendingReturnsTo">My Returns</string>
+    <string name="viewPendingRequestsButton">View My Requests</string>
+    <string name="viewBooksBorrowing">View Books I am Borrowing</string>
+    <string name="seeBookButton">See Book</string>
 
 </resources>

@@ -26,8 +26,8 @@ public class RequestViewAdapter extends ArrayAdapter<BookRequest> {
     private Button acceptButton;
     private Button declineButton;
     private Context context;
-    RequestViewAdapter adapter;
-    ArrayList<BookRequest> entries;
+    private RequestViewAdapter adapter;
+    private ArrayList<BookRequest> entries;
 
     public RequestViewAdapter(Context context, ArrayList<BookRequest> entries){
         super(context,0,entries);

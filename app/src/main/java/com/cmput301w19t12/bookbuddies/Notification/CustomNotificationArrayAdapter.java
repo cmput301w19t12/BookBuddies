@@ -132,7 +132,7 @@ public class CustomNotificationArrayAdapter extends ArrayAdapter<ClubRequestNoti
                         membersList.add(user);
                         club.setMembersList(membersList);
                         ref.child(snapshot.getKey()).removeValue();
-                        String key = ref.push().getKey();
+                        String key = club.getClubID();
                         ref.child(key).setValue(club);
                         Log.i("Deleting club and added new club", "");
                     }

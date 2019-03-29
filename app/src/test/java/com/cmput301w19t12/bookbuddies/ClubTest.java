@@ -12,7 +12,8 @@ import org.junit.Test;
 public class ClubTest {
 
 	User testUser = new User("username", "password");
-	Club testClub = new Club(testUser, "clubname",new ArrayList<User>());
+	String ID = "3";
+	Club testClub = new Club(testUser, "clubname",new ArrayList<User>(),ID);
 	User testUser2 = new User("username2", "password2");
 	Location testLocation = new Location("");
 	Calendar cal = Calendar.getInstance();
@@ -33,17 +34,7 @@ public class ClubTest {
 		assertEquals(testClub.getName(), "newclubname");
 	}
 
-	@Test
-	public void membersTest() {
-		assertTrue(testClub.getMembers().contains(testUser));
-		testClub.addMember(testUser2);
-		assertEquals(testClub.getMembers().size(), 2);
-		assertTrue(testClub.getMembers().contains(testUser2));
-		testClub.deleteMember(testUser2);
-		assertEquals(testClub.getMembers().size(), 1);
-		assertFalse(testClub.getMembers().contains(testUser2));
-	}
-
+/*
 	@Test
 	public void bookTest() {
 		assertEquals(testClub.getCurrentBook(), null);
@@ -51,7 +42,7 @@ public class ClubTest {
 		testClub.setCurrentBook(testBook);
 		assertEquals(testClub.getCurrentBook(), testBook);
 	}
-
+*/
 	@Test
 	public void eventsTest(){
 		testClub.createEvent(testEvent);
@@ -59,5 +50,12 @@ public class ClubTest {
 		testClub.deleteEvent(testEvent);
 		assertEquals(testClub.getEvents().size(), 0);
 	}
+
+	@Test
+    public void IDTest(){
+	    assertEquals(testClub.getClubID(),ID);
+	    testClub.setClubID("5");
+	    assertEquals(testClub.getClubID(),"5");
+    }
 }
 

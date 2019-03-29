@@ -1,6 +1,7 @@
 package com.cmput301w19t12.bookbuddies;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 
 /**Chat class represents a chat object between two or more users
  * A chat has a list of messages and users
@@ -10,40 +11,23 @@ import java.util.ArrayList;
 
 public class Chat {
     private ArrayList<Message> messageList;
-    private ArrayList<User> userList;
 
     /**Base constructor*/
     Chat(){
         this.messageList = new ArrayList<>();
-        this.userList = new ArrayList<>();
-    }
-
-    /**sends a message to all members of a chat*/
-    public void sendMessage(){
-        // Stuff
-    }
-
-    /**Adds a user to the chat group
-     * @param user User*/
-    public void addUser(User user){
-        this.userList.add(user);
-    }
-
-    /**Gets user list for the chat
-     * @return userList ArrayList<User>*/
-    public ArrayList<User> getUsers(){
-        return this.userList;
     }
 
     /**Gets all messages that belong to this chat
      * @return messsageList ArrayList<Messages>*/
-    public ArrayList<Message> getMessages(){
+    public ArrayList<Message> getMessageList(){
         return this.messageList;
     }
 
-    /**Adds a message to the char
-     * @param newMessage message*/
-    public void addMessage(Message newMessage){
-        messageList.add(newMessage);
+    /**Adds a message to the chat
+     * @param messages ArrayList<Message>*/
+    public void setMessageList(ArrayList<Message> messages){
+        messageList = messages;
     }
+
+
 }

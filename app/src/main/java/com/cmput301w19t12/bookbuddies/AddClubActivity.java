@@ -22,6 +22,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 
 /**
  * Activity which allows the user to create a new book reading club.
@@ -71,7 +72,8 @@ public class AddClubActivity extends AppCompatActivity {
         String name = clubNameField.getText().toString();
         ArrayList<User> membersList = new ArrayList<>();
         membersList.add(owner);
-        Club newClub = new Club(owner, name, membersList);
+        Club newClub = new Club(owner, name, membersList,key);
+        newClub.getGroupChat().getMessageList().add(new Message("Welcome to BookBuddies Chat!", Calendar.getInstance().getTime(),new User("BookBuddies","null")));
         newClub.getEvents().add(new Event());
         newClub.setCurrentBook("");
         if(key != null) {

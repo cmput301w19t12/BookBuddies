@@ -2,6 +2,7 @@ package com.cmput301w19t12.bookbuddies;
 
 import android.app.Activity;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -14,6 +15,7 @@ import android.widget.TextView;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -23,6 +25,7 @@ import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.iid.InstanceIdResult;
 import com.google.gson.Gson;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Calendar;
 
@@ -33,6 +36,7 @@ public class ClubChatActivity extends AppCompatActivity {
     private EditText messageContents;
     private Button sendMessageButton;
     private ListView messageList;
+    private Chat chat;
 
     private ArrayList<Message> messages;
 
@@ -48,6 +52,7 @@ public class ClubChatActivity extends AppCompatActivity {
         club = new Gson().fromJson(b.getString("club"),Club.class);
 
         messages = club.getGroupChat().getMessageList();
+        chat = club.getGroupChat();
         messageList = findViewById(R.id.messageList);
         adapter = new ChatMessageAdapter(this,messages);
         messageList.setAdapter(adapter);
@@ -65,9 +70,11 @@ public class ClubChatActivity extends AppCompatActivity {
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                         User user = dataSnapshot.getValue(User.class);
                         Message newMessage = new Message(messageText, Calendar.getInstance().getTime(),user);
-                        //club.getGroupChat().getMessageList().add(0,newMessage);
+                        messages = chat.getMessageList();
                         messages.add(0,newMessage);
-                        FirebaseDatabase.getInstance().getReference("Clubs").child(club.getClubID()).child("groupChat").setValue(messages);
+                        chat.setMessageList(messages);
+                        adapter.notifyDataSetChanged();
+                        FirebaseDatabase.getInstance().getReference("Clubs").child(club.getClubID()).child("groupChat").setValue(chat);
                         onStart();
                     }
 
@@ -87,9 +94,9 @@ public class ClubChatActivity extends AppCompatActivity {
         ref.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                Chat temp = dataSnapshot.getValue(Chat.class);
-                if(temp != null) {
-                    messages = temp.getMessageList();
+                chat = dataSnapshot.getValue(Chat.class);
+                if(chat != null) {
+                    messages = chat.getMessageList();
                     adapter = new ChatMessageAdapter(ClubChatActivity.this,messages);
                     messageList.setAdapter(adapter);
                 }

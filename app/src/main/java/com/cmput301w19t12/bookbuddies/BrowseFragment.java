@@ -50,7 +50,6 @@ public class BrowseFragment extends Fragment {
     private OnFragmentInteractionListener mListener;
     private Set<Book> books;
     private SimpleCursorAdapter adapter;
-    private CheckBox checkBox;
 
     public BrowseFragment() {
         // Required empty public constructor
@@ -80,16 +79,6 @@ public class BrowseFragment extends Fragment {
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-
-        // TODO Actually get the checkbox to work
-        checkBox = view.findViewById(R.id.showUnavailableCheck);
-        checkBox.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                checkBox.toggle();
-                Log.i("STUFF","IT GOT CLICKED");
-            }
-        });
 
         // Get search view and set searchable attributes
         searchBar = (SearchView) view.findViewById(R.id.bookSearch);

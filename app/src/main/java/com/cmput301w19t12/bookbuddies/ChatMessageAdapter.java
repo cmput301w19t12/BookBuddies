@@ -10,15 +10,12 @@ import android.widget.TextView;
 import java.util.ArrayList;
 
 public class ChatMessageAdapter extends ArrayAdapter<Message> {
-    private ChatMessageAdapter adapter;
-    private ArrayList<Message> entries;
     private TextView senderUsername;
     private TextView messageField;
+    private TextView timeField;
 
     ChatMessageAdapter(Context context, ArrayList<Message> entries){
         super(context,0,entries);
-        this.entries = entries;
-        this.adapter = this;
     }
 
 
@@ -39,9 +36,11 @@ public class ChatMessageAdapter extends ArrayAdapter<Message> {
 
         senderUsername = convertView.findViewById(R.id.senderUsername);
         messageField = convertView.findViewById(R.id.messageField);
+        timeField = convertView.findViewById(R.id.timeField);
 
         senderUsername.setText(message.getSender().getUsername());
         messageField.setText(message.getMessageText());
+        timeField.setText(message.getMessageTime().toString());
 
 
         return convertView;

@@ -73,17 +73,16 @@ public class CreateAccountActivity extends AppCompatActivity {
                         @Override
                         public void onComplete(@NonNull Task<AuthResult> task) {
                             if (task.isSuccessful()) {
+                                Toast.makeText(getApplicationContext(),"Account creation successful",Toast.LENGTH_LONG).show();
                                 // if the authorization is valid, create a new user in the database
                                 FirebaseUser user = mAuth.getCurrentUser();
-
-                                // UPDATE UI STUFF HERE
-
                                 String userId = user.getUid();
                                 User newUser = new User(userId, username, password, email);
                                 userRef.child(userId).setValue(newUser);
                                 Log.i("STUFF", "ACCOUNT CREATION SUCCESSFUL");
                                 finish();
                             } else {
+                                Toast.makeText(getApplicationContext(),"Account creation failed",Toast.LENGTH_LONG).show();
                                 // if an error occurs, print it to the log
                                 Log.w("STUFF", "USER ACCOUNT CREATION FAILURE");
                                 Log.w("STUFF", task.getException().toString());
@@ -91,6 +90,7 @@ public class CreateAccountActivity extends AppCompatActivity {
                         }
                     });
         }catch (Exception e){
+            Toast.makeText(getApplicationContext(),"Account creation failed",Toast.LENGTH_LONG).show();
             e.printStackTrace();
             Log.e("STUFF",e.getMessage());
             // notify the user that an error has occurred

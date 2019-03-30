@@ -45,4 +45,18 @@ public class TransactionTest {
 		Assert.assertEquals(testTransaction.getTime(),date);
 	}
 
+	@Test
+    public void transactionIdTest() {
+        String transactionID = "TransactionID";
+        testTransaction.setTransactionID(transactionID);
+        assertEquals(testTransaction.getTransactionID(), transactionID);
+    }
+
+    @Test
+    public void transactionTypeTest() {
+        String transactionType = "TransactionType";
+        testTransaction.setTransactionType(transactionType);
+        assertEquals(testTransaction.getTransactionType(), transactionType);
+    }
+
 }

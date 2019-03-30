@@ -17,6 +17,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.cmput301w19t12.bookbuddies.FirebaseMessaging.Token;
 import com.cmput301w19t12.bookbuddies.Notification.ClubRequestNotification;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -25,7 +26,10 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.messaging.FirebaseMessaging;
+import com.google.firebase.messaging.RemoteMessage;
 import com.google.gson.Gson;
+import android.os.Message;
 
 import java.util.ArrayList;
 
@@ -65,7 +69,6 @@ public class ClubDetailsActivity extends AppCompatActivity {
         clubChatButton = findViewById(R.id.clubChatButton);
         clubMembersListView = findViewById(R.id.clubMembersListView);
         getClubInfo();
-
 
     }
 
@@ -135,6 +138,7 @@ public class ClubDetailsActivity extends AppCompatActivity {
                             ClubRequestNotification notification = new ClubRequestNotification(clubOwnerUsername, currentUser.getUsername(), clubName, "PENDING");
                             ref.child("Notifications").child("Club Requests").child(clubOwnerUsername).child(key).setValue(notification);
                             Toast.makeText(ClubDetailsActivity.this, "REQUEST SENT", Toast.LENGTH_LONG).show();
+                            sendNotification(notification);
                         }
                     });
                 }
@@ -146,6 +150,37 @@ public class ClubDetailsActivity extends AppCompatActivity {
             }
         });
     }
+
+    private void sendNotification(final ClubRequestNotification notification) {
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Tokens");
+        ref.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    Token token = snapshot.getValue(Token.class);
+                    if (token.getUsername().equals(myClub.getOwner())) {
+                        Send(token, notification);
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    private void Send(Token token, ClubRequestNotification notification) {
+        FirebaseMessaging.getInstance().send(new RemoteMessage.Builder("CLUB REQ")
+                                                                .setMessageId("CLUB REQUEST NOTIFICATION")
+                                                                .addData("Title", "Club Request")
+                                                                .addData("body", notification.toString())
+                                                                .build());
+        Log.i("Push notification", "Sent");
+
+    }
+
 
     public void setEditListeners(){
         clubNameTV.setOnLongClickListener(new View.OnLongClickListener() {

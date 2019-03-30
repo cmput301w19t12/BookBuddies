@@ -29,7 +29,10 @@ import android.widget.TableLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.cmput301w19t12.bookbuddies.FirebaseMessaging.Token;
 import com.cmput301w19t12.bookbuddies.Notification.MyNotificationsActivity;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -38,6 +41,8 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.iid.InstanceIdResult;
 import com.google.gson.Gson;
 
 public class MainActivity extends AppCompatActivity implements ClubFragment.OnFragmentInteractionListener,
@@ -47,6 +52,8 @@ public class MainActivity extends AppCompatActivity implements ClubFragment.OnFr
     private DatabaseReference userRef;
     private FirebaseAuth mAuth;
     private User user;
+    private String token;
+
     @Override
     public void onFragmentInteraction(Uri uri) {
         //https://stackoverflow.com/questions/24777985/how-to-implement-onfragmentinteractionlistener
@@ -109,6 +116,56 @@ public class MainActivity extends AppCompatActivity implements ClubFragment.OnFr
         mAuth = FirebaseAuth.getInstance();
         userRef = FirebaseDatabase.getInstance().getReference("Users");
 
+        tokenHandler();
+    }
+
+    private void tokenHandler() {
+        FirebaseInstanceId.getInstance().getInstanceId()
+                .addOnCompleteListener(new OnCompleteListener<InstanceIdResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<InstanceIdResult> task) {
+                        token = task.getResult().getToken();
+                        storeToken();
+                    }
+                });
+
+    }
+
+    private void storeToken() {
+       final String userID = FirebaseAuth.getInstance().getUid();
+       userRef.addListenerForSingleValueEvent(new ValueEventListener() {
+           @Override
+           public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+               for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                   if (snapshot.getKey().equals(userID)) {
+                       String username = snapshot.getValue(User.class).getUsername();
+                       addTokenToDatabase(username);
+                   }
+               }
+           }
+
+           @Override
+           public void onCancelled(@NonNull DatabaseError databaseError) {
+
+           }
+       });
+    }
+
+    private void addTokenToDatabase(final String username) {
+        final DatabaseReference tokenRef = FirebaseDatabase.getInstance().getReference().child("Tokens");
+        final String userID = FirebaseAuth.getInstance().getUid();
+        tokenRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                Token newToken = new Token(username, token);
+                tokenRef.child(userID).setValue(newToken);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
     }
 
     public void checkLoggedIn(){

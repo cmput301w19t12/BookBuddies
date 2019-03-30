@@ -39,10 +39,14 @@ public class Club {
     }
 
 
+    /**returns the clubID
+     * @return clubID String*/
     public String getClubID() {
         return clubID;
     }
 
+    /**sets the clubID
+     * @param clubID String*/
     public void setClubID(String clubID) {
         this.clubID = clubID;
     }

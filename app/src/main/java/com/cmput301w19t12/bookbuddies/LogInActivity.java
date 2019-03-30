@@ -79,11 +79,11 @@ public class LogInActivity extends AppCompatActivity {
                         @Override
                         public void onComplete(@NonNull Task<AuthResult> task) {
                             if (task.isSuccessful()) {
+                                Toast.makeText(LogInActivity.this, String.format("%s is signed in",
+                                        email), Toast.LENGTH_LONG).show();
                                 // if auth is successful, get the user and make a toast
                                 FirebaseUser user = mAuth.getCurrentUser();
                                 // UPDATE UI STUFF HERE
-                                Toast.makeText(LogInActivity.this, String.format("%s is signed in",
-                                        email), Toast.LENGTH_LONG).show();
                                 Log.i("STUFF", "LOGIN WORKED");
                                 finish();
                             } else {

@@ -12,14 +12,22 @@
             android:id="@+id/senderUsername"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="20dp"
+            android:textSize="10dp"
             android:text="TextView" />
 
         <TextView
             android:id="@+id/messageField"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="30dp"
+            android:textSize="20dp"
             android:text="TextView" />
+
+        <TextView
+            android:id="@+id/timeField"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="10dp"
+            android:text="Text"
+            android:textAlignment="textEnd"/>
     </LinearLayout>
 </android.support.constraint.ConstraintLayout>

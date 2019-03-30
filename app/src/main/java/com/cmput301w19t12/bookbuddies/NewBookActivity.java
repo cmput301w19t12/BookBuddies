@@ -38,7 +38,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
-
+import java.util.regex.Pattern;
 
 
 /**NewBookActivity allows user to create a new book in the database and add a picture to the book
@@ -254,6 +254,8 @@ public class NewBookActivity extends AppCompatActivity implements PopupMenu.OnMe
                             JSONObject volumeInfo = jArray.getJSONObject(0).getJSONObject("volumeInfo");
                             String title = volumeInfo.getString("title");
                             String description = volumeInfo.getString("description");
+                            String[] temp = description.split(Pattern.quote("."),3);
+                            description = String.format("%s. %s",temp[0],temp[1]);
                             JSONArray authors = volumeInfo.getJSONArray("authors");
                             String author = authors.getString(0);
                             // ensure the fields were included before trying to add them to avoid null pointers

@@ -35,26 +35,6 @@
 
     </android.support.design.widget.AppBarLayout>
 
-    <android.support.constraint.ConstraintLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="55dp">
-
-        <CheckBox
-            android:id="@+id/showUnavailableCheck"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:enabled="true"
-            android:focusableInTouchMode="true"
-            android:text="@string/showUnavailable"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.976"
-            app:layout_constraintStart_toStartOf="parent"
-            />
-    </android.support.constraint.ConstraintLayout>
-
     <android.support.v4.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -65,7 +45,6 @@
             android:layout_height="match_parent"
             tools:context=".BrowseFragment">
 
-            <!-- TODO: Update blank fragment layout -->
             <android.support.constraint.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">

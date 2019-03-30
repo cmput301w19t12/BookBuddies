@@ -103,7 +103,7 @@ public class BrowseFragment extends Fragment {
             public boolean onQueryTextChange(String newText) {
                 // Whenever the user changes the contents of the query field, create a list of
                 // suggestions that match the current contents of the query field
-                getSuggestions(newText);
+                getSuggestions(newText.toLowerCase());
                 return false;
             }
         });

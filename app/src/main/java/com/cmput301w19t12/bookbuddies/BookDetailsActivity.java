@@ -15,6 +15,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.ceylonlabs.imageviewpopup.ImagePopup;
+import com.cmput301w19t12.bookbuddies.Notification.BookRequestNotification;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -169,6 +170,27 @@ public class BookDetailsActivity extends AppCompatActivity {
         });
     }
 
+
+    private void makeRequestNotification(final String requesterUsername){
+        // create a notification in firebase for this request
+
+        final DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Users").child(book.getOwner());
+        ref.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                User temp = dataSnapshot.getValue(User.class);
+                BookRequestNotification notification = new BookRequestNotification(temp.getUsername(),requesterUsername,book,ref.push().getKey(),"request");
+                FirebaseDatabase.getInstance().getReference("Notifications").child("BookRequestNotifications").child(notification.getNotifiedUsername()).child(notification.getID()).setValue(notification);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
+    }
+
     private void setClickListeners(){
         // set click listeners for all clickable interfaces in the activity
 
@@ -199,6 +221,7 @@ public class BookDetailsActivity extends AppCompatActivity {
                         request.Send();
                         // disallow repeated requests
                         requestBookButton.setEnabled(false);
+                        makeRequestNotification(temp.getUsername());
                     }
 
                     @Override

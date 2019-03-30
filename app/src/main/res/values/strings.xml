@@ -57,6 +57,7 @@
     <string name="sendMessage">Send</string>
     <string name="messageHint">Message</string>
     <string name="title_activity_maps">Map</string>
+    <string name="bookRequestNotifTitle">Book Requests</string>
 
 
 </resources>

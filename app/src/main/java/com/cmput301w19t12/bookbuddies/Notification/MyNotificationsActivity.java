@@ -12,6 +12,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
+import com.cmput301w19t12.bookbuddies.BookRequestNotificationAdapter;
 import com.cmput301w19t12.bookbuddies.R;
 import com.cmput301w19t12.bookbuddies.User;
 import com.google.firebase.auth.FirebaseAuth;
@@ -26,6 +27,8 @@ import java.util.ArrayList;
 public class MyNotificationsActivity extends AppCompatActivity {
 
     private ArrayList<ClubRequestNotification> clubNotifications;
+    private ArrayList<BookRequestNotification> bookRequestNotifications;
+    private ListView bookNotifList;
     private Context context;
     private ListView clubNotifList;
     private User currentUser;
@@ -35,8 +38,10 @@ public class MyNotificationsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_my_notifications);
         clubNotifications = new ArrayList<ClubRequestNotification>();
+        bookRequestNotifications = new ArrayList<>();
         context = this;
         clubNotifList = (ListView) findViewById(R.id.clubRequestListView);
+        bookNotifList = findViewById(R.id.bookRequestListView);
     }
 
     @Override
@@ -57,6 +62,29 @@ public class MyNotificationsActivity extends AppCompatActivity {
                     }
                 }
                 addClubNotifications();
+                addBookNotifications();
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    private void addBookNotifications() {
+
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Notifications").child("BookRequestNotifications").child(currentUser.getUsername());
+        ref.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                bookRequestNotifications.clear();
+                for (DataSnapshot notification : dataSnapshot.getChildren()){
+                    BookRequestNotification temp = notification.getValue(BookRequestNotification.class);
+                    bookRequestNotifications.add(temp);
+                }
+                BookRequestNotificationAdapter adapter =  new BookRequestNotificationAdapter(context,bookRequestNotifications);
+                bookNotifList.setAdapter(adapter);
             }
 
             @Override

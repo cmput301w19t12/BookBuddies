@@ -8,6 +8,8 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.TextView;
+
+import com.google.android.gms.maps.model.LatLng;
 import com.google.gson.Gson;
 import java.util.ArrayList;
 
@@ -26,6 +28,7 @@ public class PendingTransactionsAdapter extends ArrayAdapter<Transaction> {
     private TextView transactionDetails;
     private Button startTransaction;
     private Context context;
+    private Button viewLocation;
 
     public PendingTransactionsAdapter(Context context, ArrayList<Transaction> entries){
         super(context,0,entries);
@@ -50,6 +53,18 @@ public class PendingTransactionsAdapter extends ArrayAdapter<Transaction> {
 
         transactionDetails = convertView.findViewById(R.id.transactionDetails);
         startTransaction = convertView.findViewById(R.id.startTransactionButton);
+        viewLocation = convertView.findViewById(R.id.viewLocation);
+
+        viewLocation.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(context,MapsActivity.class);
+                LatLng latLng = new LatLng(transaction.getLocation().getLatitude(),transaction.getLocation().getLongitude());
+                intent.putExtra("location",latLng);
+                context.startActivity(intent);
+            }
+        });
+
         String td = String.format("%s\n%s\n%s",transaction.getBook().getBookDetails().getTitle(),
                 transaction.getBorrower().getUsername(),transaction.getTransactionType());
         transactionDetails.setText(td);

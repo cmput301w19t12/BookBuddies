@@ -16,10 +16,20 @@
             android:text="TextView" />
 
         <Button
+            android:id="@+id/viewLocation"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="0.05"
+            android:textSize="10dp"
+            android:text="View Meeting Location"
+            android:clickable="true"/>
+
+        <Button
             android:id="@+id/startTransactionButton"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:layout_weight="0.25"
+            android:layout_weight="0.05"
+            android:textSize="10dp"
             android:text="@string/startTransaction"
             android:clickable="true"/>
     </LinearLayout>

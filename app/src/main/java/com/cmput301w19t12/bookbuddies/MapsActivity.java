@@ -1,23 +1,11 @@
 package com.cmput301w19t12.bookbuddies;
 
-import android.Manifest;
 import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.location.Location;
-import android.location.LocationListener;
-import android.location.LocationManager;
-import android.support.annotation.NonNull;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.view.View;
-import android.widget.Button;
 import android.widget.Toast;
 
-import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.libraries.places.api.Places;
@@ -32,88 +20,34 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.libraries.places.widget.AutocompleteSupportFragment;
 import com.google.android.libraries.places.widget.listener.PlaceSelectionListener;
+import com.google.gson.Gson;
 
 import java.util.Arrays;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
-    //Permission and GoogleMap
-    private static final String TAG = "MapsActivity";
-    private static final int PLACE_PICKER_REQUEST = 1234;
-    private static final String[] permissions = {Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION};
-    private static final String COARSE = Manifest.permission.ACCESS_COARSE_LOCATION;
-    private static final String FINE = Manifest.permission.ACCESS_FINE_LOCATION;
-    private GoogleApiClient ApiClient;
+
     private GoogleMap mMap;
-    private Boolean mPermissionGranted = false;
-    //Android Location Services
-    private LocationManager locationManager;
-    private LocationListener listener;
-    private double lon;
-    private double lat;
-    private Location currentLocation;
+    private BookRequest request;
+    private LatLng meetingLocation;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
-        //Bundle b = getIntent().getExtras();
-        Places.initialize(getApplicationContext(), "AIzaSyC1tManypjvozXL45sHpXrKnzXnhk-q18g");
-        PlacesClient placesClient = Places.createClient(this);
 
-    }
+        Bundle b = getIntent().getExtras();
+        request = new Gson().fromJson(b.getString("request"),BookRequest.class);
+        meetingLocation = b.getParcelable("location");
 
-    //Getting Permission
-    private void getPermission() {
-        if (ContextCompat.checkSelfPermission(this.getApplicationContext(), COARSE) == PackageManager.PERMISSION_GRANTED) {
-            if (ContextCompat.checkSelfPermission(this.getApplicationContext(), FINE) == PackageManager.PERMISSION_GRANTED) {
-                mPermissionGranted = true;
-            }
-        } else {
-            ActivityCompat.requestPermissions(this, permissions, PLACE_PICKER_REQUEST);
-        }
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        mPermissionGranted = false;
-        getPermission();
-        switch (requestCode) {
-            case PLACE_PICKER_REQUEST: {
-                if (grantResults.length > 0) {
-                    for (int i = 0; i < grantResults.length; i++) {
-                        if (grantResults[i] != PackageManager.PERMISSION_GRANTED) {
-                            mPermissionGranted = false;
-                            return;
-                        }
-                    }
-                    mPermissionGranted = true;
-                    init();
-                }
-            }
-        }
-    }
-
-    public void init() {
+        // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
-        mapFragment.getMapAsync(new OnMapReadyCallback() {
-            @Override
-            public void onMapReady(GoogleMap googleMap) {
-                mMap = googleMap;
-                Toast.makeText(MapsActivity.this, String.format("map init okay"), Toast.LENGTH_LONG).show();
-            }
-        });
-    }
-
-    public void Confirm(View v){
-        Intent back = new Intent(MapsActivity.this, RequestViewActivity.class);
-        startActivity(back);
-    }
-
-    // Obtain the SupportMapFragment and get notified when the map is ready to be used.
+        mapFragment.getMapAsync(this);
+        // Initialize Places.
+        Places.initialize(getApplicationContext(),"AIzaSyC1tManypjvozXL45sHpXrKnzXnhk-q18g");
 
 // Create a new Places client instance.
-        /*
+        PlacesClient placesClient = Places.createClient(this);
 
         // Initialize the AutocompleteSupportFragment.
         AutocompleteSupportFragment autocompleteFragment = (AutocompleteSupportFragment)
@@ -128,11 +62,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             public void onPlaceSelected(Place place) {
                 // TODO: Get info about the selected place.
                 Log.i("MAPS", "Place: " + place.getName() + ", " + place.getId() + ", " + place.getLatLng());
-                LatLng pos = place.getLatLng();
-                if(pos != null) {
+                meetingLocation = place.getLatLng();
+                if(meetingLocation != null) {
                     mMap.clear();
-                    mMap.addMarker(new MarkerOptions().position(pos).title(place.getName()));
-                    mMap.moveCamera(CameraUpdateFactory.newLatLng(pos));
+                    mMap.addMarker(new MarkerOptions().position(meetingLocation).title(place.getName()));
+                    mMap.moveCamera(CameraUpdateFactory.newLatLng(meetingLocation));
                     mMap.moveCamera(CameraUpdateFactory.zoomTo(15.0f));
                 }
             }
@@ -143,7 +77,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 Log.i("MAPS", "An error occurred: " + status);
             }
         });
-    }*/
+    }
 
 
     /**
@@ -158,12 +92,19 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
+        if (meetingLocation != null) {
+            mMap.addMarker(new MarkerOptions().position(meetingLocation).title("Meeting Location"));
+            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(meetingLocation,10));
+        }
+    }
 
-
-        // Add a marker in Sydney and move the camera
-        LatLng sydney = new LatLng(-34, 151);
-        mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+    @Override
+    public void onBackPressed(){
+        Intent intent = new Intent();
+        intent.putExtra("request",new Gson().toJson(request));
+        intent.putExtra("location",meetingLocation);
+        setResult(4,intent);
+        finish();
     }
 
 }

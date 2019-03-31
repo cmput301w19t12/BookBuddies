@@ -2,6 +2,7 @@ package com.cmput301w19t12.bookbuddies;
 
 import android.support.annotation.NonNull;
 
+import com.google.android.gms.maps.model.LatLng;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -97,7 +98,7 @@ public class BookRequest {
     }
 
     /**Accepts this request on the book, deletes all other request, and opens a transaction*/
-    public void Accept(){
+    public void Accept(LatLng transactionLocation){
         FirebaseDatabase fire = FirebaseDatabase.getInstance();
         String bookID = requestedBook.getBookDetails().getUniqueID();
         // change the book from requested to accepted
@@ -106,7 +107,7 @@ public class BookRequest {
         requestedBook.setStatus("Accepted");
         fire.getReference("Books").child("Accepted").child(bookID).setValue(requestedBook);
         deleteRequests();
-        openTransaction();
+        openTransaction(transactionLocation);
     }
 
     /**deletes this request*/
@@ -172,12 +173,13 @@ public class BookRequest {
     }
 
     // open a new transaction after this request has been accepted
-    private void openTransaction(){
+    private void openTransaction(LatLng transactionLocation){
         final Transaction newTransaction = new Transaction();
         FirebaseDatabase fire = FirebaseDatabase.getInstance();
         DatabaseReference requesterRef = fire.getReference("Users").child(requesterID);
         DatabaseReference ownerRef = fire.getReference("Users").child(requestedBook.getOwner());
         newTransaction.setBook(requestedBook);
+        newTransaction.setLocation(new MyLatLng(transactionLocation.latitude,transactionLocation.longitude));
         String key = FirebaseDatabase.getInstance().getReference("Transactions").push().getKey();
         newTransaction.setTransactionID(key);
 

@@ -13,28 +13,22 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:name="com.google.android.libraries.places.widget.AutocompleteSupportFragment"
-        tools:layout="@layout/places_autocomplete_fragment" />
-
+        />
     <fragment xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:map="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools"
         android:id="@+id/map"
         android:name="com.google.android.gms.maps.SupportMapFragment"
-        tools:context="com.cmput301w19t12.bookbuddies.MapsActivity"
         android:layout_width="match_parent"
-        android:layout_height="652dp"
-        android:layout_below="@+id/confirmButton"
-        android:layout_marginTop="21dp"
-        tools:layout="@layout/fragment_maps"/>
+        android:layout_height="match_parent"
+        android:layout_below="@id/autocomplete_fragment" />
 
     <Button
         android:id="@+id/confirmButton"
         android:layout_width="match_parent"
-        android:layout_height="58dp"
-        android:layout_alignParentTop="true"
-        android:layout_marginTop="0dp"
-        android:onClick="Confirm"
-        android:text="Confirm" />
+        android:layout_height="wrap_content"
+        android:text="confirm"
+        android:layout_below="@id/map"/>
 
 
 </RelativeLayout>

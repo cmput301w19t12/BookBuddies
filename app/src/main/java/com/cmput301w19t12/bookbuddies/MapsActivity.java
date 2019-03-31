@@ -1,9 +1,23 @@
 package com.cmput301w19t12.bookbuddies;
 
+import android.Manifest;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
+import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
+import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
+import android.widget.Toast;
 
+import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.libraries.places.api.Places;
@@ -22,22 +36,84 @@ import com.google.android.libraries.places.widget.listener.PlaceSelectionListene
 import java.util.Arrays;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
-
+    //Permission and GoogleMap
+    private static final String TAG = "MapsActivity";
+    private static final int PLACE_PICKER_REQUEST = 1234;
+    private static final String[] permissions = {Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION};
+    private static final String COARSE = Manifest.permission.ACCESS_COARSE_LOCATION;
+    private static final String FINE = Manifest.permission.ACCESS_FINE_LOCATION;
+    private GoogleApiClient ApiClient;
     private GoogleMap mMap;
+    private Boolean mPermissionGranted = false;
+    //Android Location Services
+    private LocationManager locationManager;
+    private LocationListener listener;
+    private double lon;
+    private double lat;
+    private Location currentLocation;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
-        // Obtain the SupportMapFragment and get notified when the map is ready to be used.
+        //Bundle b = getIntent().getExtras();
+        Places.initialize(getApplicationContext(), "AIzaSyC1tManypjvozXL45sHpXrKnzXnhk-q18g");
+        PlacesClient placesClient = Places.createClient(this);
+
+    }
+
+    //Getting Permission
+    private void getPermission() {
+        if (ContextCompat.checkSelfPermission(this.getApplicationContext(), COARSE) == PackageManager.PERMISSION_GRANTED) {
+            if (ContextCompat.checkSelfPermission(this.getApplicationContext(), FINE) == PackageManager.PERMISSION_GRANTED) {
+                mPermissionGranted = true;
+            }
+        } else {
+            ActivityCompat.requestPermissions(this, permissions, PLACE_PICKER_REQUEST);
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        mPermissionGranted = false;
+        getPermission();
+        switch (requestCode) {
+            case PLACE_PICKER_REQUEST: {
+                if (grantResults.length > 0) {
+                    for (int i = 0; i < grantResults.length; i++) {
+                        if (grantResults[i] != PackageManager.PERMISSION_GRANTED) {
+                            mPermissionGranted = false;
+                            return;
+                        }
+                    }
+                    mPermissionGranted = true;
+                    init();
+                }
+            }
+        }
+    }
+
+    public void init() {
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
-        mapFragment.getMapAsync(this);
-        // Initialize Places.
-        Places.initialize(getApplicationContext(),"AIzaSyC1tManypjvozXL45sHpXrKnzXnhk-q18g");
+        mapFragment.getMapAsync(new OnMapReadyCallback() {
+            @Override
+            public void onMapReady(GoogleMap googleMap) {
+                mMap = googleMap;
+                Toast.makeText(MapsActivity.this, String.format("map init okay"), Toast.LENGTH_LONG).show();
+            }
+        });
+    }
+
+    public void Confirm(View v){
+        Intent back = new Intent(MapsActivity.this, RequestViewActivity.class);
+        startActivity(back);
+    }
+
+    // Obtain the SupportMapFragment and get notified when the map is ready to be used.
 
 // Create a new Places client instance.
-        PlacesClient placesClient = Places.createClient(this);
+        /*
 
         // Initialize the AutocompleteSupportFragment.
         AutocompleteSupportFragment autocompleteFragment = (AutocompleteSupportFragment)
@@ -67,7 +143,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 Log.i("MAPS", "An error occurred: " + status);
             }
         });
-    }
+    }*/
 
 
     /**
@@ -88,6 +164,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         LatLng sydney = new LatLng(-34, 151);
         mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
         mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
-        }
-
     }
+
+}

@@ -8,7 +8,6 @@ import java.util.Calendar;
 import java.util.Date;
 
 import static org.junit.Assert.*;
-import org.junit.Test;
 public class ClubTest {
 
 	User testUser = new User("username", "password");
@@ -28,28 +27,54 @@ public class ClubTest {
 	}
 
 	@Test
+	public void memberTest() {
+		User testUser1 = new User("username1", "password1",
+									"780-111-1111", "testUser1@gmail.com",
+								null);
+		User testUser2 = new User("username2", "password2",
+									"780-222-2222", "testUser2@gmail.com", null);
+
+		testClub.getMembersList().add(testUser1);
+		testClub.getMembersList().add(testUser2);
+		assertEquals(testClub.getMembersList().get(0), testUser1);
+		assertEquals(testClub.getMembersList().get(1), testUser2);
+	}
+
+	@Test
+	public void clubIDTest() {
+		String testId = "1234";
+		testClub.setClubID(testId);
+		assertEquals(testClub.getClubID(), testId);
+	}
+
+	@Test
+	public void chatTest() {
+		Chat chat = new Chat();
+		testClub.setGroupChat(chat);
+		assertEquals(testClub.getGroupChat(), chat);
+	}
+
+	@Test
 	public void clubNameTest() {
 		assertEquals(testClub.getName(), "clubname");
 		testClub.setName("newclubname");
 		assertEquals(testClub.getName(), "newclubname");
 	}
 
-/*
 	@Test
-	public void bookTest() {
-		assertEquals(testClub.getCurrentBook(), null);
-		Book testBook = new Book();
-		testClub.setCurrentBook(testBook);
-		assertEquals(testClub.getCurrentBook(), testBook);
+	public void currentBookTest() {
+		String bookTitle = "testBook";
+		testClub.setCurrentBook(bookTitle);
+		assertEquals(bookTitle, testClub.getCurrentBook());
 	}
-*/
-	@Test
-	public void eventsTest(){
-		testClub.createEvent(testEvent);
-		assertEquals(testClub.getEvents().size(), 1);
-		testClub.deleteEvent(testEvent);
-		assertEquals(testClub.getEvents().size(), 0);
-	}
+
+//	@Test
+//	public void eventsTest(){
+//		testClub.createEvent(testEvent);
+//		assertEquals(testClub.getEvents().size(), 1);
+//		testClub.deleteEvent(testEvent);
+//		assertEquals(testClub.getEvents().size(), 0);
+//	}
 
 	@Test
     public void IDTest(){

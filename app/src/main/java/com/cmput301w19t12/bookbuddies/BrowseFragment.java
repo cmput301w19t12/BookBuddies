@@ -5,7 +5,9 @@ import android.app.SearchableInfo;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.database.DatabaseErrorHandler;
 import android.database.MatrixCursor;
+import android.media.Image;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.BaseColumns;
@@ -19,10 +21,16 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
+import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.SearchView;
 import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -30,6 +38,9 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.gson.Gson;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -47,9 +58,13 @@ import java.util.Set;
 public class BrowseFragment extends Fragment {
 
     private SearchView searchBar;
+    private LinearLayout suggestedScroll;
     private OnFragmentInteractionListener mListener;
     private Set<Book> books;
     private SimpleCursorAdapter adapter;
+    private ImageButton sug1;
+    private ImageButton sug2;
+
 
     public BrowseFragment() {
         // Required empty public constructor
@@ -127,7 +142,31 @@ public class BrowseFragment extends Fragment {
             }
         });
 
+        //At Last, populate the two scroll views.
+        suggestedScroll = (LinearLayout) view.findViewById(R.id.sugScroll);
+        /*DatabaseReference sref = FirebaseDatabase.getInstance().getReference().child("Books").child("Available");
+        sref.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for(DataSnapshot item : dataSnapshot.getChildren()) {
+                    for (DataSnapshot snap : item.getChildren()) {
+                        Book book = snap.getValue(Book.class);
+                        BookDetails details = book.getBookDetails();
+                        String author = details.getAuthor().toLowerCase();
+                    }
+                }
+            }
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) { }
+        });*/
+        /*String srefName = sref.orderByChild("owner").limitToFirst(2).toString();
+        StorageReference ref = FirebaseStorage.getInstance().getReference().child("images");
+        Book book = new Gson().fromJson(srefName,Book.class);
+        String browsebook = book.getBookDetails().getUniqueID();
+*/
+        //888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888
     }
+
 
     private void populateSuggestions(){
         final MatrixCursor c = new MatrixCursor(new String[]{BaseColumns._ID,"Book"});

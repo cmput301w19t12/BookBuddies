@@ -17,4 +17,24 @@ public class RequestTest {
         request.setRequesterID("123");
         assertEquals(requesterID,"123");
     }
+
+    @Test
+    public void requestedBookTest(){
+        request.getRequestedBook().setOwner("Owner");
+        assertEquals(request.getRequestedBook().getOwner(),"Owner");
+    }
+
+    @Test
+    public void requestIDTest(){
+        assertEquals(request.getRequestID(),requestID);
+        request.setRequestID("789");
+        assertEquals(request.getRequestID(),"789");
+    }
+
+    @Test
+    public void requesterUsernameTest(){
+        assertEquals(request.getRequesterUsername(),username);
+        request.setRequesterUsername("Tony1");
+        assertEquals(request.getRequesterUsername(),"Tony1");
+    }
 }

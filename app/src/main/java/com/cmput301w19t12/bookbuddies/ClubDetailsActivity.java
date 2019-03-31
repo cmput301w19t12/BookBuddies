@@ -59,7 +59,6 @@ public class ClubDetailsActivity extends AppCompatActivity {
         clubName = intent.getStringExtra("CLUB DETAILS NAME");
         intent.removeExtra("CLUB DETAILS NAME");
         clubNameTV = findViewById(R.id.clubDetailsName);
-        clubEventTV = findViewById(R.id.clubDetailsClubEvents);
         clubBookTV = findViewById(R.id.clubDetailsBookName);
         actionButton = findViewById(R.id.clubDetailsEditButton);
         clubChatButton = findViewById(R.id.clubChatButton);

@@ -17,7 +17,4 @@
     <item
         android:id="@+id/action_Notifications"
         android:title="@string/notifications" />
-    <item
-        android:id="@+id/menu_maps"
-        android:title="Map" />
 </menu>

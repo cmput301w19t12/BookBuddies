@@ -21,7 +21,7 @@ public class TransactionTest {
     Location location = new Location("");
     Calendar cal = Calendar.getInstance();
     Date date = cal.getTime();
-    Transaction testTransaction = new Transaction(testUser,testUser2,testBook,"","");
+    Transaction testTransaction = new Transaction(testUser,testUser2,testBook,"","",new MyLatLng(1.0,1.0));
 
     @Test
 	public void ownerTest() {

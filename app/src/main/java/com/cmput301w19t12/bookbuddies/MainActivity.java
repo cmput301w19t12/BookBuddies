@@ -194,7 +194,7 @@ public class MainActivity extends AppCompatActivity implements ClubFragment.OnFr
 
         switch(id) {
             case R.id.action_view_detailed:
-                Intent i = new Intent(this, DetailedBookListActivity.class);
+                Intent i = new Intent(this, DetailedBookList.class);
                 i.putExtra("UserID", FirebaseAuth.getInstance().getCurrentUser().getUid());
                 startActivity(i);
                 break;

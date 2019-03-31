@@ -20,7 +20,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-public class DetailedBookListActivity extends AppCompatActivity {
+public class DetailedBookList extends AppCompatActivity {
 
     private FirebaseAuth mAuth;
     private String userID;

@@ -19,7 +19,7 @@ import android.widget.SearchView;
 import android.widget.TextView;
 
 import com.cmput301w19t12.bookbuddies.Book;
-import com.cmput301w19t12.bookbuddies.DetailedBookListActivity;
+import com.cmput301w19t12.bookbuddies.DetailedBookList;
 import com.cmput301w19t12.bookbuddies.ExpandingMenuListAdapter;
 import com.cmput301w19t12.bookbuddies.MainActivity;
 import com.cmput301w19t12.bookbuddies.MyProfileActivity;
@@ -355,7 +355,7 @@ public class IntentTest extends ActivityTestRule<MainActivity> {
     @Test
     public void detailedBookListTest() {
         solo.clickOnMenuItem("Detailed Book List");
-        solo.assertCurrentActivity("Wrong Activity", DetailedBookListActivity.class);
+        solo.assertCurrentActivity("Wrong Activity", DetailedBookList.class);
     }
 
     @Test

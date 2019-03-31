@@ -6,31 +6,24 @@
 
 package com.cmput301w19t12.android.bookbuddies;
 
-import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.TabLayout;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
-import android.support.v4.app.Fragment;
-import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ExpandableListView;
-import android.widget.ListAdapter;
 import android.widget.ListView;
+import android.widget.SearchView;
 import android.widget.TextView;
 
 import com.cmput301w19t12.bookbuddies.Book;
+import com.cmput301w19t12.bookbuddies.DetailedBookListActivity;
 import com.cmput301w19t12.bookbuddies.ExpandingMenuListAdapter;
-import com.cmput301w19t12.bookbuddies.LogInActivity;
 import com.cmput301w19t12.bookbuddies.MainActivity;
-import com.cmput301w19t12.bookbuddies.MainActivity;
+import com.cmput301w19t12.bookbuddies.MyProfileActivity;
 import com.cmput301w19t12.bookbuddies.R;
-import com.cmput301w19t12.bookbuddies.User;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -43,8 +36,6 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-
-import java.util.ArrayList;
 
 import static android.support.test.InstrumentationRegistry.getInstrumentation;
 import static org.junit.Assert.*;
@@ -84,15 +75,15 @@ public class IntentTest extends ActivityTestRule<MainActivity> {
      * Tests for the add and delete club functionalities.
      * Needs more work.
      */
-//    @Test
-//    public void addDeleteClubTest() {
-//        validLogIn();
-//        addClub();
-//        assertEquals(true, ensureClubInList());
-//        deleteClub();
-//        assertNotEquals(true, ensureClubInList());
-//        validLogOut();
-//    }
+    @Test
+    public void addDeleteClubTest() {
+        validLogIn();
+        addClub();
+        assertEquals(true, ensureClubInList());
+        deleteClub();
+        assertNotEquals(true, ensureClubInList());
+        validLogOut();
+    }
 
     /**
      * Iterates through the listview checking returns true if the test club is present in the listview,
@@ -101,11 +92,9 @@ public class IntentTest extends ActivityTestRule<MainActivity> {
      */
     public boolean ensureClubInList() {
         ListView clubList =  (ListView) solo.getView(R.id.clubsListView);
-        ListAdapter adapter = clubList.getAdapter();
-
-        for (int i = 0; i < adapter.getCount(); i++) {
-            String text = (String) adapter.getItem(i);
-            if (text.equals("Great club (TEST)")) {
+        for (int i = 0; i < clubList.getAdapter().getCount(); i++) {
+            Log.d("Club name testing", clubList.getItemAtPosition(i).toString());
+            if (clubList.getItemAtPosition(i).toString().equals("Great club (TEST)")) {
                 position = i;
                 return true;
             }
@@ -117,8 +106,7 @@ public class IntentTest extends ActivityTestRule<MainActivity> {
      * Deletes the club from the application.
      */
     public void deleteClub() {
-        Log.i("Club position", ""+position);
-        solo.clickLongOnText("Great club (TEST)");
+        solo.clickLongInList(position+1, 1);
         solo.clickOnButton("Delete");
     }
 
@@ -158,7 +146,7 @@ public class IntentTest extends ActivityTestRule<MainActivity> {
         solo.enterText((EditText) solo.getView(R.id.emailEdit), "grenierb96@gmail.com");
         solo.enterText((EditText) solo.getView(R.id.passwordEdit), "123456");
         solo.clickOnButton("Login");
-        assertEquals(true, solo.searchText("grenierb96@gmail.com is signed in"));
+        solo.waitForText("grenierb96@gmail.com is signed in");
         solo.assertCurrentActivity("Wrong Activity", MainActivity.class);
     }
 
@@ -179,34 +167,37 @@ public class IntentTest extends ActivityTestRule<MainActivity> {
     @Test
     public void addBookTest() {
         validLogIn();
-        solo.clickOnMenuItem("My Profile");
-        solo.clickOnButton("Add New Book");
-        solo.enterText((EditText) solo.getView(R.id.titleEdit), "Hunger Games (TEST)");
-        solo.enterText((EditText) solo.getView(R.id.authorEdit), "Suzanne Collins");
-        solo.enterText((EditText) solo.getView(R.id.ISBNEdit), "122255566");
-        solo.enterText((EditText) solo.getView(R.id.DesEdit), "This is a book for Intent Testing");
-        scrollDown();
-        solo.clickOnView((FloatingActionButton) solo.getView(R.id.addButton));
+        addBook();
         solo.waitForText("My Library");
         solo.clickOnText("My Library");
         solo.clickOnText("Available");
         assertEquals(true, findTitleInList());
-        removeTestTitle();
+        removeTestTitle("Hunger Games (TEST)");
         validLogOut();
+    }
+
+    private void addBook() {
+        solo.clickOnText("My Library");
+        FloatingActionButton button = (FloatingActionButton) solo.getView(R.id.addNewBook);
+        solo.clickOnView(button);
+        solo.enterText((EditText) solo.getView(R.id.titleEdit), "Hunger Games (TEST)");
+        solo.enterText((EditText) solo.getView(R.id.authorEdit), "Suzanne Collins");
+        solo.enterText((EditText) solo.getView(R.id.ISBNEdit), "122255566");
+        solo.enterText((EditText) solo.getView(R.id.DesEdit), "This is a book for Intent Testing");
+        solo.clickOnView((FloatingActionButton) solo.getView(R.id.addButton));
     }
 
     /**
      * Removes the Book that was added during the intent test from the database.
      */
-    public void removeTestTitle() {
-        solo.sleep(500);
+    public void removeTestTitle(final String keyWord) {
         final DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child("Books").child("Available");
         ref.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     Book book = snapshot.getValue(Book.class);
-                    if (book.getBookDetails().getTitle().equals("Hunger Games (TEST)")) {
+                    if (book.getBookDetails().getTitle().contains(keyWord)) {
                         ref.child(snapshot.getKey()).removeValue();
                     }
                 }
@@ -241,33 +232,39 @@ public class IntentTest extends ActivityTestRule<MainActivity> {
         });
     }
 
-    /**
-     * Scroll down the current screen
-     */
-    //https://stackoverflow.com/questions/11682196/fast-scroll-in-robotium
-    public void scrollDown() {
-        int screenWidth = solo.getCurrentActivity().getWindowManager().getDefaultDisplay().getWidth();
-        int screenHeight = solo.getCurrentActivity().getWindowManager().getDefaultDisplay().getHeight();
-
-        int fromX, toX, fromY, toY = 0,stepCount=1;
-
-        // Scroll Down // Drag Up
-        fromX = screenWidth/2;
-        toX = screenWidth/2;
-        fromY = (screenHeight/2) + (screenHeight/3);
-        toY = (screenHeight/2) - (screenHeight/3);
-
-        solo.drag(fromX, toX, fromY, toY, stepCount);
-    }
+//    /**
+//     * Scroll down the current screen
+//     */
+//    //https://stackoverflow.com/questions/11682196/fast-scroll-in-robotium
+//    public void scrollDown() {
+//        int screenWidth = solo.getCurrentActivity().getWindowManager().getDefaultDisplay().getWidth();
+//        int screenHeight = solo.getCurrentActivity().getWindowManager().getDefaultDisplay().getHeight();
+//
+//        int fromX, toX, fromY, toY = 0,stepCount=1;
+//
+//        // Scroll Down // Drag Up
+//        fromX = screenWidth/2;
+//        toX = screenWidth/2;
+//        fromY = (screenHeight/2) + (screenHeight/3);
+//        toY = (screenHeight/2) - (screenHeight/3);
+//
+//        solo.drag(fromX, toX, fromY, toY, stepCount);
+//    }
 
     /**
      * Returns true if the book title is added to the list of Available books, else returns false.
      * @return boolean
      */
     public boolean findTitleInList() {
-        ExpandableListView list = (ExpandableListView) solo.getCurrentActivity().findViewById(R.id.ExpandingMenu);
+        ExpandableListView list = (ExpandableListView) solo.getView(R.id.ExpandingMenu);
         ExpandingMenuListAdapter adapter = (ExpandingMenuListAdapter) list.getExpandableListAdapter();
-        return adapter.searchForTitle(0, "Hunger Games (TEST)");
+        for (int i = 0; i < adapter.getChildrenCount(0); i++) {
+            if (adapter.getChild(0, i).toString().contains("(TEST)")) {
+                position = i;
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
@@ -281,5 +278,100 @@ public class IntentTest extends ActivityTestRule<MainActivity> {
         solo.searchText("USER DOES NOT EXIST");
     }
 
+//    @Test
+//    public void editBookTest() {
+    //TODO: try and fix the edit book
+//        validLogIn();
+//        addBook();
+//        findTitleInList();
+//        solo.clickOnText("My Library");
+//        solo.clickOnText("Available");
+//        ExpandableListView list = (ExpandableListView) solo.getView(R.id.ExpandingMenu);
+//        ExpandingMenuListAdapter adapter = (ExpandingMenuListAdapter) list.getExpandableListAdapter();
+//        Log.i("Child position", Integer.toString(position));
+//        boolean isLastChild;
+//        if (adapter.getChildrenCount(0) == position) {
+//            isLastChild = true;
+//        }
+//        else {
+//            isLastChild = false;
+//        }
+//
+//        solo.assertCurrentActivity("Wrong activity", EditBookDetailsActivity.class);
+//        validLogOut();
+//    }
+
+    @Test
+    public void userProfileEditTest() {
+        testLogin();
+        solo.clickOnMenuItem("My Profile");
+        solo.assertCurrentActivity("Wrong activity", MyProfileActivity.class);
+        solo.clickLongOnView((TextView) solo.getView(R.id.profileFullName));
+        solo.enterText((EditText) solo.getView(R.id.promptUserInput), "New Name");
+        solo.clickOnButton("OK");
+        solo.clickLongOnView((TextView) solo.getView(R.id.profileEmailAddr));
+        solo.enterText((EditText) solo.getView(R.id.promptUserInput), "newemail@gmail.com");
+        solo.clickOnButton("OK");
+        solo.clickLongOnView((TextView) solo.getView(R.id.profilePhoneNum));
+        solo.enterText((EditText) solo.getView(R.id.promptUserInput), "000-000-0000");
+        solo.clickOnButton("OK");
+        solo.searchText("New Name");
+        solo.searchText("newemail@gmail.com");
+        solo.searchText("000-000-0000");
+        revertTestInfo();
+        solo.goBack();
+        solo.goBack();
+        solo.goBack();
+        solo.goBack();
+        solo.goBack();
+        solo.goBack();
+        solo.goBack();
+        validLogOut();
+    }
+
+    private void revertTestInfo() {
+        solo.clickLongOnView((TextView) solo.getView(R.id.profileFullName));
+        solo.enterText((EditText) solo.getView(R.id.promptUserInput), "Test");
+        solo.clickOnButton("OK");
+        solo.clickLongOnView((TextView) solo.getView(R.id.profileEmailAddr));
+        solo.enterText((EditText) solo.getView(R.id.promptUserInput), "testaccount@gmail.com");
+        solo.clickOnButton("OK");
+        solo.clickLongOnView((TextView) solo.getView(R.id.profilePhoneNum));
+        solo.enterText((EditText) solo.getView(R.id.promptUserInput), "111-111-1111");
+        solo.clickOnButton("OK");
+
+    }
+
+    private void testLogin() {
+        solo.clearEditText((EditText) solo.getView(R.id.passwordEdit));
+        solo.clearEditText((EditText) solo.getView(R.id.emailEdit));
+        solo.enterText((EditText) solo.getView(R.id.emailEdit), "testaccount@gmail.com");
+        solo.enterText((EditText) solo.getView(R.id.passwordEdit), "123456");
+        solo.clickOnButton("Login");
+        solo.waitForText("testaccount@gmail.com is signed in");
+        solo.assertCurrentActivity("Wrong Activity", MainActivity.class);
+    }
+
+    @Test
+    public void detailedBookListTest() {
+        solo.clickOnMenuItem("Detailed Book List");
+        solo.assertCurrentActivity("Wrong Activity", DetailedBookListActivity.class);
+    }
+
+    @Test
+    public void searchBookTest() {
+        testLogin();
+        addBook();
+        validLogOut();
+
+        validLogIn();
+        solo.clickOnText("Browse");
+        SearchView search = (SearchView) solo.getView(R.id.bookSearch);
+        search.setQuery("Hunger Games (TEST)", true);
+        ListView list = (ListView) solo.getView(R.id.listView);
+        assertEquals(1, list.getAdapter().getCount());
+        removeTestTitle("(TEST)");
+        validLogOut();
+    }
 
 }

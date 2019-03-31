@@ -18,9 +18,8 @@
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="BookRecommendationsTitle">Books you might like</string>
-    <string name="CloseBooks">Books closest to you</string>
+    <string name="CloseBooks">Featured Books</string>
     <string name="seeAll">See All</string>
-    <string name="closeBooks">Books closest to you</string>
     <string name="titleHint">Title</string>
     <string name="authorHint">Author</string>
     <string name="ISBNHint">ISBN</string>

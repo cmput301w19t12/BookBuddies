@@ -59,11 +59,14 @@ public class BrowseFragment extends Fragment {
 
     private SearchView searchBar;
     private LinearLayout suggestedScroll;
+    private LinearLayout suggestedScroll2;
     private OnFragmentInteractionListener mListener;
     private Set<Book> books;
     private SimpleCursorAdapter adapter;
     private ImageButton sug1;
     private ImageButton sug2;
+    private ImageButton sug3;
+    private ImageButton sug4;
 
 
     public BrowseFragment() {
@@ -144,6 +147,29 @@ public class BrowseFragment extends Fragment {
 
         //At Last, populate the two scroll views.
         suggestedScroll = (LinearLayout) view.findViewById(R.id.sugScroll);
+        suggestedScroll2 = (LinearLayout) view.findViewById(R.id.sugScroll2);
+        sug3 = (ImageButton) view.findViewById(R.id.sug3);
+        sug4 = (ImageButton) view.findViewById(R.id.sug4);
+        sug3.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v){
+                Intent intent = new Intent(getContext(), Ad.class);
+                Bundle bundle=new Bundle();
+                bundle.putInt("image",R.drawable.coca);
+                intent.putExtras(bundle);
+                startActivity(intent);
+            }
+        });
+        sug4.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v){
+                Intent intent = new Intent(getContext(), Ad.class);
+                Bundle bundle=new Bundle();
+                bundle.putInt("image",R.drawable.pepsi);
+                intent.putExtras(bundle);
+                startActivity(intent);
+            }
+        });
         /*DatabaseReference sref = FirebaseDatabase.getInstance().getReference().child("Books").child("Available");
         sref.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override

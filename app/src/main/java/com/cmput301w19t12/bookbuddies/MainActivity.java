@@ -154,19 +154,11 @@ public class MainActivity extends AppCompatActivity implements ClubFragment.OnFr
                 break;
             case R.id.action_myProfile:
                 getCurrentUser();
-               // Intent profileIntent = new Intent(this,MyProfileActivity.class);
-              //  profileIntent.putExtra("username", user.getUsername());
-             //   startActivity(profileIntent);
                 return true;
             case R.id.action_Notifications:
                 Intent notificationIntent = new Intent(this, MyNotificationsActivity.class);
                 startActivity(notificationIntent);
                 break;
-            case R.id.menu_maps:
-                Intent mapsIntent = new Intent(this, MapsActivity.class);
-                startActivity(mapsIntent);
-                break;
-
             default:
                 return super.onOptionsItemSelected(item);
         }

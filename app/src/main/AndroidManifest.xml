@@ -65,7 +65,6 @@
         <activity android:name=".NewBookActivity" />
         <activity android:name=".LogInActivity" />
         <activity android:name=".ClubChatActivity" />
-        <activity android:name=".ClubEventsActivity" />
         <activity android:name=".ClubMembersActivity" />
         <activity
             android:name=".LivePreviewActivity"

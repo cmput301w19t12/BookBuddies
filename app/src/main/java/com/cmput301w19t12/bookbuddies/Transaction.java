@@ -3,6 +3,7 @@ package com.cmput301w19t12.bookbuddies;
 import android.location.Location;
 import android.support.annotation.NonNull;
 
+import com.google.android.gms.maps.model.LatLng;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -20,7 +21,7 @@ import java.util.Date;
 public class Transaction {
     public User owner;
     private User borrower;
-    private Location location;
+    private MyLatLng location;
     private Book book;
     private Date time;
     private String transactionType;
@@ -32,10 +33,11 @@ public class Transaction {
      * @param owner User
      * @param borrower User
      * @param book Book*/
-    Transaction(User owner, User borrower, Book book, String transactionType, String key){
+    Transaction(User owner, User borrower, Book book, String transactionType, String key, MyLatLng location){
         this.owner = owner;
         this.borrower = borrower;
         this.book = book;
+        this.location = location;
         this.ownerScanned = false;
         this.borrowerScanned = false;
         this.transactionType = transactionType;
@@ -87,14 +89,14 @@ public class Transaction {
     }
 
     /**Gets the location of the transaction
-     * @return location Location*/
-    public Location getLocation() {
+     * @return location Latlng*/
+    public MyLatLng getLocation() {
         return this.location;
     }
 
     /**Sets the location of the transaction
-     * @param  location Location*/
-    public void setLocation(Location location) {
+     * @param  location LatLng*/
+    public void setLocation(MyLatLng location) {
         this.location = location;
     }
 
@@ -134,7 +136,7 @@ public class Transaction {
         tempRef.setValue(book);
         // close this transaction, and open new return transaction
         FirebaseDatabase.getInstance().getReference("Transactions").child(transactionID).removeValue();
-        Transaction returnTransaction = new Transaction(owner,borrower,book,"returning",transactionID);
+        Transaction returnTransaction = new Transaction(owner,borrower,book,"returning",transactionID,location);
         returnTransaction.transactionToDatabase();
 
     }

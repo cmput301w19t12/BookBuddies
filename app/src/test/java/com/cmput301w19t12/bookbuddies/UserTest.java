@@ -11,7 +11,7 @@ public class UserTest {
 
     @Before
     public void setUp() throws Exception {
-        testUser = new User("username", "password", "555-5555", "test@example.com", "photos/selfie.png");
+        testUser = new User("userId", "username", "password","555-5555", "test@example.com");
     }
 
     @Test
@@ -35,19 +35,12 @@ public class UserTest {
         testUser.setEmailAddress("student@ualberta.ca");
         assertEquals(testUser.getEmailAddress(), "student@ualberta.ca");
     }
-    @Test
-    public void profilePictureTest(){
-        assertEquals(testUser.getProfilePicturePath(),"photos/selfie.png");
-        testUser.setProfilePicturePath("photos/cuteCat.png");
-        assertEquals(testUser.getProfilePicturePath(), "photos/cuteCat.png");
-    }
+
 
     @Test
     public void userIdTest() {
         testUser.setUserId("1234");
         assertEquals(testUser.getUserId(),"1234");
     }
-
-    //Other Tests require database functionality
 
 }

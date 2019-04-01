@@ -18,9 +18,6 @@ public class TransactionTest {
     User testUser3 = new User("username3", "password3");
     Book testBook = new Book("Owner",new BookDetails("","","","",""),"Available","");
     Book testBook2 = new Book("Owner2",new BookDetails("","","","",""),"Available","");
-    Location location = new Location("");
-    Calendar cal = Calendar.getInstance();
-    Date date = cal.getTime();
     Transaction testTransaction = new Transaction(testUser,testUser2,testBook,"","",new MyLatLng(1.0,1.0));
 
     @Test
@@ -42,7 +39,6 @@ public class TransactionTest {
 		assertEquals(testTransaction.getBook().getOwner(), testBook.getOwner());
 		testTransaction.setBook(testBook2);
 		assertEquals(testTransaction.getBook().getOwner(), testBook2.getOwner());
-		Assert.assertEquals(testTransaction.getTime(),date);
 	}
 
 	@Test

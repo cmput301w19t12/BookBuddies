@@ -15,7 +15,7 @@ public class RequestTest {
     public void requesterIDTest(){
         assertEquals(request.getRequesterID(),requesterID);
         request.setRequesterID("123");
-        assertEquals(requesterID,"123");
+        assertEquals(request.getRequesterID(),"123");
     }
 
     @Test

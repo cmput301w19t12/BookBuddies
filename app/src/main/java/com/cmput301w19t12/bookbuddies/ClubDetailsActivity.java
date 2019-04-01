@@ -138,6 +138,7 @@ public class ClubDetailsActivity extends AppCompatActivity {
                         }
                     });
                 } else {
+                    clubChatButton.setEnabled(false);
                     actionButton.setText("Join Club");
                     actionButton.setOnClickListener(new View.OnClickListener() {
                         @Override

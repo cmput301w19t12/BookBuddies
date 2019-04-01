@@ -91,8 +91,6 @@ public class BookRequestNotificationAdapter extends ArrayAdapter<BookRequestNoti
         }
 
 
-
-
         return convertView;
     }
 }

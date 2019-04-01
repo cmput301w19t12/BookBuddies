@@ -21,6 +21,14 @@ import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 
+
+/**Shows the user a list of books they are currently borrowing
+ *
+ * @author bgrenier
+ * @verison 1.0
+ *
+ * @see Book*/
+
 public class MyBorrowingBooksActivity extends AppCompatActivity {
     private ArrayList<Book> myBorrows;
 
@@ -34,6 +42,8 @@ public class MyBorrowingBooksActivity extends AppCompatActivity {
 
 
     private void getMyBorrowingBooks(){
+        // get all the books the user is borrowing and add them to a list
+
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Books").child("Borrowed");
         final String myID = FirebaseAuth.getInstance().getCurrentUser().getUid();
         ref.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -56,6 +66,8 @@ public class MyBorrowingBooksActivity extends AppCompatActivity {
     }
 
     private void makeList(){
+        // set the adapter to the listview
+
         ListView listView = findViewById(R.id.borrowingListView);
         final MyBorrowingBooksAdapter adapter = new MyBorrowingBooksAdapter(this,myBorrows);
         listView.setAdapter(adapter);

@@ -15,7 +15,6 @@ public class Club {
     private String name;
     private ArrayList<User> membersList;
     private String currentBook;
-    private ArrayList<Event> events;
     private Chat groupChat;
     private String clubID;
 
@@ -108,26 +107,6 @@ public class Club {
      * @param owner User*/
     public void setOwner(User owner) {
         this.owner = owner;
-    }
-
-    /**Adds a new event to the club
-     * @param newEvent Event*/
-     public void createEvent(Event newEvent){
-        this.events.add(newEvent);
-    }
-
-    /**Deletes an event from the club
-     * @param event Event*/
-
-    public void deleteEvent(Event event){
-        this.events.remove(event);
-    }
-
-    /**Gets a list of all events associated with a club
-     * @return events ArrayList<Event>*/
-
-    public ArrayList<Event> getEvents(){
-        return this.events;
     }
 
 }

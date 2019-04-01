@@ -160,6 +160,7 @@ public class ClubDetailsActivity extends AppCompatActivity {
         });
     }
 
+    /**Sets long click listeners for editable fields*/
     public void setEditListeners(){
         clubNameTV.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
@@ -177,6 +178,7 @@ public class ClubDetailsActivity extends AppCompatActivity {
         });
     }
 
+    /**open the edit popup for editing a component of the club*/
     public void openEditMenu(final int field){
 
         LayoutInflater li = LayoutInflater.from(this);

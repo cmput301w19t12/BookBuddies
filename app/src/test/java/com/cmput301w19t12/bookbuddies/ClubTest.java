@@ -14,10 +14,6 @@ public class ClubTest {
 	String ID = "3";
 	Club testClub = new Club(testUser, "clubname",new ArrayList<User>(),ID);
 	User testUser2 = new User("username2", "password2");
-	Location testLocation = new Location("");
-	Calendar cal = Calendar.getInstance();
-	Date date = cal.getTime();
-	Event testEvent = new Event(testLocation,date);
 
 	@Test
 	public void ownerTest() {
@@ -68,13 +64,6 @@ public class ClubTest {
 		assertEquals(bookTitle, testClub.getCurrentBook());
 	}
 
-//	@Test
-//	public void eventsTest(){
-//		testClub.createEvent(testEvent);
-//		assertEquals(testClub.getEvents().size(), 1);
-//		testClub.deleteEvent(testEvent);
-//		assertEquals(testClub.getEvents().size(), 0);
-//	}
 
 	@Test
     public void IDTest(){

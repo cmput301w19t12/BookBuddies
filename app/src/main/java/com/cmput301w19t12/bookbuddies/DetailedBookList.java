@@ -102,6 +102,8 @@ public class DetailedBookList extends AppCompatActivity {
         });
     }
 
+    /**create the text string for the book
+     * @param aBook Book*/
     public String addBookToList(Book aBook) {
         String titleText = "Book Title: " + aBook.getBookDetails().getTitle();
         String statusText = "Book Status: " + aBook.getStatus();

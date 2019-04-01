@@ -18,6 +18,13 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.List;
 
+/**Shows the user a list of the books they currently have request on
+ *
+ * @author bgrenier
+ * @verison 1.0
+ *
+ * @see BookRequest*/
+
 public class MyRequestsActivity extends AppCompatActivity {
     private ArrayList<BookRequest> requestList;
     private ArrayList<String> entries;
@@ -33,6 +40,8 @@ public class MyRequestsActivity extends AppCompatActivity {
     }
 
     private void getRequests(){
+        // get requests made by this user
+
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Notifications").child("BookRequests");
         ref.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -53,11 +62,14 @@ public class MyRequestsActivity extends AppCompatActivity {
     }
 
     private void makeEntries(){
+        // make formatted strings to show information of each request
+
         final ListView listView = findViewById(R.id.myRequestsList);
         final ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,android.R.layout.simple_list_item_1,entries);
         listView.setAdapter(adapter);
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Users");
         for(BookRequest request : requestList){
+            // get the username of each book owner to use in the info string
             Book book = request.getRequestedBook();
             final BookDetails details = book.getBookDetails();
             DatabaseReference tempRef = ref.child(book.getOwner());

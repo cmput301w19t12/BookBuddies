@@ -1,2 +1,6 @@
 com.cmput301w19t12.android.bookbuddies
 com.cmput301w19t12.bookbuddies
+com.cmput301w19t12.bookbuddies.FirebaseMessaging
+com.cmput301w19t12.bookbuddies.Notification
+com.cmput301w19t12.bookbuddies.barcodescanning
+com.cmput301w19t12.bookbuddies.common

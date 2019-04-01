@@ -17,11 +17,7 @@ import java.util.ArrayList;
 import java.util.concurrent.CountDownLatch;
 
 
-
-
-
-
-
+/**This class serves to initialize firebase*/
 
 public class BookBuddies extends Application {
 

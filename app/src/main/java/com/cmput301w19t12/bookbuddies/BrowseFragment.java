@@ -152,6 +152,8 @@ public class BrowseFragment extends Fragment {
     }
 
     private void makeBooksList(){
+        // get the first 10 books in the database
+
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Books").child("Available");
         ref.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -162,6 +164,9 @@ public class BrowseFragment extends Fragment {
                     if (!(book.getOwner().equals(FirebaseAuth.getInstance().getUid()))) {
                         availableBooks.add(book);
                         total += 1;
+                    }
+                    if(total == 10){
+                        break;
                     }
                 }
                 addBooksToListView();

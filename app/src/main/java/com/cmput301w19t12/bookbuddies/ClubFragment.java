@@ -305,13 +305,9 @@ public class ClubFragment extends Fragment {
                     for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                         club = snapshot.getValue(Club.class);
                         ArrayList<User> members = club.getMembersList();
-                        if ((club.getOwner().getUsername()).equals(owner.getUsername())){
-                            myClubNames.add(club.getName());
-                        }else {
-                            for (User member : members) {
-                                if (member.getUsername().equals(owner.getUsername())) {
-                                    myClubNames.add(club.getName());
-                                }
+                        for (User member : members) {
+                            if (member.getUsername().equals(owner.getUsername())) {
+                                myClubNames.add(club.getName());
                             }
                         }
                     }

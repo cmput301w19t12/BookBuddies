@@ -210,9 +210,7 @@ public class ClubFragment extends Fragment {
         searchBar.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-                Intent i = new Intent(ClubFragment.this.getContext(), ClubDetailsActivity.class);
-                i.putExtra("CLUB DETAILS NAME", query);
-                startActivity(i);
+                checkValidity(query);
                 return false;
             }
 
@@ -236,6 +234,31 @@ public class ClubFragment extends Fragment {
                 String suggestion = cursor.getString(1);
                 searchBar.setQuery(suggestion, true);
                 return false;
+            }
+        });
+    }
+
+    private void checkValidity(final String query) {
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Clubs");
+        ref.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                boolean exists = false;
+                for (DataSnapshot snap : dataSnapshot.getChildren()) {
+                    if (snap.getValue(Club.class).getName().equals(query)) {
+                        exists = true;
+                    }
+                }
+                if (exists) {
+                    Intent i = new Intent(ClubFragment.this.getContext(), ClubDetailsActivity.class);
+                    i.putExtra("CLUB DETAILS NAME", query);
+                    startActivity(i);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
             }
         });
     }

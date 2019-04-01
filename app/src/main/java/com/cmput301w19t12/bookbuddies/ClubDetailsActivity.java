@@ -95,9 +95,6 @@ public class ClubDetailsActivity extends AppCompatActivity {
                         populateClubInfo();
                     }
                 }
-                if (myClub == null) {
-                    startActivity(new Intent(getApplicationContext(), MainActivity.class));
-                }
             }
 
             @Override

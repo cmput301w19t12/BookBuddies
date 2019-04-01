@@ -42,6 +42,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.robotium.solo.Solo;
+
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -99,7 +101,6 @@ public class IntentTest extends ActivityTestRule<MainActivity> {
         solo.sleep(5000);
         deleteClub();
         assertNotEquals(true, ensureClubInList(clubName));
-        validLogOut();
     }
 
     /**
@@ -194,7 +195,6 @@ public class IntentTest extends ActivityTestRule<MainActivity> {
         solo.sleep(5000);
         assertEquals(true, findTitleInList());
         removeTestTitle("(TEST)");
-        validLogOut();
     }
 
     private void addBook() {
@@ -306,7 +306,6 @@ public class IntentTest extends ActivityTestRule<MainActivity> {
         solo.goBack();
         solo.goBack();
         solo.goBack();
-        validLogOut();
     }
 
     private void revertTestInfo() {
@@ -370,8 +369,6 @@ public class IntentTest extends ActivityTestRule<MainActivity> {
         solo.assertCurrentActivity("Wrong activity", ClubDetailsActivity.class);
         solo.searchText("TEST CLUB");
         solo.goBack();
-        validLogOut();
-
         removeClubFromDatabase();
     }
 
@@ -422,7 +419,6 @@ public class IntentTest extends ActivityTestRule<MainActivity> {
         assertNotNull(list);
         removeClubFromDatabase();
         removeNotification();
-        validLogOut();
     }
 
     private void removeNotification() {
@@ -460,10 +456,13 @@ public class IntentTest extends ActivityTestRule<MainActivity> {
         assertEquals(messages.getAdapter().getCount(), 2);
         solo.goBack();
         solo.goBack();
-        validLogOut();
         removeClubFromDatabase();
     }
 
+    @After
+    public void tearDown() {
+        validLogOut();
+    }
 
 }
 

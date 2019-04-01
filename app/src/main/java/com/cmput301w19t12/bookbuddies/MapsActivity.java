@@ -6,11 +6,15 @@ import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.maps.model.LatLngBounds;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.libraries.places.api.Places;
 import com.google.android.libraries.places.api.model.Place;
 
+import com.google.android.libraries.places.api.net.FetchPlaceRequest;
+import com.google.android.libraries.places.api.net.FetchPlaceResponse;
 import com.google.android.libraries.places.api.net.PlacesClient;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -23,6 +27,7 @@ import com.google.android.libraries.places.widget.listener.PlaceSelectionListene
 import com.google.gson.Gson;
 
 import java.util.Arrays;
+import java.util.List;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
 
@@ -39,6 +44,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         request = new Gson().fromJson(b.getString("request"),BookRequest.class);
         meetingLocation = b.getParcelable("location");
 
+
+
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
@@ -49,6 +56,20 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 // Create a new Places client instance.
         PlacesClient placesClient = Places.createClient(this);
 
+
+        if(meetingLocation == null) {
+            String defaultPlaceID = "ChIJoxCPYfUhoFMRE7JXmPJlW8s";
+            List<Place.Field> placeFields = Arrays.asList(Place.Field.ID,Place.Field.NAME, Place.Field.LAT_LNG);
+            FetchPlaceRequest defaultRequest = FetchPlaceRequest.builder(defaultPlaceID,placeFields).build();
+            placesClient.fetchPlace(defaultRequest).addOnSuccessListener(new OnSuccessListener<FetchPlaceResponse>() {
+                @Override
+                public void onSuccess(FetchPlaceResponse fetchPlaceResponse) {
+                    Place place = fetchPlaceResponse.getPlace();
+                    meetingLocation = place.getLatLng();
+                    Log.i("MAPS", "Place found: " + place.getName());
+                }
+            });
+        }
         // Initialize the AutocompleteSupportFragment.
         AutocompleteSupportFragment autocompleteFragment = (AutocompleteSupportFragment)
                 getSupportFragmentManager().findFragmentById(R.id.autocomplete_fragment);

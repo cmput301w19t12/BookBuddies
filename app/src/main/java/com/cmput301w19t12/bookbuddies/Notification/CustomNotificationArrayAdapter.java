@@ -1,3 +1,11 @@
+/**
+ * CustomNotificationArrayAdapter
+ *
+ * @Author team12
+ *
+ * March 31, 2019
+ */
+
 package com.cmput301w19t12.bookbuddies.Notification;
 
 import android.content.Context;
@@ -26,6 +34,11 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 
+/**
+ * An array adapter for club request notifications. It displays the string format of the notification
+ * as well as two buttons to either accept the club join request or to deny it.
+ */
+
 public class CustomNotificationArrayAdapter extends ArrayAdapter<ClubRequestNotification> {
     private final Context context;
     private final ArrayList<ClubRequestNotification> Requests;
@@ -40,6 +53,14 @@ public class CustomNotificationArrayAdapter extends ArrayAdapter<ClubRequestNoti
         this.adapter = this;
     }
 
+    /**
+     * Sets the text and the functionality of the accept and deny button and returns the configured
+     * view.
+     * @param position:int
+     * @param convertView:View
+     * @param parent:ViewGroup
+     * @return convertView:View
+     */
     @NonNull
     @Override
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
@@ -98,6 +119,11 @@ public class CustomNotificationArrayAdapter extends ArrayAdapter<ClubRequestNoti
         return notifItem;
     }
 
+    /**
+     * Obtains the information of the user who has attempted to join the club and calls addUser once it
+     * is found.
+     * @param mRequest:ClubRequestNotification
+     */
     private void getUserAndAdd(final ClubRequestNotification mRequest) {
         final String UserID = FirebaseAuth.getInstance().getUid();
         DatabaseReference userRef = FirebaseDatabase.getInstance().getReference().child("Users");
@@ -121,6 +147,12 @@ public class CustomNotificationArrayAdapter extends ArrayAdapter<ClubRequestNoti
 
     }
 
+    /**
+     * Adds the user to the club and updates the club information in the database to reflect
+     * the addition of the new member.
+     * @param notification:ClubRequestNotification
+     * @param user:User
+     */
     private void addUser(final ClubRequestNotification notification, final User user) {
         final DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Clubs");
         ref.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -146,6 +178,11 @@ public class CustomNotificationArrayAdapter extends ArrayAdapter<ClubRequestNoti
         });
     }
 
+    /**
+     * Once the user has either been added or the request to join the club has been denied then the
+     * notification is removed from the database.
+     * @param request:ClubRequestNotification
+     */
     private void removeNotification(final ClubRequestNotification request) {
         final DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Notifications").child("Club Requests").child(username);
         ref.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -172,6 +209,12 @@ public class CustomNotificationArrayAdapter extends ArrayAdapter<ClubRequestNoti
         });
     }
 
+    /**
+     * If the request has been accepted by the owner of the club then the requester is notified
+     * that they have been added to the club. This is done by adding a new notification to the
+     * database so that the requester can see it the next time they are using the application.
+     * @param notification:ClubRequestNotification
+     */
     private void notifyRequester(ClubRequestNotification notification) {
         final DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Notifications").child("Club Requests").child(notification.getNotifiedUsername());
         String key = ref.push().getKey();

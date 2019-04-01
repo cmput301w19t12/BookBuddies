@@ -19,7 +19,7 @@ public class Club {
     private Chat groupChat;
     private String clubID;
 
-    Club() {
+    public Club() {
         this.membersList = new ArrayList<>();
         this.groupChat = new Chat();
     }
@@ -33,7 +33,6 @@ public class Club {
         this.name = name;
         this.membersList = membersList;
         //this.membersList.add(owner);
-        this.events = new ArrayList<>();
         this.groupChat = new Chat();
         this.clubID = clubID;
     }

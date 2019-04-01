@@ -1,3 +1,10 @@
+/**
+ * DetailedBookList
+ *
+ * @Author team12
+ *
+ * March 31, 2019
+ */
 package com.cmput301w19t12.bookbuddies;
 
 import android.content.Context;
@@ -20,6 +27,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Displays a detailed book list which includes the title, status, and descriptions of all the books
+ * that the user owns.
+ */
 public class DetailedBookList extends AppCompatActivity {
 
     private FirebaseAuth mAuth;
@@ -47,6 +58,9 @@ public class DetailedBookList extends AppCompatActivity {
 
     }
 
+    /**
+     * Creates a list containing all possible statuses
+     */
     private void initializeStatusList() {
         statusList = new ArrayList<String>();
         statusList.add("Available");
@@ -55,6 +69,11 @@ public class DetailedBookList extends AppCompatActivity {
         statusList.add("Borrowed");
     }
 
+    /**
+     * Adds the titles and other information of the book that the user owns to list so that it can be
+     * easily viewed.
+     * @param index:int
+     */
     public void addAllMyTitles(final int index) {
         userLibRef = FirebaseDatabase.getInstance().getReference("Books").child(statusList.get(index));
         userLibRef.addValueEventListener(new ValueEventListener() {

@@ -1,3 +1,10 @@
+/**
+ * MyNotificationsActivity
+ *
+ * @Author team 12
+ *
+ * March 31, 2019
+ */
 package com.cmput301w19t12.bookbuddies.Notification;
 
 import android.app.AlertDialog;
@@ -23,6 +30,9 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 
+/**
+ * Displays all of the club request notificatins for the current user
+ */
 public class MyNotificationsActivity extends AppCompatActivity {
 
     private ArrayList<ClubRequestNotification> clubNotifications;
@@ -45,6 +55,10 @@ public class MyNotificationsActivity extends AppCompatActivity {
         getCurrentUser();
     }
 
+    /**
+     * Obtains the information of the current user from the firebase database. Uses the unique
+     * ID to search for the matching user.
+     */
     private void getCurrentUser() {
         final String UserID = FirebaseAuth.getInstance().getUid();
         DatabaseReference userRef = FirebaseDatabase.getInstance().getReference().child("Users");
@@ -66,6 +80,10 @@ public class MyNotificationsActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * If the club request notification is for the current user, then add it to the listview so that
+     * the user may respond to the notification.
+     */
     private void addClubNotifications() {
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Notifications").child("Club Requests").child(currentUser.getUsername());
         ref.addValueEventListener(new ValueEventListener() {

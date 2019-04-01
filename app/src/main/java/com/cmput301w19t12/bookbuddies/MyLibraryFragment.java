@@ -274,6 +274,12 @@ public class MyLibraryFragment extends Fragment {
 
     }
 
+    /**
+     * Displays an alert dialog to confirm whether the user wants to delete the book. If not, the dialog
+     * is cleared and no action is taken, otherwise the book is deleted.
+     * @param book:Book
+     * @return
+     */
     private AlertDialog getDeleteConfirmation(final Book book) {
         return new AlertDialog.Builder(getContext())
                 .setTitle("Delete Book")
@@ -293,6 +299,10 @@ public class MyLibraryFragment extends Fragment {
                 .create();
     }
 
+    /**
+     * Removes the book specified in the parameters from the firebase database.
+     * @param book:Book
+     */
     public void removeBook(final Book book){
         //toDO
         final DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child("Books").child("Available");
@@ -314,6 +324,11 @@ public class MyLibraryFragment extends Fragment {
         });
     }
 
+    /**
+     * If the user clicks on one of their books they are taken to a page where they can view and
+     * edit the details of the book.
+     * @param book:Book
+     */
     public void switchToDetails(Book book){
         Intent intent = new Intent(MyLibraryFragment.this.getContext(), BookDetailsActivity.class);
         intent.putExtra("book",new Gson().toJson(book));

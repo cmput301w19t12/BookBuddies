@@ -1,3 +1,8 @@
+/**
+ * SectionsPageAdapter
+ *
+ * March 31, 2019
+ */
 package com.cmput301w19t12.bookbuddies;
 
 import android.support.v4.app.Fragment;
@@ -6,6 +11,10 @@ import android.support.v4.app.FragmentPagerAdapter;
 
 import java.util.ArrayList;
 
+/**
+ * Sets up the fragment interface with 3 tabs which include clubs tab, browse tab, and the mylibrary
+ * tab
+ */
 public class SectionsPageAdapter extends FragmentPagerAdapter {
     private final ArrayList<Fragment> mFragmentList = new ArrayList<Fragment>();
     private final ArrayList<String> mFragmentTitles = new ArrayList<String>();

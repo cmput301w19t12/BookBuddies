@@ -6,12 +6,14 @@
 
 package com.cmput301w19t12.android.bookbuddies;
 
+import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ExpandableListView;
 import android.widget.ListView;
@@ -19,11 +21,15 @@ import android.widget.SearchView;
 import android.widget.TextView;
 
 import com.cmput301w19t12.bookbuddies.Book;
+import com.cmput301w19t12.bookbuddies.Club;
+import com.cmput301w19t12.bookbuddies.ClubDetailsActivity;
 import com.cmput301w19t12.bookbuddies.DetailedBookList;
 import com.cmput301w19t12.bookbuddies.ExpandingMenuListAdapter;
 import com.cmput301w19t12.bookbuddies.MainActivity;
 import com.cmput301w19t12.bookbuddies.MyProfileActivity;
+import com.cmput301w19t12.bookbuddies.Notification.CustomNotificationArrayAdapter;
 import com.cmput301w19t12.bookbuddies.R;
+import com.cmput301w19t12.bookbuddies.User;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -49,6 +55,9 @@ public class IntentTest extends ActivityTestRule<MainActivity> {
     private Solo solo;
     private int position;
     private View view;
+    private User currentTestUser;
+    private Club testClub;
+    private User secondTestUser;
 
     public IntentTest() {
         super(MainActivity.class, true, true);
@@ -77,11 +86,12 @@ public class IntentTest extends ActivityTestRule<MainActivity> {
      */
     @Test
     public void addDeleteClubTest() {
+        String clubName = "Great club (TEST)";
         validLogIn();
         addClub();
-        assertEquals(true, ensureClubInList());
+        assertEquals(true, ensureClubInList(clubName));
         deleteClub();
-        assertNotEquals(true, ensureClubInList());
+        assertNotEquals(true, ensureClubInList(clubName));
         validLogOut();
     }
 
@@ -90,12 +100,14 @@ public class IntentTest extends ActivityTestRule<MainActivity> {
      * otherwise it returns false.
      * @return boolean
      */
-    public boolean ensureClubInList() {
+    public boolean ensureClubInList(final String clubName) {
         ListView clubList =  (ListView) solo.getView(R.id.clubsListView);
+        Log.i("Count", Integer.toString(clubList.getAdapter().getCount()));
         for (int i = 0; i < clubList.getAdapter().getCount(); i++) {
             Log.d("Club name testing", clubList.getItemAtPosition(i).toString());
-            if (clubList.getItemAtPosition(i).toString().equals("Great club (TEST)")) {
+            if (clubList.getItemAtPosition(i).toString().equals(clubName)) {
                 position = i;
+                Log.i("Position", Integer.toString(i));
                 return true;
             }
         }
@@ -106,7 +118,8 @@ public class IntentTest extends ActivityTestRule<MainActivity> {
      * Deletes the club from the application.
      */
     public void deleteClub() {
-        solo.clickLongInList(position+1, 1);
+        solo.clickInList(position+1, 1);
+        solo.clickOnButton("Delete Club");
         solo.clickOnButton("Delete");
     }
 
@@ -156,7 +169,7 @@ public class IntentTest extends ActivityTestRule<MainActivity> {
      */
     public void validLogOut() {
         solo.clickOnMenuItem("SignOut");
-        assertEquals("Successfully signed out", true, solo.searchText("Sign in to your account"));
+        solo.searchText("Successfully signed out");
     }
 
 
@@ -278,29 +291,6 @@ public class IntentTest extends ActivityTestRule<MainActivity> {
         solo.searchText("USER DOES NOT EXIST");
     }
 
-//    @Test
-//    public void editBookTest() {
-    //TODO: try and fix the edit book
-//        validLogIn();
-//        addBook();
-//        findTitleInList();
-//        solo.clickOnText("My Library");
-//        solo.clickOnText("Available");
-//        ExpandableListView list = (ExpandableListView) solo.getView(R.id.ExpandingMenu);
-//        ExpandingMenuListAdapter adapter = (ExpandingMenuListAdapter) list.getExpandableListAdapter();
-//        Log.i("Child position", Integer.toString(position));
-//        boolean isLastChild;
-//        if (adapter.getChildrenCount(0) == position) {
-//            isLastChild = true;
-//        }
-//        else {
-//            isLastChild = false;
-//        }
-//
-//        solo.assertCurrentActivity("Wrong activity", EditBookDetailsActivity.class);
-//        validLogOut();
-//    }
-
     @Test
     public void userProfileEditTest() {
         testLogin();
@@ -365,13 +355,124 @@ public class IntentTest extends ActivityTestRule<MainActivity> {
         validLogOut();
 
         validLogIn();
-        solo.clickOnText("Browse");
-        SearchView search = (SearchView) solo.getView(R.id.bookSearch);
-        search.setQuery("Hunger Games (TEST)", true);
+        final View search = (SearchView) solo.getView(R.id.bookSearch);
+        ((SearchView) search).setQuery("Hunger Games (TEST)", true);
         ListView list = (ListView) solo.getView(R.id.listView);
         assertEquals(1, list.getAdapter().getCount());
         removeTestTitle("(TEST)");
         validLogOut();
     }
 
+    @Test
+    public void searchAndClubDetails() {
+        testLogin();
+        solo.clickOnText("Clubs");
+        solo.clickOnView((FloatingActionButton) solo.getView(R.id.addClubButton));
+        solo.enterText((EditText) solo.getView(R.id.clubName), "TEST CLUB");
+        solo.clickOnView((FloatingActionButton) solo.getView(R.id.createClub));
+        solo.waitForText("Clubs");
+        validLogOut();
+
+        validLogIn();
+        solo.clickOnText("Clubs");
+        solo.clickOnView((SearchView) solo.getView(R.id.clubSearch));
+        ((SearchView) solo.getView(R.id.clubSearch)).setQuery("TEST CLUB", true);
+        solo.assertCurrentActivity("Wrong activity", ClubDetailsActivity.class);
+        solo.searchText("TEST CLUB");
+        solo.goBack();
+        validLogOut();
+
+        removeClubFromDatabase();
+    }
+
+    private void removeClubFromDatabase() {
+        final DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Clubs");
+        ref.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for (DataSnapshot snap : dataSnapshot.getChildren()) {
+                    if (snap.getValue(Club.class).getOwner().getUsername().equals("Test Account")) {
+                        ref.child(snap.getKey()).removeValue();
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    @Test
+    public void joinClubTest() {
+        testLogin();
+        solo.clickOnText("Clubs");
+        solo.clickOnView((FloatingActionButton) solo.getView(R.id.addClubButton));
+        solo.enterText((EditText) solo.getView(R.id.clubName), "TEST CLUB");
+        solo.clickOnView((FloatingActionButton) solo.getView(R.id.createClub));
+        solo.waitForText("Clubs");
+        validLogOut();
+
+        validLogIn();
+        solo.clickOnText("Clubs");
+        solo.clickOnView((SearchView) solo.getView(R.id.clubSearch));
+        ((SearchView) solo.getView(R.id.clubSearch)).setQuery("TEST CLUB", true);
+        solo.assertCurrentActivity("Wrong activity", ClubDetailsActivity.class);
+        solo.searchText("TEST CLUB");
+        solo.clickOnButton("Join Club");
+        solo.waitForText("REQUEST SENT");
+        solo.goBack();
+        validLogOut();
+
+        testLogin();
+        solo.clickOnText("Clubs");
+        solo.clickOnButton("Club Requests");
+        ListView list = (ListView) solo.getView(R.id.clubRequestListView);
+        assertNotNull(list);
+        removeClubFromDatabase();
+        removeNotification();
+        validLogOut();
+    }
+
+    private void removeNotification() {
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Notifications")
+                .child("Club Requests")
+                .child("Test Account");
+        ref.removeValue();
+    }
+
+    @Test
+    public void clubChatTest() {
+        testLogin();
+        addClub();
+        validLogOut();
+        validLogIn();
+        solo.clickOnText("Clubs");
+        solo.clickOnView((SearchView) solo.getView(R.id.clubSearch));
+        ((SearchView) solo.getView(R.id.clubSearch)).setQuery("Great club (TEST)", true);
+        solo.assertCurrentActivity("Wrong activity", ClubDetailsActivity.class);
+        solo.searchText("Great club (TEST)");
+        solo.clickOnButton("Club Chat");
+        solo.enterText((EditText) solo.getView(R.id.messageContents), "TEST MESSAGE");
+        solo.clickOnView(solo.getView(R.id.sendButton));
+        solo.goBack();
+        solo.goBack();
+        validLogOut();
+
+        testLogin();
+        solo.clickOnText("Clubs");
+        solo.clickOnView((SearchView) solo.getView(R.id.clubSearch));
+        ((SearchView) solo.getView(R.id.clubSearch)).setQuery("Great club (TEST)", true);
+        solo.assertCurrentActivity("Wrong activity", ClubDetailsActivity.class);
+        solo.searchText("Great club (TEST)");
+        solo.clickOnButton("Club Chat");
+        ListView messages = (ListView) solo.getView(R.id.messageList);
+        assertEquals(messages.getAdapter().getCount(), 2);
+        solo.goBack();
+        solo.goBack();
+        validLogOut();
+        removeClubFromDatabase();
+    }
 }
+

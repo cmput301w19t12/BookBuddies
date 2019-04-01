@@ -24,7 +24,6 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".Ad"></activity>
         <activity android:name=".MyRequestsActivity" />
         <activity android:name=".MyBorrowingBooksActivity" />
         <activity android:name=".PendingTransactionsActivity" />

@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+
 public class CustomNotificationArrayAdapter extends ArrayAdapter<ClubRequestNotification> {
     private final Context context;
     private final ArrayList<ClubRequestNotification> Requests;

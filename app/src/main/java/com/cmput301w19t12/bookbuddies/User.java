@@ -31,14 +31,14 @@ public class User {
      * @param username String
      * @param password String
      * @param phoneNumber String
-     * @param emailAddress String
-     * @param profilePicturePath String*/
-    public User(String username, String password, String phoneNumber, String emailAddress, String profilePicturePath){
+     * @param emailAddress String*/
+    public User(String userId,String username, String password, String phoneNumber, String emailAddress){
         this.username = username;
         this.password = password;
         this.phoneNumber = phoneNumber;
         this.emailAddress = emailAddress;
-        this.profilePicturePath = profilePicturePath;
+        this.userId = userId;
+        this.fullName = username;
 
     }
 

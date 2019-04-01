@@ -280,11 +280,11 @@ public class MyProfileActivity extends AppCompatActivity implements PopupMenu.On
         }
 
         public void getUserData() {
+            FirebaseUser userDB = mAuth.getCurrentUser();
+            final String userId = userDB.getUid();
             userRef.addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                    FirebaseUser userDB = mAuth.getCurrentUser();
-                    String userId = userDB.getUid();
                     user = dataSnapshot.child(userId).getValue(User.class);
                     for (DataSnapshot allUsers : dataSnapshot.getChildren()) {
                         User tempUser = allUsers.getValue(User.class);
@@ -293,6 +293,7 @@ public class MyProfileActivity extends AppCompatActivity implements PopupMenu.On
                             if (usernameViewed.equals(usernameToShow)) {
                                 userViewed = tempUser;
                                 Log.i("USER", userViewed.getUsername());
+                                Log.i("USER", usernameViewed);
                                 setTextViews();
                                 setEditListeners();
                                 getImage(usernameViewed);

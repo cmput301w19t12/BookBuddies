@@ -33,10 +33,12 @@ import java.util.ArrayList;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+
 /**
  * An array adapter for club request notifications. It displays the string format of the notification
  * as well as two buttons to either accept the club join request or to deny it.
  */
+
 public class CustomNotificationArrayAdapter extends ArrayAdapter<ClubRequestNotification> {
     private final Context context;
     private final ArrayList<ClubRequestNotification> Requests;

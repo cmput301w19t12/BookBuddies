@@ -71,10 +71,11 @@ public class AddClubActivity extends AppCompatActivity {
         EditText clubNameField = findViewById(R.id.clubName);
         String name = clubNameField.getText().toString();
         ArrayList<User> membersList = new ArrayList<>();
-        membersList.add(owner);
         Club newClub = new Club(owner, name, membersList,key);
+        membersList.add(owner);
         newClub.getGroupChat().getMessageList().add(new Message("Welcome to BookBuddies Chat!", Calendar.getInstance().getTime(),new User("BookBuddies","null")));
         newClub.setCurrentBook("");
+        newClub.setOwner(owner);
         if(key != null) {
             clubsRef.child(key).setValue(newClub);
         }

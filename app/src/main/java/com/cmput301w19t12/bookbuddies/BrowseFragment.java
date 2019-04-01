@@ -19,11 +19,14 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.ScrollView;
 import android.widget.SearchView;
 import android.widget.SimpleCursorAdapter;
@@ -44,6 +47,7 @@ import com.google.gson.Gson;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Random;
 import java.util.Set;
 
 
@@ -58,15 +62,11 @@ import java.util.Set;
 public class BrowseFragment extends Fragment {
 
     private SearchView searchBar;
-    private LinearLayout suggestedScroll;
-    private LinearLayout suggestedScroll2;
     private OnFragmentInteractionListener mListener;
     private Set<Book> books;
     private SimpleCursorAdapter adapter;
-    private ImageButton sug1;
-    private ImageButton sug2;
-    private ImageButton sug3;
-    private ImageButton sug4;
+    private ArrayList<Book> availableBooks;
+    private ListView availableListView;
 
 
     public BrowseFragment() {
@@ -105,6 +105,10 @@ public class BrowseFragment extends Fragment {
         searchBar.setSearchableInfo(searchManager.getSearchableInfo(getActivity().getComponentName()));
         searchBar.setSuggestionsAdapter(adapter);
         searchBar.setIconifiedByDefault(false);
+        availableBooks = new ArrayList<>();
+        availableListView = view.findViewById(R.id.recommendationList);
+
+        makeBooksList();
 
         // set query listener to handle user typing detection and final submission
         searchBar.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
@@ -145,52 +149,50 @@ public class BrowseFragment extends Fragment {
             }
         });
 
-        //At Last, populate the two scroll views.
-        suggestedScroll = (LinearLayout) view.findViewById(R.id.sugScroll);
-        suggestedScroll2 = (LinearLayout) view.findViewById(R.id.sugScroll2);
-        sug3 = (ImageButton) view.findViewById(R.id.sug3);
-        sug4 = (ImageButton) view.findViewById(R.id.sug4);
-        sug3.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View v){
-                Intent intent = new Intent(getContext(), Ad.class);
-                Bundle bundle=new Bundle();
-                bundle.putInt("image",R.drawable.coca);
-                intent.putExtras(bundle);
-                startActivity(intent);
-            }
-        });
-        sug4.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View v){
-                Intent intent = new Intent(getContext(), Ad.class);
-                Bundle bundle=new Bundle();
-                bundle.putInt("image",R.drawable.pepsi);
-                intent.putExtras(bundle);
-                startActivity(intent);
-            }
-        });
-        /*DatabaseReference sref = FirebaseDatabase.getInstance().getReference().child("Books").child("Available");
-        sref.addListenerForSingleValueEvent(new ValueEventListener() {
+    }
+
+    private void makeBooksList(){
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Books").child("Available");
+        ref.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                for(DataSnapshot item : dataSnapshot.getChildren()) {
-                    for (DataSnapshot snap : item.getChildren()) {
-                        Book book = snap.getValue(Book.class);
-                        BookDetails details = book.getBookDetails();
-                        String author = details.getAuthor().toLowerCase();
+                int total = 0;
+                for (DataSnapshot snap : dataSnapshot.getChildren()) {
+                    Book book = snap.getValue(Book.class);
+                    if (!(book.getOwner().equals(FirebaseAuth.getInstance().getUid()))) {
+                        availableBooks.add(book);
+                        total += 1;
                     }
                 }
+                addBooksToListView();
             }
+
             @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) { }
-        });*/
-        /*String srefName = sref.orderByChild("owner").limitToFirst(2).toString();
-        StorageReference ref = FirebaseStorage.getInstance().getReference().child("images");
-        Book book = new Gson().fromJson(srefName,Book.class);
-        String browsebook = book.getBookDetails().getUniqueID();
-*/
-        //888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    private void addBooksToListView(){
+        ArrayList<String> entries = new ArrayList<>();
+
+        for(Book book : availableBooks){
+            BookDetails details = book.getBookDetails();
+            String info = String.format("%s\n%s",details.getTitle(),details.getAuthor());
+            entries.add(info);
+        }
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(getContext(),android.R.layout.simple_list_item_1,entries);
+        availableListView.setAdapter(adapter);
+        availableListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Book book = availableBooks.get(position);
+                Intent intent = new Intent(getContext(),BookDetailsActivity.class);
+                intent.putExtra("book",new Gson().toJson(book));
+                startActivity(intent);
+            }
+        });
     }
 
 

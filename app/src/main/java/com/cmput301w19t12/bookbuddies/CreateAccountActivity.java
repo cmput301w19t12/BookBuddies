@@ -77,7 +77,7 @@ public class CreateAccountActivity extends AppCompatActivity {
                                 // if the authorization is valid, create a new user in the database
                                 FirebaseUser user = mAuth.getCurrentUser();
                                 String userId = user.getUid();
-                                User newUser = new User(userId, username, password, email);
+                                User newUser = new User(userId, username, password, "No Phone Number",email);
                                 userRef.child(userId).setValue(newUser);
                                 Log.i("STUFF", "ACCOUNT CREATION SUCCESSFUL");
                                 finish();

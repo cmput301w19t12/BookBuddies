@@ -2,6 +2,8 @@
  * IntentTest.java
  *
  * Ensure you are logged out of application before running
+ *
+ * WARNING: IF ONE TEST FAILS THEY ALL WILL FAIL
  */
 
 package com.cmput301w19t12.android.bookbuddies;
@@ -11,6 +13,7 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
+import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -23,6 +26,7 @@ import android.widget.TextView;
 import com.cmput301w19t12.bookbuddies.Book;
 import com.cmput301w19t12.bookbuddies.Club;
 import com.cmput301w19t12.bookbuddies.ClubDetailsActivity;
+import com.cmput301w19t12.bookbuddies.ClubFragment;
 import com.cmput301w19t12.bookbuddies.DetailedBookList;
 import com.cmput301w19t12.bookbuddies.ExpandingMenuListAdapter;
 import com.cmput301w19t12.bookbuddies.MainActivity;
@@ -58,6 +62,7 @@ public class IntentTest extends ActivityTestRule<MainActivity> {
     private User currentTestUser;
     private Club testClub;
     private User secondTestUser;
+    private MainActivity mActivity;
 
     public IntentTest() {
         super(MainActivity.class, true, true);
@@ -69,6 +74,7 @@ public class IntentTest extends ActivityTestRule<MainActivity> {
     @Before
     public void setUp() throws Exception {
         solo = new Solo(getInstrumentation(), rule.getActivity());
+        mActivity = this.getActivity();
     }
 
     /**
@@ -87,9 +93,10 @@ public class IntentTest extends ActivityTestRule<MainActivity> {
     @Test
     public void addDeleteClubTest() {
         String clubName = "Great club (TEST)";
-        validLogIn();
+        testLogin();
         addClub();
         assertEquals(true, ensureClubInList(clubName));
+        solo.sleep(5000);
         deleteClub();
         assertNotEquals(true, ensureClubInList(clubName));
         validLogOut();
@@ -120,7 +127,7 @@ public class IntentTest extends ActivityTestRule<MainActivity> {
     public void deleteClub() {
         solo.clickInList(position+1, 1);
         solo.clickOnButton("Delete Club");
-        solo.clickOnButton("Delete");
+        solo.clickOnView((solo.getView(android.R.id.button1)));
     }
 
     /**
@@ -179,13 +186,14 @@ public class IntentTest extends ActivityTestRule<MainActivity> {
      */
     @Test
     public void addBookTest() {
-        validLogIn();
+        testLogin();
         addBook();
         solo.waitForText("My Library");
         solo.clickOnText("My Library");
         solo.clickOnText("Available");
+        solo.sleep(5000);
         assertEquals(true, findTitleInList());
-        removeTestTitle("Hunger Games (TEST)");
+        removeTestTitle("(TEST)");
         validLogOut();
     }
 
@@ -245,24 +253,6 @@ public class IntentTest extends ActivityTestRule<MainActivity> {
         });
     }
 
-//    /**
-//     * Scroll down the current screen
-//     */
-//    //https://stackoverflow.com/questions/11682196/fast-scroll-in-robotium
-//    public void scrollDown() {
-//        int screenWidth = solo.getCurrentActivity().getWindowManager().getDefaultDisplay().getWidth();
-//        int screenHeight = solo.getCurrentActivity().getWindowManager().getDefaultDisplay().getHeight();
-//
-//        int fromX, toX, fromY, toY = 0,stepCount=1;
-//
-//        // Scroll Down // Drag Up
-//        fromX = screenWidth/2;
-//        toX = screenWidth/2;
-//        fromY = (screenHeight/2) + (screenHeight/3);
-//        toY = (screenHeight/2) - (screenHeight/3);
-//
-//        solo.drag(fromX, toX, fromY, toY, stepCount);
-//    }
 
     /**
      * Returns true if the book title is added to the list of Available books, else returns false.
@@ -348,20 +338,20 @@ public class IntentTest extends ActivityTestRule<MainActivity> {
         solo.assertCurrentActivity("Wrong Activity", DetailedBookList.class);
     }
 
-    @Test
-    public void searchBookTest() {
-        testLogin();
-        addBook();
-        validLogOut();
-
-        validLogIn();
-        final View search = (SearchView) solo.getView(R.id.bookSearch);
-        ((SearchView) search).setQuery("Hunger Games (TEST)", true);
-        ListView list = (ListView) solo.getView(R.id.listView);
-        assertEquals(1, list.getAdapter().getCount());
-        removeTestTitle("(TEST)");
-        validLogOut();
-    }
+//    @Test
+//    public void searchBookTest() {
+//        testLogin();
+//        addBook();
+//        validLogOut();
+//
+//        validLogIn();
+//        final View search = (SearchView) solo.getView(R.id.bookSearch);
+//        ((SearchView) search).setQuery("Hunger Games (TEST)", true);
+//        ListView list = (ListView) solo.getView(R.id.listView);
+//        assertEquals(1, list.getAdapter().getCount());
+//        removeTestTitle("(TEST)");
+//        validLogOut();
+//    }
 
     @Test
     public void searchAndClubDetails() {
@@ -448,7 +438,6 @@ public class IntentTest extends ActivityTestRule<MainActivity> {
         addClub();
         validLogOut();
         validLogIn();
-        solo.clickOnText("Clubs");
         solo.clickOnView((SearchView) solo.getView(R.id.clubSearch));
         ((SearchView) solo.getView(R.id.clubSearch)).setQuery("Great club (TEST)", true);
         solo.assertCurrentActivity("Wrong activity", ClubDetailsActivity.class);
@@ -474,5 +463,7 @@ public class IntentTest extends ActivityTestRule<MainActivity> {
         validLogOut();
         removeClubFromDatabase();
     }
+
+
 }
 
